@@ -1,0 +1,413 @@
+= 指标管理系统需求分析
+肖燏 <yu.xiao@seaboxdata.com>
+v1.0
+
+== 系统定位
+指标管理系统建立在大数据平台所采集和管理的海量数据基础上，帮助用户建立和管理全方位衡量业务发展目标的关键指标体系，是实现企业数据价值的重要工具。
+
+== 业务流程
+
+image::business-flow.jpg[]
+
+== 基本概念
+
+* 指标数据源：指标数据源表示基础指标的数据来源。指标数据源在逻辑上是一个包含多个维度和指标字段的二维表，可以在物理上以多种形式存在，如从关系数据库中查询得到的结果集、二维表形式的结构化文件（CSV、Excel等）、通过转换从其他形式的数据（如JSON、XML等）得到的二维表结构等。*目前仅支持从关系数据库中查询得到的结果集。*
+* 基础指标：指能够从指标数据源直接查询得到的指标。基础指标的计算不依赖于其他指标。
+* 衍生指标：指使用基础指标或其他衍生指标的值，经过用户定义的运算而得到的指标。
+* 指标目录：是对基础指标和衍生指标进行的多级分类。指标目录中可以包含子目录或者具体指标，但不能两者兼有，指标只能包含在最下层指标目录中。
+* 指标体系：指标体系代表从根节点开始的一颗完整的指标目录树及目录下所涵盖的指标。
+** 公共指标体系：由专职部门维护管理，对指标管理系统的所有用户可见，任何用户都可以根据自己的权限查看或引用公共指标体系中的指标。
+** 私有指标体系：由各业务部门自行维护管理，主要涵盖本部门内部使用的各种指标，私有指标体系只对本业务部门的用户可见。
+* 指标库：包括存放指标计算结果的事实表和相关的维表。具备相同维度的指标的数据可以被保存在相同的指标库中。
+* 指标维度：指标可以拥有多个维度，如时间周期、管理机构（地区）等。维度可以包含多级粒度。所有指标都至少具备时间周期维度和管理机构（或地区）维度，可以根据需要增加其他维度。
+
+== 数据源管理
+对基础指标的数据源进行管理，包括数据源的增加、修改、删除和查询。数据源的基本属性包括：
+
+* 数据源名称
+* 数据源类型，用于区分数据库、文件、及其他结构化数据源。
+* 数据源访问参数，表示访问该数据源需要提供的参数，如用户名、口令、地址、端口等。
+
+== 指标数据权限管理
+
+=== 指标数据权限管理框架
+
+用户对指标的访问权限可以从以下几方面进行控制：
+
+* 指标可见性
++
+用户可以浏览和访问的指标（及指标目录）包括所有公共指标体系和用户所在业务部门的私有指标体系。
+* 管理机构
++
+所有指标数据都具备管理机构（或地区）维度，对于非公开指标，用户能够访问的指标数据被限制在和用户所在的管理机构及下级管理机构所对应的指标数据范围之内。
+* 指标数据安全级别
++
+所有指标都需要设置安全级别，例如公开、内部、保密、绝密等。用户的角色（或岗位）决定了能够访问的指标数据的最高安全级别。
+可以为同一指标在不同维度和维度级别上的数据设置不同的安全级别。
+
+=== 指标数据权限管理功能
+
+* 设置用户角色的最高指标访问安全级别。
+* 设置指标数据（包括各维度和粒度）的数据安全级别。
+
+== 指标体系管理
+
+用户可以自主创建、修改指标体系，指标体系（包括各级指标目录及所引用的指标）的修改需要经过审核才能生效。
+
+=== 指标目录基本要素
+
+* 指标目录名称
+* 指标目录代码，在指标体系内不得重复。
+* 上级指标目录代码
+* 指标目录归属部门
+* 指标体系版本
+
+=== 指标基本要素
+* 指标名称
+* 指标代码
+* 指标所属部门
+* 指标数据源
+* 指标库名称
+* 指标字段名
+* 指标数据单位
+
+=== 指标体系管理功能
+
+* 指标体系浏览
++
+指标体系的浏览采用类似Windows资源管理器的方式，窗口左边为指标分类树，点击分类树底层节点时，在窗口右侧显示该目录下引用的指标列表。
+* 修改指标体系。
+** 修改指标体系名称。
+** 指标分类目录维护
+*** 创建、删除目录
++
+不允许删除非空的指标目录。
+*** 在目录下增加、删除指标
++
+不允许指标目录既有子目录，又引用指标。
+*** 修改目录属性
++
+不可修改指标目录代码和归属部门。
+** 基础指标维护
+** 衍生指标维护
+
+
+=== 指标库基本要素
+* 指标库名称
+* 指标库物理名称
+* 指标库维度（多个）
+
+
+* 指标体系发布
++
+指标体系修改后需要通过发布动作启动审核流程，审核通过后才能生效。
+
+* 指标体系审核
++
+审核指标体系的修改，审核界面应标注新增、修改、及删除的目录。审核通过后，产生新的指标体系版本。
+
+* 指标体系版本比较
++
+比较指标体系两个版本之间的差异，比较界面应标注新旧版本之间新增、修改、及删除的目录。
+
+
+== 数据处理流程语言
+=== 概述
+数据处理定义语言是一种类似SQL的脚本语言，用户可以使用这种语言来描述数据采集和加工过程中用到的各种数据接口，以及数据处理的具体过程。
+
+=== 基本概念
+
+* 数据接口
++
+在数据处理过程中，作业使用数据接口与各种数据源进行数据交换，目前支持下列数据接口类型：
++
+[horizontal]
+JDBC接口:: 可以与支持JDBC的关系型数据库（如MySQL）进行数据交换。
+Java对象接口:: 可以使用Java API（或WebService stub）与数据源进行数据交换。
+HTTP接口:: 可以使用HTTP接口与数据源进行数据交换。
+CSV文件:: 可以使用指定的CSV文件与数据源进行数据交换。
+
+//
+
+* 数据处理语句
++
+数据处理语句是用来描述数据处理流程的脚本语句，类似于SQL语句，例如：
+[source,sql]
+insert 'mysql:tmp1.tbl1' column ('c2', 'c3') \
+select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' from 'java1:GetUnitListInfo' \
+params_from {
+    select 'c1', 'c2' from_sql('mysql') {
+        '''select * from tmp1.tbl1 where c1 > 20'''
+    }
+}
++
+目前实现的语句包括：
+. 数据接口定义语句
+. insert语句
+. select语句
+
+=== 语法
+==== 数据接口定义语句
+数据接口定义语句用于定义在当前脚本的数据处理语句（insert，select）中用到的数据接口。
+
+* MySQL接口
++
+MySQL接口是JDBC接口中的一种，可以为其他支持JDBC的数据库实现相应的接口。
+
+** 语法结构
+[source,groovy]
+mysql(<数据接口名称>) {
+   host <数据库服务器名称>
+   port <数据库端口>
+   username <数据库用户名>
+   password <数据库用户口令>
+}
+
+** 示例
+[source,groovy]
+mysql('mysql') {
+    host 'localhost'
+    port 3306
+    username 'root'
+    password 'root'
+}
+
+* Java对象接口
+** 语法结构
+[source,groovy]
+java(<数据接口名称>) {
+    className <Java类名>
+    dataFormat <数据格式>
+    verify <调用返回结果校验代码>
+}
+
+** 示例
+[source,groovy]
+java('java1') {
+    className 'test.JavaAPI1'
+    dataFormat 'xml'
+    verify { errinfo.info == '' } // 当errinfo.info节点的内容为空时表示调用成功。
+}
+
+* HTTP接口
+** 语法结构
+[source,groovy]
+http(<数据接口名称>) {
+    baseUrl <HTTP接口URL>
+    dataFormat <数据格式>
+    parameter {
+      <HTTP请求参数列表>
+    }
+}
+
+** 示例
+[source,groovy]
+http('http1') {
+    baseUrl 'http://localhost:8888/authService/air/user/getUserStationAuth'
+    dataFormat 'json'
+    parameter {
+        userId  (order: 1)
+        projectId (order: 2)
+        areaCode (order: 3)
+    }
+}
+
+* CSV文件接口
+** 语法结构
+[source,groovy]
+csv(<数据接口名称>) {
+    path <接口文件路径>
+    header <是否包含标题行>
+    column {
+      <文件字段列表>
+    }
+}
+
+** 示例
+[source,groovy]
+csv('csv1') {
+    path 'example.csv'
+    header true
+    column {
+        author  (order:1)
+        title   (order:2)
+    }
+}
+
+==== insert语句
+insert语句可以表示一个完整的数据加工流程，即从一个或多个数据源中获取数据，经过指定的中间加工过程，将最终处理结果保存到一个指定的数据源。
+
+* 语法结构
+[source,sql]
+insert <目标数据接口> column <目标字段列表> <select语句>
++
+** 目标数据存储：通过该接口保存本条语句的数据处理结果。格式为：`<目标接口名>:<目标实体名>`，例如：
+[source,sql]
+'mysql1:db_name.table_name'
+** 目标字段列表：数据处理结果对应的目标数据存储实体的字段名列表，格式为：`<字段1>[,<字段2>,...]`，例如：
+[source,sql]
+'column1', 'column2', 'column3'
+** select语句：用来描述如何得到数据处理结果的语句，参见[select语句]一节的内容。
+
+* 示例
+[source,sql]
+insert 'mysql:tmp1.tbl1' column ('c2', 'c3') \
+select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' from 'java1:GetUnitListInfo' \
+params_from {
+    select 'c1', 'c2' from_sql('mysql') {
+        '''select * from tmp1.tbl1 where c1 > 20'''
+    }
+}
++
+这条语句表示的数据加工流程为：
+. 从名为'mysql'的数据接口中，使用SQL语句`select * from tmp1.tbl1 where c1 > 20`得到'c1'和'c2'两列数据。
+. 使用第1步中的结果集作为参数反复调用名为'java1'的Java API的GetUniListInfo方法，并从该方法的返回结果中（xml格式）提取路径为'unitlists.unitinfo.id'和'unitlists.unitinfo.name'的数据。将各次方法调用的返回结果合并为一个结果集。
+. 将第2步得到的结果集保存到名为'mysql'的数据接口的'tmp1.tbl1'表中，对应字段为'c2'和'c3'。
+
+==== select语句
+select语句可以表示一个结果集的获取及加工流程。
+
+* 语法结构
+[source,sql]
+select <字段列表> from <数据源接口> <param子句>
++
+** 字段列表：结果集的字段名列表，字段可以包含数据源中的字段，也可以包含常量，格式为：`<字段1>[,<字段2>,...]`，例如：
+[source,sql]
+'column1', 'column2', CONST('value')
++
+'column1'和'column2'表示从数据源中获取的字段，CONST('value')表示值为'value'的常量。
+** 数据源接口：获取源数据的接口。格式为：`<数据接口名>[:<数据实体名>]`，例如：
+[source,sql]
+'java1:GetUnitListInfo'
++
+其中'数据实体名'为可选项，需要根据数据接口类型决定是否指定实体名。
+** param子句：提供select语句所需的参数。可以通过以下两种语法指定：
+*** 标量参数
++
+标量参数只有一条记录，使用标量参数的select语句只执行一次。
+[source,sql]
+param_using ('参数1', '参数2', ...)
++
+标量参数可以使用常量（例如：'value1'）或者调用数据处理脚本时提供的绑定参数（例如：WORKDATE）。
+*** 集合参数
++
+集合参数使用内嵌的select语句提供参数结果集，使用集合参数的select语句以参数结果集中的每条记录为参数执行一次。并将所有各次执行的结果合并为一个统一的结果集。
+[source,sql]
+param_from {
+    <select语句>
+}
+
+* 示例
+[source,sql]
+ select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' \
+ from 'java1:GetUnitListInfo' \
+ params_from {
+     select 'code', CONST('vv') from 'http1' params_using (USERID, PROJECTID, '')
+ }
++
+这条语句表示的数据加工流程为：
+. 从名为'http1'的数据接口中，使用绑定参数USERID，PROJECTID和常量参数('')得到'code'字段和常量CONST('vv')两列数据。
+. 使用第1步中的结果集作为参数反复调用名为'java1'的Java API的GetUniListInfo方法，并从该方法的返回结果中（xml格式）提取路径为'unitlists.unitinfo.id'和'unitlists.unitinfo.name'的数据。将各次方法调用的返回结果合并为一个结果集。
+
+==== 注释
+脚本中可以使用双斜线`//`开始注释，例如：
+[source,sql]
+ // 这是一行注释。
+
+== 数据处理脚本执行器
+=== 概述
+本程序可以执行使用数据处理流程语言编写的数据处理作业脚本。
+
+=== 运行环境
+JDK 1.8
+
+=== 程序安装
+将安装包 `job-runner-1.0-SNAPSHOT-bin.zip` 解压到任意目录下。
+
+=== 脚本执行
+假设脚本执行器的解压路径为 `/path/to/job-runner`，
+
+. 准备数据处理脚本文件
++
+示例:
++
+[source,groovy]
+----
+mysql('mysql') {
+    host 'localhost'
+    port 3306
+    username 'root'
+    password 'root'
+}
+
+java('java1') {
+    className 'test.JavaAPI1'
+    dataFormat 'xml'
+    verify { errinfo.info == '' }
+}
+
+java('java2') {
+    className 'test.JavaAPI1'
+    dataFormat 'json'
+}
+
+http('http1') {
+    baseUrl 'http://localhost:8888/authService/air/user/getUserStationAuth'
+    dataFormat 'json'
+    parameter {
+        userId  (order: 1)
+        projectId (order: 2)
+        areaCode (order: 3)
+    }
+}
+
+csv('csv1') {
+    path 'example.csv'
+    header true
+    column {
+        author  (order:1)
+        title   (order:2)
+    }
+}
+
+insert 'mysql:tmp1.tbl1' column ('c2', 'c3') \
+select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' from 'java1:GetUnitListInfo' \
+params_from {
+    select 'code', CONST('vv') from 'http1' params_using (USERID, PROJECTID, '')
+}
+
+insert 'mysql:tmp1.tbl1' column ('c2', 'c3') \
+select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' from 'java1:GetUnitListInfo' \
+params_from {
+    select 'author', 'title' from 'csv1' params_using ()
+}
+----
+. 准备脚本绑定参数文件
++
+参数名称需要与数据处理脚本中引用的参数名保持一致，包括大小写。参数值目前只支持字符串类型。 示例:
+[source,groovy]
+USERNAME='user1'
+PASSWORD='pass1'
+USERID='123'
+PROJECTID='321'
+
+. 执行脚本
++
+进入/path/to/job-runner目录，执行：
++
+Windows
+[source,bash]
+java -cp "job-runner-1.0-SNAPSHOT.jar;lib\*" JobRunner \
+    -b bindings.properties -j job-script.jdl
++
+Linux
+[source,bash]
+java -classpath "job-runner-1.0-SNAPSHOT.jar:lib/*" JobRunner \
+    -b bindings.properties -j job-script.jdl
++
+其中：
+[horizontal]
+  bindings.properties:: 脚本参数绑定文件。
+  job-script.jdl:: 数据处理脚本文件。
+[vertial]
+这两个文件名要根据需要修改为实际的参数绑定文件和脚本文件路径。
