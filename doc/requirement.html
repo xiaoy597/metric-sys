@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
 <meta name="author" content="肖燏">
-<title>指标管理系统需求分析</title>
+<title>指标管理系统需求分析和总体设计</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,7 +439,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article data-line-1">
 <div id="header">
-<h1>指标管理系统需求分析</h1>
+<h1>指标管理系统需求分析和总体设计</h1>
 <div class="details">
 <span id="author" class="author">肖燏</span><br>
 <span id="email" class="email"><a href="mailto:yu.xiao@seaboxdata.com">yu.xiao@seaboxdata.com</a></span><br>
@@ -456,644 +456,1044 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1 data-line-8">
-<h2 id="_业务流程">业务流程</h2>
+<h2 id="_系统概述">系统概述</h2>
 <div class="sectionbody">
-<div class="paragraph data-line-10">
-<p>image::business-flow.jpg</p>
-</div>
-</div>
-</div>
-<div class="sect1 data-line-12">
-<h2 id="_基本概念">基本概念</h2>
-<div class="sectionbody">
-<div class="ulist data-line-14">
+<div class="sect2 data-line-9">
+<h3 id="_基本概念">基本概念</h3>
+<div class="ulist data-line-11">
 <ul>
+<li class="data-line-11">
+<p>指标数据源：指标数据源表示基础指标的数据来源。指标数据源可以是关系数据库、本地或远程文件系统、消息队列或NoSQL数据库。<strong>目前仅支持使用关系数据库作为指标数据源。</strong></p>
+</li>
+<li class="data-line-12">
+<p>基础指标：指能够从指标数据源直接查询得到的指标。基础指标的计算不依赖于其他指标。基础指标只存在于公共指标库中。</p>
+</li>
+<li class="data-line-13">
+<p>衍生指标：指使用基础指标或其他衍生指标的值，经过用户定义的运算而得到的指标。衍生指标可以存在于公共指标库和私有指标库中。</p>
+</li>
 <li class="data-line-14">
-<p>指标数据源：指标数据源表示基础指标的数据来源。指标数据源在逻辑上是一个包含多个维度和指标字段的二维表，可以在物理上以多种形式存在，如从关系数据库中查询得到的结果集、二维表形式的结构化文件（CSV、Excel等）、通过转换从其他形式的数据（如JSON、XML等）得到的二维表结构等。目前仅支持从关系数据库中查询得到的结果集。</p>
+<p>指标目录：是对基础指标和衍生指标进行的多级分类。指标目录中可以包含子目录或者具体指标，但不能两者兼有，指标只能包含在最下层指标目录中。</p>
 </li>
 <li class="data-line-15">
-<p>基础指标：指能够从指标数据源直接查询得到的指标。基础指标的计算不依赖于其他指标。</p>
-</li>
+<p>指标体系：指标体系代表从根节点开始的一颗完整的指标目录树及目录下所涵盖的指标。</p>
+<div class="ulist data-line-16">
+<ul>
 <li class="data-line-16">
-<p>衍生指标：指使用基础指标或其他衍生指标的值，经过用户定义的运算而得到的指标。</p>
+<p>公共指标体系：由专职部门维护管理，对指标管理系统的所有用户可见，公共指标体系中只包含公共指标库中的指标，任何用户都可以根据自己的权限查看或引用公共指标体系中的指标。</p>
 </li>
 <li class="data-line-17">
-<p>指标维度：指标可以拥有多个维度，如时间周期、地区、部门等。</p>
+<p>私有指标体系：由各业务部门自行维护管理，私有指标体系既可以包含公共指标库中的指标，也可以包含本部门私有指标库中的指标，私有指标体系只对本业务部门的用户可见。</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-18">
+<p>指标库：用于存放指标数据的数据库，指标库在逻辑上划分为多个区域，分别用于存放公共指标数据和各部门私有指标数据。公共指标区域中的表分为指标主表和指标维表两部分，其中维度表由所有指标区域共享，各部门指标库区域只包含部门私有指标主表。</p>
+<div class="ulist data-line-19">
+<ul>
+<li class="data-line-19">
+<p>指标维表：定义指标维度的表。指标的每个维度（如日期、地域、币种等）都对应到不同的指标维表。维度可以包含多个粒度，维度粒度用维度表的字段表示。维度表和指标主表之间使用维度记录唯一记录ID关联。</p>
+</li>
+<li class="data-line-20">
+<p>指标主表：指标主表存储指标数据。指标库中可以有多个指标主表。指标主表通过关联指标维表定义指标维度，指标主表可以包含多个度量字段，每个度量字段对应一个指标（可以是基础指标或衍生指标）。存储在同一个指标主表中的所有指标都具备相同的维度。</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-21">
+<p>指标维度：指标可以拥有多个维度，如时间周期、管理机构（地区）等。维度可以包含多级粒度。所有指标都至少具备时间周期维度和管理机构（或地区）维度，可以根据需要增加其他维度。衍生指标的维度是它所引用的基础指标或其他衍生指标的公共维度以及粒度的子集。</p>
 </li>
 </ul>
 </div>
 </div>
-</div>
-<div class="sect1 data-line-19">
-<h2 id="_数据源管理">数据源管理</h2>
-<div class="sectionbody">
-<div class="paragraph data-line-20">
-<p>对基础指标的数据源进行管理，包括数据源的增加、修改、删除和查询。数据源在物理上数据源的基本属性包括：</p>
-</div>
-<div class="ulist data-line-22">
-<ul>
-<li class="data-line-22">
-<p>数据源名称</p>
-</li>
-<li class="data-line-23">
-<p>维度字段列表</p>
-</li>
-<li class="data-line-24">
-<p>指标字段列表</p>
-</li>
-<li class="data-line-25">
-<p>数据查询语句模板</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1 data-line-27">
-<h2 id="_数据处理流程语言">数据处理流程语言</h2>
-<div class="sectionbody">
-<div class="sect2 data-line-28">
-<h3 id="_概述">概述</h3>
-<div class="paragraph data-line-29">
-<p>数据处理定义语言是一种类似SQL的脚本语言，用户可以使用这种语言来描述数据采集和加工过程中用到的各种数据接口，以及数据处理的具体过程。</p>
-</div>
-</div>
-<div class="sect2 data-line-31">
-<h3 id="_基本概念_2">基本概念</h3>
-<div class="ulist data-line-33">
-<ul>
-<li class="data-line-33">
-<p>数据接口</p>
-<div class="paragraph data-line-35">
-<p>在数据处理过程中，作业使用数据接口与各种数据源进行数据交换，目前支持下列数据接口类型：</p>
-</div>
-<div class="hdlist data-line-38">
-<table>
-<tr>
-<td class="hdlist1">
-JDBC接口
-</td>
-<td class="hdlist2">
-<p>可以与支持JDBC的关系型数据库（如MySQL）进行数据交换。</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Java对象接口
-</td>
-<td class="hdlist2">
-<p>可以使用Java API（或WebService stub）与数据源进行数据交换。</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-HTTP接口
-</td>
-<td class="hdlist2">
-<p>可以使用HTTP接口与数据源进行数据交换。</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-CSV文件
-</td>
-<td class="hdlist2">
-<p>可以使用指定的CSV文件与数据源进行数据交换。</p>
-</td>
-</tr>
-</table>
-</div>
-</li>
-</ul>
-</div>
-<div class="ulist data-line-45">
-<ul>
-<li class="data-line-45">
-<p>数据处理语句</p>
-<div class="paragraph data-line-47">
-<p>数据处理语句是用来描述数据处理流程的脚本语句，类似于SQL语句，例如：</p>
-</div>
-<div class="listingblock data-line-49">
+<div class="sect2 data-line-23">
+<h3 id="_业务流程">业务流程</h3>
+<div class="imageblock data-line-26">
 <div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">insert 'mysql:tmp1.tbl1' column ('c2', 'c3') \
-select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' from 'java1:GetUnitListInfo' \
-params_from {
-    select 'c1', 'c2' from_sql('mysql') {
-        '''select * from tmp1.tbl1 where c1 &gt; 20'''
-    }
-}</code></pre>
+<img src="business-flow.jpg" alt="business flow">
+</div>
+<div class="title">Figure 1. 指标管理系统业务流程</div>
 </div>
 </div>
-<div class="paragraph data-line-57">
-<p>目前实现的语句包括：</p>
+<div class="sect2 data-line-28">
+<h3 id="_系统角色">系统角色</h3>
+<div class="paragraph data-line-29">
+<p>系统设置下列用户角色：</p>
 </div>
-<div class="olist arabic data-line-58">
-<ol class="arabic">
-<li class="data-line-58">
-<p>数据接口定义语句</p>
+<div class="ulist data-line-31">
+<ul>
+<li class="data-line-31">
+<p>普通用户：使用指标管理系统进行指标数据查询和分析的人员。</p>
 </li>
+<li class="data-line-32">
+<p>公共指标维护人员：负责维护公共指标体系和公共指标，包括基础指标和衍生指标。</p>
+</li>
+<li class="data-line-33">
+<p>部门指标维护人员：负责维护本部门指标体系和私有指标。</p>
+</li>
+<li class="data-line-34">
+<p>公共指标管理人员：负责审核对公共指标体系和公共指标的调整，以及对指标接口的审核。</p>
+</li>
+<li class="data-line-35">
+<p>部门指标管理人员：负责审核对部门指标体系和私有指标的调整，以及对指标接口的审核。</p>
+</li>
+<li class="data-line-36">
+<p>指标系统管理人员：负责指标管理系统的运行维护，包括数据源管理、指标库管理、指标接口管理。</p>
+</li>
+<li class="data-line-37">
+<p>指标数据安全管理人员：负责设置指标数据的安全级别和各用户岗位的数据访问权限。</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2 data-line-39">
+<h3 id="_角色职责矩阵">角色职责矩阵</h3>
+<div class="imageblock data-line-41">
+<div class="content">
+<img src="role-privileges.jpg" alt="role privileges">
+</div>
+<div class="title">Figure 2. 系统角色职责矩阵</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 data-line-44">
+<h2 id="_指标查询分析">指标查询分析</h2>
+<div class="sectionbody">
+<div class="sect2 data-line-47">
+<h3 id="_指标数据查询浏览">指标数据查询浏览</h3>
+<div class="paragraph data-line-48">
+<p>指标数据检索：在选定的指标上设置维度筛选条件，检索指标数据。系统根据用户角色、指标安全级别和用户的组织机构属性对查询结果进行过滤，防止用户对数据的越权访问。</p>
+</div>
+</div>
+<div class="sect2 data-line-50">
+<h3 id="_指标数据导入导出">指标数据导入/导出</h3>
+<div class="paragraph data-line-51">
+<p>用户可以选择将查询结果中的指标数据导出到文件中。指标体系的维护人员可以从文件中导入指标数据，如果导入的数据和指标库中的数据有冲突，需要询问用户是否覆盖。指标数据的导入导出操作都需要记录到用户访问日志中。</p>
+</div>
+</div>
+<div class="sect2 data-line-53">
+<h3 id="_指标仪表盘">指标仪表盘</h3>
+<div class="paragraph data-line-54">
+<p>指标仪表盘提供指标的图形化展现和分析功能，用户可以选择需要在仪表盘上展现的指标数据和展现形式（折线图、饼图、柱状图等）。</p>
+</div>
+<div class="sect3 data-line-56">
+<h4 id="_指标仪表盘基本要素">指标仪表盘基本要素</h4>
+
+</div>
+<div class="sect3 data-line-58">
+<h4 id="_指标仪表盘功能">指标仪表盘功能</h4>
+<div class="ulist data-line-59">
+<ul>
 <li class="data-line-59">
-<p>insert语句</p>
+<p>仪表盘浏览</p>
 </li>
 <li class="data-line-60">
-<p>select语句</p>
-</li>
-</ol>
-</div>
+<p>定制仪表盘内容</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect2 data-line-62">
-<h3 id="_语法">语法</h3>
-<div class="sect3 data-line-63">
-<h4 id="_数据接口定义语句">数据接口定义语句</h4>
-<div class="paragraph data-line-64">
-<p>数据接口定义语句用于定义在当前脚本的数据处理语句（insert，select）中用到的数据接口。</p>
 </div>
-<div class="ulist data-line-66">
-<ul>
-<li class="data-line-66">
-<p>MySQL接口</p>
-<div class="paragraph data-line-68">
-<p>MySQL接口是JDBC接口中的一种，可以为其他支持JDBC的数据库实现相应的接口。</p>
 </div>
-<div class="ulist data-line-70">
-<ul>
-<li class="data-line-70">
-<p>语法结构</p>
-<div class="listingblock data-line-72">
+</div>
+<div class="sect1 data-line-63">
+<h2 id="_指标体系管理">指标体系管理</h2>
+<div class="sectionbody">
+<div class="paragraph data-line-65">
+<p>公共指标体系维护人员和各业务部门指标体系维护人员可以创建、维护指标体系内容，指标体系（包括各级指标目录及所引用的指标）的修改需要经过审核才能生效。</p>
+</div>
+<div class="imageblock data-line-68">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">mysql(&lt;数据接口名称&gt;) {
-   host &lt;数据库服务器名称&gt;
-   port &lt;数据库端口&gt;
-   username &lt;数据库用户名&gt;
-   password &lt;数据库用户口令&gt;
-}</code></pre>
+<img src="metric-hierarchy.jpg" alt="metric hierarchy">
 </div>
+<div class="title">Figure 3. 指标体系框架</div>
 </div>
+<div class="sect2 data-line-70">
+<h3 id="_指标体系基本要素">指标体系基本要素</h3>
+<div class="ulist data-line-71">
+<ul>
+<li class="data-line-71">
+<p>指标体系名称</p>
 </li>
-<li class="data-line-79">
-<p>示例</p>
-<div class="listingblock data-line-81">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">mysql('mysql') {
-    host 'localhost'
-    port 3306
-    username 'root'
-    password 'root'
-}</code></pre>
-</div>
-</div>
+<li class="data-line-72">
+<p>指标体系代码</p>
+</li>
+<li class="data-line-73">
+<p>指标体系根目录名称</p>
+</li>
+<li class="data-line-74">
+<p>指标体系根目录代码</p>
+</li>
+<li class="data-line-75">
+<p>指标体系部门代码</p>
 </li>
 </ul>
 </div>
+</div>
+<div class="sect2 data-line-77">
+<h3 id="_指标目录基本要素">指标目录基本要素</h3>
+<div class="paragraph data-line-78">
+<p>指标目录的归属部门与上级指标目录归属部门相同，根目录的归属部门为与该根目录对应的指标体系所归属的业务部门。</p>
+</div>
+<div class="ulist data-line-80">
+<ul>
+<li class="data-line-80">
+<p>指标目录名称</p>
+</li>
+<li class="data-line-81">
+<p>指标目录代码，在指标体系内不得重复。</p>
+</li>
+<li class="data-line-82">
+<p>上级指标目录代码</p>
+</li>
+<li class="data-line-83">
+<p>指标目录显示顺序</p>
+</li>
+<li class="data-line-84">
+<p>指标体系代码</p>
+</li>
+<li class="data-line-85">
+<p>最后更新用户</p>
+</li>
+<li class="data-line-86">
+<p>最后审核用户</p>
+</li>
+<li class="data-line-87">
+<p>最后更新时间</p>
 </li>
 <li class="data-line-88">
-<p>Java对象接口</p>
-<div class="ulist data-line-89">
-<ul>
-<li class="data-line-89">
-<p>语法结构</p>
-<div class="listingblock data-line-91">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">java(&lt;数据接口名称&gt;) {
-    className &lt;Java类名&gt;
-    dataFormat &lt;数据格式&gt;
-    verify &lt;调用返回结果校验代码&gt;
-}</code></pre>
-</div>
-</div>
-</li>
-<li class="data-line-97">
-<p>示例</p>
-<div class="listingblock data-line-99">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">java('java1') {
-    className 'test.JavaAPI1'
-    dataFormat 'xml'
-    verify { errinfo.info == '' } // 当errinfo.info节点的内容为空时表示调用成功。
-}</code></pre>
-</div>
-</div>
+<p>最后审核时间</p>
 </li>
 </ul>
 </div>
+</div>
+<div class="sect2 data-line-90">
+<h3 id="_基础指标基本要素">基础指标基本要素</h3>
+<div class="ulist data-line-91">
+<ul>
+<li class="data-line-91">
+<p>指标名称</p>
 </li>
-<li class="data-line-105">
-<p>HTTP接口</p>
+<li class="data-line-92">
+<p>指标代码</p>
+</li>
+<li class="data-line-93">
+<p>业务部门代码</p>
+</li>
+<li class="data-line-94">
+<p>指标数据源代码</p>
+</li>
+<li class="data-line-95">
+<p>指标主表代码</p>
+</li>
+<li class="data-line-96">
+<p>指标库度量字段代码</p>
+</li>
+<li class="data-line-97">
+<p>指标数据单位</p>
+</li>
+<li class="data-line-98">
+<p>指标计算周期</p>
+</li>
+<li class="data-line-99">
+<p>指标描述</p>
+</li>
+<li class="data-line-100">
+<p>最后更新用户</p>
+</li>
+<li class="data-line-101">
+<p>最后审核用户</p>
+</li>
+<li class="data-line-102">
+<p>最后更新时间</p>
+</li>
+<li class="data-line-103">
+<p>最后审核时间</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2 data-line-105">
+<h3 id="_衍生指标基本要素">衍生指标基本要素</h3>
 <div class="ulist data-line-106">
 <ul>
 <li class="data-line-106">
-<p>语法结构</p>
-<div class="listingblock data-line-108">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">http(&lt;数据接口名称&gt;) {
-    baseUrl &lt;HTTP接口URL&gt;
-    dataFormat &lt;数据格式&gt;
-    parameter {
-      &lt;HTTP请求参数列表&gt;
-    }
-}</code></pre>
-</div>
-</div>
+<p>指标名称</p>
+</li>
+<li class="data-line-107">
+<p>指标代码</p>
+</li>
+<li class="data-line-108">
+<p>业务部门代码</p>
+</li>
+<li class="data-line-109">
+<p>指标计算公式模板</p>
+</li>
+<li class="data-line-110">
+<p>指标主表代码</p>
+</li>
+<li class="data-line-111">
+<p>指标库度量字段代码</p>
+</li>
+<li class="data-line-112">
+<p>指标数据单位</p>
+</li>
+<li class="data-line-113">
+<p>指标计算周期</p>
+</li>
+<li class="data-line-114">
+<p>指标描述</p>
+</li>
+<li class="data-line-115">
+<p>最后更新用户</p>
 </li>
 <li class="data-line-116">
-<p>示例</p>
-<div class="listingblock data-line-118">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">http('http1') {
-    baseUrl 'http://localhost:8888/authService/air/user/getUserStationAuth'
-    dataFormat 'json'
-    parameter {
-        userId  (order: 1)
-        projectId (order: 2)
-        areaCode (order: 3)
-    }
-}</code></pre>
-</div>
-</div>
+<p>最后审核用户</p>
+</li>
+<li class="data-line-117">
+<p>最后更新时间</p>
+</li>
+<li class="data-line-118">
+<p>最后审核时间</p>
 </li>
 </ul>
 </div>
-</li>
-<li class="data-line-128">
-<p>CSV文件接口</p>
-<div class="ulist data-line-129">
+</div>
+<div class="sect2 data-line-120">
+<h3 id="_指标体系管理功能">指标体系管理功能</h3>
+<div class="sect3 data-line-122">
+<h4 id="_指标体系浏览">指标体系浏览</h4>
+<div class="paragraph data-line-123">
+<p>指标体系的浏览采用类似Windows资源管理器的方式，窗口左边为指标分类树，点击分类树底层节点时，在窗口右侧显示该目录下引用的指标列表。</p>
+</div>
+<div class="ulist data-line-125">
 <ul>
+<li class="data-line-125">
+<p>指标浏览查询</p>
+<div class="paragraph data-line-127">
+<p>根据指标名称、指标代码、指标所属部门、指标数据源、指标主表检索符合条件的指标配置信息。</p>
+</div>
+</li>
 <li class="data-line-129">
-<p>语法结构</p>
-<div class="listingblock data-line-131">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">csv(&lt;数据接口名称&gt;) {
-    path &lt;接口文件路径&gt;
-    header &lt;是否包含标题行&gt;
-    column {
-      &lt;文件字段列表&gt;
-    }
-}</code></pre>
-</div>
-</div>
-</li>
-<li class="data-line-139">
-<p>示例</p>
-<div class="listingblock data-line-141">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">csv('csv1') {
-    path 'example.csv'
-    header true
-    column {
-        author  (order:1)
-        title   (order:2)
-    }
-}</code></pre>
-</div>
-</div>
-</li>
-</ul>
+<p>指标依赖关系视图</p>
+<div class="paragraph data-line-131">
+<p>以有向图的方式展示基础指标和衍生指标之间的依赖关系。</p>
 </div>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect3 data-line-150">
-<h4 id="_insert语句">insert语句</h4>
-<div class="paragraph data-line-151">
-<p>insert语句可以表示一个完整的数据加工流程，即从一个或多个数据源中获取数据，经过指定的中间加工过程，将最终处理结果保存到一个指定的数据源。</p>
-</div>
-<div class="ulist data-line-153">
+<div class="sect3 data-line-133">
+<h4 id="_指标体系维护">指标体系维护</h4>
+<div class="ulist data-line-134">
 <ul>
+<li class="data-line-134">
+<p>指标体系创建</p>
+<div class="paragraph data-line-136">
+<p>由指标管理部门创建的指标体系为公共指标体系，其他业务部门创建的指标体系为部门私有指标体系。</p>
+</div>
+</li>
+<li class="data-line-138">
+<p>指标体系基本属性维护</p>
+</li>
+<li class="data-line-140">
+<p>指标分类目录维护</p>
+<div class="ulist data-line-141">
+<ul>
+<li class="data-line-141">
+<p>创建、删除目录</p>
+<div class="paragraph data-line-143">
+<p>不允许删除非空的指标目录。</p>
+</div>
+</li>
+<li class="data-line-144">
+<p>在目录下增加、删除指标</p>
+<div class="paragraph data-line-146">
+<p>不允许指标目录既有子目录，又包含指标。</p>
+</div>
+</li>
+<li class="data-line-147">
+<p>修改目录属性</p>
+<div class="paragraph data-line-149">
+<p>不可修改指标目录代码和归属部门。</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-151">
+<p>指标维护</p>
+<div class="ulist data-line-152">
+<ul>
+<li class="data-line-152">
+<p>基础指标配置/修改</p>
+<div class="olist arabic data-line-153">
+<ol class="arabic">
 <li class="data-line-153">
-<p>语法结构</p>
-<div class="listingblock data-line-155">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">insert &lt;目标数据接口&gt; column &lt;目标字段列表&gt; &lt;select语句&gt;</code></pre>
+<p>设置指标基本属性</p>
+<div class="olist loweralpha data-line-154">
+<ol class="loweralpha" type="a">
+<li class="data-line-154">
+<p>指标名称</p>
+</li>
+<li class="data-line-155">
+<p>指标代码</p>
+</li>
+<li class="data-line-156">
+<p>指标数据单位</p>
+</li>
+</ol>
 </div>
-</div>
-<div class="ulist data-line-157">
-<ul>
+</li>
 <li class="data-line-157">
-<p>目标数据存储：通过该接口保存本条语句的数据处理结果。格式为：<code>&lt;目标接口名&gt;:&lt;目标实体名&gt;</code>，例如：</p>
-<div class="listingblock data-line-159">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">'mysql1:db_name.table_name'</code></pre>
-</div>
-</div>
+<p>设置指标维度和各维度的数据粒度</p>
+</li>
+<li class="data-line-158">
+<p>设置指标数据源</p>
+<div class="olist loweralpha data-line-159">
+<ol class="loweralpha" type="a">
+<li class="data-line-159">
+<p>选择指标数据源</p>
 </li>
 <li class="data-line-160">
-<p>目标字段列表：数据处理结果对应的目标数据存储实体的字段名列表，格式为：<code>&lt;字段1&gt;[,&lt;字段2&gt;,&#8230;&#8203;]</code>，例如：</p>
-<div class="listingblock data-line-162">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">'column1', 'column2', 'column3'</code></pre>
-</div>
-</div>
-</li>
-<li class="data-line-163">
-<p>select语句：用来描述如何得到数据处理结果的语句，参见[select语句]一节的内容。</p>
-</li>
-</ul>
-</div>
-</li>
-<li class="data-line-165">
-<p>示例</p>
-<div class="listingblock data-line-167">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">insert 'mysql:tmp1.tbl1' column ('c2', 'c3') \
-select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' from 'java1:GetUnitListInfo' \
-params_from {
-    select 'c1', 'c2' from_sql('mysql') {
-        '''select * from tmp1.tbl1 where c1 &gt; 20'''
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph data-line-175">
-<p>这条语句表示的数据加工流程为：</p>
-</div>
-<div class="olist arabic data-line-176">
-<ol class="arabic">
-<li class="data-line-176">
-<p>从名为&#8217;mysql&#8217;的数据接口中，使用SQL语句`select * from tmp1.tbl1 where c1 &gt; 20`得到&#8217;c1&#8217;和&#8217;c2&#8217;两列数据。</p>
-</li>
-<li class="data-line-177">
-<p>使用第1步中的结果集作为参数反复调用名为&#8217;java1&#8217;的Java API的GetUniListInfo方法，并从该方法的返回结果中（xml格式）提取路径为&#8217;unitlists.unitinfo.id&#8217;和&#8217;unitlists.unitinfo.name&#8217;的数据。将各次方法调用的返回结果合并为一个结果集。</p>
-</li>
-<li class="data-line-178">
-<p>将第2步得到的结果集保存到名为&#8217;mysql&#8217;的数据接口的&#8217;tmp1.tbl1&#8217;表中，对应字段为&#8217;c2&#8217;和&#8217;c3'。</p>
+<p>编写数据筛选语句或上传数据筛选脚本</p>
 </li>
 </ol>
 </div>
 </li>
-</ul>
-</div>
-</div>
-<div class="sect3 data-line-180">
-<h4 id="_select语句">select语句</h4>
-<div class="paragraph data-line-181">
-<p>select语句可以表示一个结果集的获取及加工流程。</p>
-</div>
-<div class="ulist data-line-183">
-<ul>
-<li class="data-line-183">
-<p>语法结构</p>
-<div class="listingblock data-line-185">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">select &lt;字段列表&gt; from &lt;数据源接口&gt; &lt;param子句&gt;</code></pre>
-</div>
-</div>
-<div class="ulist data-line-187">
-<ul>
-<li class="data-line-187">
-<p>字段列表：结果集的字段名列表，字段可以包含数据源中的字段，也可以包含常量，格式为：<code>&lt;字段1&gt;[,&lt;字段2&gt;,&#8230;&#8203;]</code>，例如：</p>
-<div class="listingblock data-line-189">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">'column1', 'column2', CONST('value')</code></pre>
-</div>
-</div>
-<div class="paragraph data-line-191">
-<p>'column1&#8217;和&#8217;column2&#8217;表示从数据源中获取的字段，CONST('value')表示值为&#8217;value&#8217;的常量。</p>
+<li class="data-line-161">
+<p>指标库设置</p>
+<div class="paragraph data-line-163">
+<p>系统根据用户设置的指标维度自动选择指标主表并增加主表度量字段。</p>
 </div>
 </li>
-<li class="data-line-192">
-<p>数据源接口：获取源数据的接口。格式为：<code>&lt;数据接口名&gt;[:&lt;数据实体名&gt;]</code>，例如：</p>
-<div class="listingblock data-line-194">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">'java1:GetUnitListInfo'</code></pre>
-</div>
-</div>
-<div class="paragraph data-line-196">
-<p>其中&#8217;数据实体名&#8217;为可选项，需要根据数据接口类型决定是否指定实体名。</p>
+<li class="data-line-166">
+<p>设置指标计算周期</p>
+</li>
+</ol>
 </div>
 </li>
-<li class="data-line-197">
-<p>param子句：提供select语句所需的参数。可以通过以下两种语法指定：</p>
-<div class="ulist data-line-198">
-<ul>
-<li class="data-line-198">
-<p>标量参数</p>
-<div class="paragraph data-line-200">
-<p>标量参数只有一条记录，使用标量参数的select语句只执行一次。</p>
-</div>
-<div class="listingblock data-line-202">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">param_using ('参数1', '参数2', ...)</code></pre>
-</div>
-</div>
-<div class="paragraph data-line-204">
-<p>标量参数可以使用常量（例如：'value1'）或者调用数据处理脚本时提供的绑定参数（例如：WORKDATE）。</p>
-</div>
-</li>
-<li class="data-line-205">
-<p>集合参数</p>
-<div class="paragraph data-line-207">
-<p>集合参数使用内嵌的select语句提供参数结果集，使用集合参数的select语句以参数结果集中的每条记录为参数执行一次。并将所有各次执行的结果合并为一个统一的结果集。</p>
-</div>
-<div class="listingblock data-line-209">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">param_from {
-    &lt;select语句&gt;
-}</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</li>
-<li class="data-line-213">
-<p>示例</p>
-<div class="listingblock data-line-215">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql"> select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' \
- from 'java1:GetUnitListInfo' \
- params_from {
-     select 'code', CONST('vv') from 'http1' params_using (USERID, PROJECTID, '')
- }</code></pre>
-</div>
-</div>
-<div class="paragraph data-line-221">
-<p>这条语句表示的数据加工流程为：</p>
-</div>
-<div class="olist arabic data-line-222">
+<li class="data-line-167">
+<p>衍生指标配置/修改</p>
+<div class="olist arabic data-line-168">
 <ol class="arabic">
-<li class="data-line-222">
-<p>从名为&#8217;http1&#8217;的数据接口中，使用绑定参数USERID，PROJECTID和常量参数('')得到&#8217;code&#8217;字段和常量CONST('vv')两列数据。</p>
+<li class="data-line-168">
+<p>设置指标基本属性</p>
+<div class="olist loweralpha data-line-169">
+<ol class="loweralpha" type="a">
+<li class="data-line-169">
+<p>指标名称</p>
+</li>
+<li class="data-line-170">
+<p>指标代码</p>
+</li>
+<li class="data-line-171">
+<p>指标数据单位</p>
+</li>
+</ol>
+</div>
+</li>
+<li class="data-line-172">
+<p>设置指标维度和各维度的数据粒度</p>
+</li>
+<li class="data-line-173">
+<p>设置指标计算公式模板</p>
+<div class="olist loweralpha data-line-174">
+<ol class="loweralpha" type="a">
+<li class="data-line-174">
+<p>挑选用于指标计算的基础指标和其他衍生指标</p>
+</li>
+<li class="data-line-175">
+<p>编写指标计算公式</p>
+</li>
+</ol>
+</div>
+</li>
+<li class="data-line-176">
+<p>指标库设置</p>
+<div class="paragraph data-line-178">
+<p>系统根据用户设置的指标维度自动选择指标主表并增加主表度量字段。</p>
+</div>
+</li>
+<li class="data-line-181">
+<p>设置指标计算周期</p>
+</li>
+</ol>
+</div>
+</li>
+<li class="data-line-182">
+<p>指标配置删除</p>
+<div class="paragraph data-line-184">
+<p>不可删除被其他衍生指标所引用的基础指标或衍生指标。</p>
+</div>
+</li>
+<li class="data-line-186">
+<p>指标试算</p>
+<div class="paragraph data-line-188">
+<p>验证指标数据源查询或指标计算模板的正确性。</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-190">
+<p>指标体系发布</p>
+<div class="paragraph data-line-192">
+<p>指标体系修改后需要通过发布动作启动审核流程，审核通过后才能生效。</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3 data-line-194">
+<h4 id="_指标体系审核">指标体系审核</h4>
+<div class="paragraph data-line-195">
+<p>对指标体系及指标定义的修改需经过审核才能生效，审核界面应标注新增、修改、及删除的目录。 公共指标体系的审核由指标管理系统管理部门负责，其他业务部门私有指标体系的审核由本部门负责。</p>
+</div>
+<div class="ulist data-line-197">
+<ul>
+<li class="data-line-197">
+<p>浏览指标体系修改内容</p>
+<div class="paragraph data-line-199">
+<p>查看指标体系中新增、修改和删除的指标和指标目录。</p>
+</div>
+</li>
+<li class="data-line-200">
+<p>批准指标体系更新</p>
+</li>
+<li class="data-line-201">
+<p>拒绝指标体系更新</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 data-line-203">
+<h2 id="_数据权限管理">数据权限管理</h2>
+<div class="sectionbody">
+<div class="paragraph data-line-205">
+<p>由于数据权限的管理策略同用户的组织架构有密切关系，因此需要定义一个能够适应大部分用户情况的比较通用的组织架构形式，作为实施指标数据权限管理的前提条件。</p>
+</div>
+<div class="sect2 data-line-207">
+<h3 id="_指标管理系统用户组织架构">指标管理系统用户组织架构</h3>
+<div class="paragraph data-line-208">
+<p>用户组织架构包括两个交叉的体系，分别为行政管理体系和业务管辖体系，图中蓝色实线表示行政隶属关系，红色虚线表示业务管辖关系。</p>
+</div>
+<div class="imageblock data-line-211">
+<div class="content">
+<img src="organization-hierarchy.jpg" alt="organization hierarchy">
+</div>
+<div class="title">Figure 4. 用户组织架构</div>
+</div>
+</div>
+<div class="sect2 data-line-213">
+<h3 id="_指标数据权限管理框架">指标数据权限管理框架</h3>
+<div class="paragraph data-line-215">
+<p>用户对指标的访问权限可以从三个维度进行管理：</p>
+</div>
+<div class="ulist data-line-217">
+<ul>
+<li class="data-line-217">
+<p>用户的业务部门</p>
+<div class="paragraph data-line-219">
+<p>用户可以浏览和访问的指标（及指标目录）包括所有公共指标体系和用户所在业务部门的私有指标体系。</p>
+</div>
+</li>
+<li class="data-line-220">
+<p>用户所处行政管理机构</p>
+<div class="paragraph data-line-222">
+<p>所有指标数据都具备管理机构（或地区）维度，对于非公开指标，用户只能访问处于他所在管理机构管辖范围内的指标数据。</p>
+</div>
 </li>
 <li class="data-line-223">
-<p>使用第1步中的结果集作为参数反复调用名为&#8217;java1&#8217;的Java API的GetUniListInfo方法，并从该方法的返回结果中（xml格式）提取路径为&#8217;unitlists.unitinfo.id&#8217;和&#8217;unitlists.unitinfo.name&#8217;的数据。将各次方法调用的返回结果合并为一个结果集。</p>
-</li>
-</ol>
+<p>指标数据安全级别</p>
+<div class="paragraph data-line-225">
+<p>所有指标都需要设置安全级别，例如公开、内部、保密、绝密等。用户的角色（或岗位）决定了他能够访问的指标数据的最高安全级别。
+可以为同一指标在不同维度和维度级别上的数据设置不同的安全级别。</p>
 </div>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect3 data-line-225">
-<h4 id="_注释">注释</h4>
-<div class="paragraph data-line-226">
-<p>脚本中可以使用双斜线`//`开始注释，例如：</p>
+<div class="sect2 data-line-228">
+<h3 id="_指标数据权限管理功能">指标数据权限管理功能</h3>
+<div class="ulist data-line-230">
+<ul>
+<li class="data-line-230">
+<p>用户角色数据权限管理</p>
+<div class="ulist data-line-231">
+<ul>
+<li class="data-line-231">
+<p>用户角色数据权限浏览</p>
+</li>
+<li class="data-line-232">
+<p>用户角色数据权限维护</p>
+</li>
+</ul>
 </div>
-<div class="listingblock data-line-228">
-<div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql"> // 这是一行注释。</code></pre>
+</li>
+<li class="data-line-233">
+<p>指标数据安全级别管理</p>
+<div class="ulist data-line-234">
+<ul>
+<li class="data-line-234">
+<p>指标数据安全级别查询浏览</p>
+</li>
+<li class="data-line-235">
+<p>指标数据安全级别维护</p>
+<div class="paragraph data-line-237">
+<p>可以为指标的不同维度、不同粒度的数据设置不同的安全级别。</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1 data-line-230">
-<h2 id="_数据处理脚本执行器">数据处理脚本执行器</h2>
+<div class="sect1 data-line-239">
+<h2 id="_数据接口管理">数据接口管理</h2>
 <div class="sectionbody">
-<div class="sect2 data-line-231">
-<h3 id="_概述_2">概述</h3>
-<div class="paragraph data-line-232">
-<p>本程序可以执行使用数据处理流程语言编写的数据处理作业脚本。</p>
-</div>
-</div>
-<div class="sect2 data-line-234">
-<h3 id="_运行环境">运行环境</h3>
-<div class="paragraph data-line-235">
-<p>JDK 1.8</p>
-</div>
-</div>
-<div class="sect2 data-line-237">
-<h3 id="_程序安装">程序安装</h3>
-<div class="paragraph data-line-238">
-<p>将安装包 <code>job-runner-1.0-SNAPSHOT-bin.zip</code> 解压到任意目录下。</p>
-</div>
-</div>
-<div class="sect2 data-line-240">
-<h3 id="_脚本执行">脚本执行</h3>
 <div class="paragraph data-line-241">
-<p>假设脚本执行器的解压路径为 <code>/path/to/job-runner</code>，</p>
+<p>指标管理系统的指标数据可以通过接口供其他系统使用。接口的数据访问权限与申请开放接口的用户所具备的数据访问权限相同。数据接口的开放和更新需要经过指标体系管理人员的审核。</p>
 </div>
-<div class="olist arabic data-line-243">
+<div class="sect2 data-line-243">
+<h3 id="_业务流程_2">业务流程</h3>
+<div class="imageblock data-line-246">
+<div class="content">
+<img src="interface-workflow.jpg" alt="interface workflow">
+</div>
+<div class="title">Figure 5. 指标数据接口业务流程</div>
+</div>
+</div>
+<div class="sect2 data-line-248">
+<h3 id="_指标数据接口基本要素">指标数据接口基本要素</h3>
+<div class="ulist data-line-249">
+<ul>
+<li class="data-line-249">
+<p>接口申请用户</p>
+</li>
+<li class="data-line-250">
+<p>接口审批用户</p>
+</li>
+<li class="data-line-251">
+<p>接口名称</p>
+</li>
+<li class="data-line-252">
+<p>接口代码</p>
+</li>
+<li class="data-line-253">
+<p>接口对应的指标列表</p>
+</li>
+<li class="data-line-254">
+<p>指标数据筛选条件</p>
+</li>
+<li class="data-line-255">
+<p>接口访问频次和数据量限制</p>
+</li>
+<li class="data-line-256">
+<p>接口有效期限</p>
+</li>
+<li class="data-line-257">
+<p>接口访问令牌</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2 data-line-259">
+<h3 id="_指标数据接口管理功能">指标数据接口管理功能</h3>
+<div class="ulist data-line-261">
+<ul>
+<li class="data-line-261">
+<p>数据接口查询浏览</p>
+</li>
+<li class="data-line-262">
+<p>数据接口申请</p>
+<div class="olist arabic data-line-263">
 <ol class="arabic">
-<li class="data-line-243">
-<p>准备数据处理脚本文件</p>
-<div class="paragraph data-line-245">
-<p>示例:</p>
-</div>
-<div class="listingblock data-line-248">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">mysql('mysql') {
-    host 'localhost'
-    port 3306
-    username 'root'
-    password 'root'
-}
-
-java('java1') {
-    className 'test.JavaAPI1'
-    dataFormat 'xml'
-    verify { errinfo.info == '' }
-}
-
-java('java2') {
-    className 'test.JavaAPI1'
-    dataFormat 'json'
-}
-
-http('http1') {
-    baseUrl 'http://localhost:8888/authService/air/user/getUserStationAuth'
-    dataFormat 'json'
-    parameter {
-        userId  (order: 1)
-        projectId (order: 2)
-        areaCode (order: 3)
-    }
-}
-
-csv('csv1') {
-    path 'example.csv'
-    header true
-    column {
-        author  (order:1)
-        title   (order:2)
-    }
-}
-
-insert 'mysql:tmp1.tbl1' column ('c2', 'c3') \
-select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' from 'java1:GetUnitListInfo' \
-params_from {
-    select 'code', CONST('vv') from 'http1' params_using (USERID, PROJECTID, '')
-}
-
-insert 'mysql:tmp1.tbl1' column ('c2', 'c3') \
-select 'unitlists.unitinfo.id', 'unitlists.unitinfo.name' from 'java1:GetUnitListInfo' \
-params_from {
-    select 'author', 'title' from 'csv1' params_using ()
-}</code></pre>
-</div>
-</div>
+<li class="data-line-263">
+<p>设置接口名称、接口代码</p>
 </li>
-<li class="data-line-298">
-<p>准备脚本绑定参数文件</p>
-<div class="paragraph data-line-300">
-<p>参数名称需要与数据处理脚本中引用的参数名保持一致，包括大小写。参数值目前只支持字符串类型。 示例:</p>
-</div>
-<div class="listingblock data-line-302">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">USERNAME='user1'
-PASSWORD='pass1'
-USERID='123'
-PROJECTID='321'</code></pre>
-</div>
-</div>
+<li class="data-line-264">
+<p>选择指标列表</p>
 </li>
-<li class="data-line-307">
-<p>执行脚本</p>
-<div class="paragraph data-line-309">
-<p>进入/path/to/job-runner目录，执行：</p>
-</div>
-<div class="paragraph data-line-311">
-<p>Windows</p>
-</div>
-<div class="listingblock data-line-313">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">java -cp "job-runner-1.0-SNAPSHOT.jar;lib\*" JobRunner \
-    -b bindings.properties -j job-script.jdl</code></pre>
-</div>
-</div>
-<div class="paragraph data-line-316">
-<p>Linux</p>
-</div>
-<div class="listingblock data-line-318">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">java -classpath "job-runner-1.0-SNAPSHOT.jar:lib/*" JobRunner \
-    -b bindings.properties -j job-script.jdl</code></pre>
-</div>
-</div>
-<div class="paragraph data-line-321">
-<p>其中：</p>
-</div>
-<div class="hdlist data-line-323">
-<table>
-<tr>
-<td class="hdlist1">
-bindings.properties
-</td>
-<td class="hdlist2">
-<p>脚本参数绑定文件。</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-job-script.jdl
-</td>
-<td class="hdlist2">
-<p>数据处理脚本文件。</p>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph data-line-326">
-<p>这两个文件名要根据需要修改为实际的参数绑定文件和脚本文件路径。</p>
-</div>
+<li class="data-line-265">
+<p>设置数据筛选条件</p>
+</li>
+<li class="data-line-266">
+<p>设置访问频次和数据量限制</p>
+</li>
+<li class="data-line-267">
+<p>设置有效期限</p>
 </li>
 </ol>
+</div>
+</li>
+<li class="data-line-269">
+<p>数据接口审核</p>
+<div class="olist arabic data-line-270">
+<ol class="arabic">
+<li class="data-line-270">
+<p>浏览数据接口开放或更新申请</p>
+</li>
+<li class="data-line-271">
+<p>同意/拒绝接口开放或更新申请</p>
+</li>
+<li class="data-line-272">
+<p>生成接口访问令牌</p>
+</li>
+</ol>
+</div>
+</li>
+<li class="data-line-274">
+<p>数据接口启用/停用</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 data-line-277">
+<h2 id="_系统管理">系统管理</h2>
+<div class="sectionbody">
+<div class="sect2 data-line-278">
+<h3 id="_系统日志分析">系统日志分析</h3>
+<div class="ulist data-line-279">
+<ul>
+<li class="data-line-279">
+<p>指标加载日志分析</p>
+<div class="ulist data-line-280">
+<ul>
+<li class="data-line-280">
+<p>指标加载日志查询（指定指标代码、时间段、错误级别等条件）</p>
+</li>
+<li class="data-line-281">
+<p>日志全文检索</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-282">
+<p>指标访问日志分析</p>
+<div class="ulist data-line-283">
+<ul>
+<li class="data-line-283">
+<p>指标访问日志查询（指定指标代码、时间段、用户、部门等条件）</p>
+</li>
+<li class="data-line-284">
+<p>日志全文检索</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-285">
+<p>指标维护日志分析</p>
+<div class="ulist data-line-286">
+<ul>
+<li class="data-line-286">
+<p>指标体系维护日志查询（指定指标代码、时间段、用户、部门等条件）</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-287">
+<p>数据接口日志分析</p>
+<div class="ulist data-line-288">
+<ul>
+<li class="data-line-288">
+<p>数据接口访问日志查询</p>
+<div class="paragraph data-line-290">
+<p>根据给定的接口名称、接口代码、日期区间、接口用户查询接口访问日志明细。</p>
+</div>
+</li>
+<li class="data-line-291">
+<p>数据接口访问统计</p>
+<div class="paragraph data-line-293">
+<p>按照用户指定的分组标准（包括：接口、日期、接口用户、正常/异常，异常类型）对接口访问日志进行分组统计。</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2 data-line-295">
+<h3 id="_用户角色管理">用户角色管理</h3>
+<div class="ulist data-line-296">
+<ul>
+<li class="data-line-296">
+<p>用户角色查询浏览</p>
+</li>
+<li class="data-line-297">
+<p>用户角色信息维护</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2 data-line-299">
+<h3 id="_数据源管理">数据源管理</h3>
+<div class="paragraph data-line-300">
+<p>对基础指标的数据源进行管理，包括数据源的增加、修改、删除和查询。</p>
+</div>
+<div class="sect3 data-line-302">
+<h4 id="_数据源的基本属性">数据源的基本属性</h4>
+<div class="ulist data-line-304">
+<ul>
+<li class="data-line-304">
+<p>数据源名称</p>
+</li>
+<li class="data-line-305">
+<p>数据源类型，用于区分数据库、文件、及其他结构化数据源。</p>
+</li>
+<li class="data-line-306">
+<p>数据源访问参数，表示访问该数据源需要提供的参数，如用户名、口令、地址、端口等。</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3 data-line-308">
+<h4 id="_数据源管理功能">数据源管理功能</h4>
+<div class="ulist data-line-309">
+<ul>
+<li class="data-line-309">
+<p>数据源浏览</p>
+</li>
+<li class="data-line-310">
+<p>数据源新增、修改</p>
+</li>
+<li class="data-line-311">
+<p>数据源删除</p>
+<div class="paragraph data-line-313">
+<p>被基础指标引用的数据源不能被删除。</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2 data-line-315">
+<h3 id="_指标库管理">指标库管理</h3>
+<div class="paragraph data-line-317">
+<p>指标库定义了指标可以使用的维度，以及指标存放的数据主表。指标的维度必须和指标主表的维度相匹配。一个主表中可以存放若干个基础指标和衍生指标的指标数据。指标库的度量字段根据指标的配置动态增加或删除。</p>
+</div>
+<div class="imageblock data-line-320">
+<div class="content">
+<img src="metric-db.jpg" alt="metric db">
+</div>
+<div class="title">Figure 6. 指标库数据模型示意</div>
+</div>
+<div class="sect3 data-line-322">
+<h4 id="_指标库基本要素">指标库基本要素</h4>
+<div class="ulist data-line-323">
+<ul>
+<li class="data-line-323">
+<p>指标库维度列表</p>
+<div class="ulist data-line-324">
+<ul>
+<li class="data-line-324">
+<p>维度名称</p>
+</li>
+<li class="data-line-325">
+<p>维度表名称</p>
+</li>
+<li class="data-line-326">
+<p>维度粒度列表</p>
+<div class="ulist data-line-327">
+<ul>
+<li class="data-line-327">
+<p>粒度名称</p>
+</li>
+<li class="data-line-328">
+<p>粒度字段名称</p>
+</li>
+<li class="data-line-329">
+<p>粒度等级</p>
+</li>
+<li class="data-line-330">
+<p>粒度字段数据类型</p>
+</li>
+<li class="data-line-331">
+<p>粒度描述</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-332">
+<p>指标库主表列表</p>
+<div class="ulist data-line-333">
+<ul>
+<li class="data-line-333">
+<p>主表名称</p>
+</li>
+<li class="data-line-334">
+<p>主表所属部门</p>
+</li>
+<li class="data-line-335">
+<p>主表维度列表</p>
+<div class="ulist data-line-336">
+<ul>
+<li class="data-line-336">
+<p>维度名称</p>
+</li>
+<li class="data-line-337">
+<p>维度粒度名称</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-338">
+<p>主表指标字段列表</p>
+<div class="ulist data-line-339">
+<ul>
+<li class="data-line-339">
+<p>指标字段名称</p>
+</li>
+<li class="data-line-340">
+<p>指标字段物理名称</p>
+</li>
+<li class="data-line-341">
+<p>指标字段数据类型</p>
+</li>
+<li class="data-line-342">
+<p>指标字段描述</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3 data-line-344">
+<h4 id="_指标库管理功能">指标库管理功能</h4>
+<div class="ulist data-line-345">
+<ul>
+<li class="data-line-345">
+<p>指标维度管理</p>
+<div class="ulist data-line-346">
+<ul>
+<li class="data-line-346">
+<p>指标维度浏览</p>
+</li>
+<li class="data-line-347">
+<p>指标维度新建、编辑</p>
+<div class="ulist data-line-348">
+<ul>
+<li class="data-line-348">
+<p>维度粒度管理</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-349">
+<p>指标维度删除</p>
+<div class="paragraph data-line-351">
+<p>被指标主表引用的指标维度不可删除</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-352">
+<p>指标主表管理</p>
+<div class="paragraph data-line-354">
+<p>指标主表在用户维护指标时根据指标的维度自动创建并增加/删除度量字段。</p>
+</div>
+<div class="ulist data-line-356">
+<ul>
+<li class="data-line-356">
+<p>指标主表浏览</p>
+</li>
+<li class="data-line-357">
+<p>指标主表拆分</p>
+<div class="paragraph data-line-359">
+<p>将数据量过大的指标主表拆分为多个维度相同的主表，可以提高指标查询效率。</p>
+</div>
+</li>
+<li class="data-line-360">
+<p>指标主表删除</p>
+<div class="paragraph data-line-362">
+<p>被指标所引用的指标主表不可删除。</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-363">
+<p>指标库模型视图</p>
+<div class="paragraph data-line-365">
+<p>以图形化方式展现指标库中各指标维度和指标主表之间的关系</p>
+</div>
+</li>
+<li class="data-line-366">
+<p>指标数据量分析</p>
+<div class="paragraph data-line-368">
+<p>提供指标主表和指标级别的数据量分析功能。</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2 data-line-371">
+<h3 id="_系统运行报告">系统运行报告</h3>
+<div class="paragraph data-line-372">
+<p>+
+包含下列基本要素：</p>
+</div>
+<div class="ulist data-line-375">
+<ul>
+<li class="data-line-375">
+<p>报告日期区间</p>
+</li>
+<li class="data-line-376">
+<p>指标体系维护情况</p>
+<div class="ulist data-line-377">
+<ul>
+<li class="data-line-377">
+<p>审核通过的各指标体系的新增、修改和删除的指标</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-378">
+<p>指标加载情况</p>
+<div class="ulist data-line-379">
+<ul>
+<li class="data-line-379">
+<p>故障情况分析：故障天数、故障原因分析</p>
+</li>
+<li class="data-line-380">
+<p>指标数据量分析：各主表数据量、各主表数据增量</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-381">
+<p>指标访问情况</p>
+<div class="ulist data-line-382">
+<ul>
+<li class="data-line-382">
+<p>用户访问情况：各部门访问指标数据次数排名</p>
+</li>
+<li class="data-line-383">
+<p>接口访问情况：指标访问数据量排名、接口账号活跃度排名</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1102,7 +1502,7 @@ job-script.jdl
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2020-04-21 12:46:36 +0800
+Last updated 2020-05-08 12:48:08 +0800
 </div>
 </div>
 </body>
