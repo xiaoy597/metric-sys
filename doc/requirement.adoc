@@ -423,6 +423,112 @@ image::metric-db.jpg[]
 
 === 指标批量加载引擎
 
+==== 标记指标计算次序
+
+.伪代码
+----
+将所有衍生指标计算次序设置为-1
+将所有基础指标计算次序设置为0
+SET LAST_CALC_ORDER = 0
+WHILE 能够找到满足以下标准的指标:
+        直接依赖于计算次序为LAST_CALC_ORDER的指标 AND
+        本身的计算次序 <= LAST_CALC_ORDER
+    将这些指标的计算次序设置为LAST_CALC_ORDER + 1
+    SET LAST_CALC_ORDER = LAST_CALC_ORER + 1
+END WHILE
+----
+
+==== 指标汇总
+
+===== 指标维度表汇总记录计算
+.伪代码
+----
+INSERT INTO <维度表名称> (粒度1，粒度2，……，粒度N) // <1>
+SELECT * FROM
+(
+    SELECT 粒度1，粒度2，……，粒度N
+    FROM <维度表名称>
+    GROUP BY 粒度1，粒度2，……，粒度N
+    WITH ROLLUP
+) T
+WHERE
+粒度1 IS NULL
+OR 粒度2 IS NULL
+……
+OR 粒度N IS NULL
+;
+----
+<1> 粒度从 1~N 逐渐细化。
+
+===== 指标主表度量字段从各维度向上汇总
+.伪代码
+----
+
+FOR 指标主表的所有维度：
+    SET dim_id = 当前汇总的维度ID字段
+    SET <其他维度ID字段列表> = 主表中除了当前汇总的维度ID之外的维度ID字段列表 // <1>
+    SET <汇总粒度字段列表> = 当前维度除最细粒度外其他粒度字段列表 // <2>
+
+    INSERT INTO <主表名称> (dim_id, <其他维度ID字段列表>, <度量字段列表>)
+    SELECT <维度表名>.id as dim_id, <其他维度ID字段列表>, <度量字段列表>
+    FROM (
+        SELECT <其他维度ID字段列表>, <汇总粒度字段列表>, NULL as <最细粒度字段>, 
+            SUM(度量字段1) as <度量字段1>, SUM(度量字段2) as <度量字段2>，……，SUM（度量字段N） as <度量字段N>
+        FROM <维度表名称>, <主表名称>
+        WHERE <维度表名称>.id = <主表名称>.dim_id
+        GROUP BY <其他维度ID字段列表>, <汇总粒度字段列表>
+        WITH ROLLUP
+        HAVING 所有其他维度ID字段不为空
+    ) T, <维度表名>
+    WHERE
+        COALESCE(T.<汇总粒度字段1>， INVALID) = COALESCE(<维度表名>.<汇总粒度字段1>) AND
+        COALESCE(T.<汇总粒度字段2>， INVALID) = COALESCE(<维度表名>.<汇总粒度字段2>) AND
+        ……
+        COALESCE(T.<汇总粒度字段N>， INVALID) = COALESCE(<维度表名>.<汇总粒度字段N>) AND
+    ;
+
+----
+<1> 如果主表只有一个维度，此列表为空
+<2> 如果维度只有一个粒度，此列表为空
+
+
+.例子
+[source, sql]
+----
+insert into metric_fact (date_id, org_id, metric1, metric2)
+select dim_date.id as date_id, tmp_fact.org_id as org_id, metric1, metric2
+from (
+    select f.org_id, d.year_val, d.month_val, null as day_val, 
+        sum(metric1) as metric1, sum(metric2) as metric2
+    from dim_date d, metric_fact f
+    where d.id = f.date_id
+    group by f.org_id, d.year_val, d.month_val
+    with ROLLUP
+    having f.org_id is not null
+) T, dim_date 
+where coalesce(T.year_val, -1) = coalesce(dim_date.year_val, -1)
+and coalesce(T.month_val, -1) = coalesce(dim_date.month_val, -1)
+and coalesce(T.day_val, -1) = coalesce(dim_date.day_val, -1)
+;
+
+insert into metric_fact (org_id, date_id, metric1, metric2)
+select dim_org.id as org_id, T.date_id as date_id, metric1, metric2
+from (
+    select f.date_id, d.level1, d.level2, null as level3, 
+        sum(metric1) as metric1, sum(metric2) as metric2
+    from dim_org d, metric_fact f
+    where d.id = f.org_id
+    group by f.date_id, d.level1, d.level2
+    with ROLLUP
+    having f.date_id is not null
+) T, dim_org 
+where coalesce(T.level1, -1) = coalesce(dim_org.level1, -1)
+and coalesce(T.level2, -1) = coalesce(dim_org.level2, -1)
+and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
+;
+
+----
+
 === 流式指标加载引擎
 
 === 指标数据接口
