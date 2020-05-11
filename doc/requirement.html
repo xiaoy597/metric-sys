@@ -529,9 +529,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect2 data-line-34">
 <h3 id="_业务流程">业务流程</h3>
-<div class="imageblock data-line-37">
+<div class="imageblock text-center data-line-37">
 <div class="content">
-<img src="business-flow.jpg" alt="business flow">
+<img src="business-flow.jpg" alt="business flow" width="80%">
 </div>
 <div class="title">Figure 1. 指标管理系统业务流程</div>
 </div>
@@ -589,9 +589,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1 data-line-59">
 <h2 id="_系统技术架构">系统技术架构</h2>
 <div class="sectionbody">
-<div class="imageblock data-line-62">
+<div class="imageblock text-center data-line-62">
 <div class="content">
-<img src="sys-architecture.jpg" alt="sys architecture">
+<img src="sys-architecture.jpg" alt="sys architecture" width="80%">
 </div>
 <div class="title">Figure 3. 系统技术架构图</div>
 </div>
@@ -643,9 +643,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph data-line-88">
 <p>公共指标体系维护人员和各业务部门指标体系维护人员可以创建、维护指标体系内容，指标体系（包括各级指标目录及所引用的指标）的修改需要经过审核才能生效。</p>
 </div>
-<div class="imageblock data-line-91">
+<div class="imageblock text-center data-line-91">
 <div class="content">
-<img src="metric-hierarchy.jpg" alt="metric hierarchy">
+<img src="metric-hierarchy.jpg" alt="metric hierarchy" width="80%">
 </div>
 <div class="title">Figure 4. 指标体系框架</div>
 </div>
@@ -1058,9 +1058,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph data-line-244">
 <p>用户组织架构包括两个交叉的体系，分别为行政管理体系和业务管辖体系，图中蓝色实线表示行政隶属关系，红色虚线表示业务管辖关系。</p>
 </div>
-<div class="imageblock data-line-247">
+<div class="imageblock text-center data-line-247">
 <div class="content">
-<img src="organization-hierarchy.jpg" alt="organization hierarchy">
+<img src="organization-hierarchy.jpg" alt="organization hierarchy" width="60%">
 </div>
 <div class="title">Figure 5. 用户组织架构</div>
 </div>
@@ -1138,9 +1138,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect3 data-line-279">
 <h4 id="_业务流程_2">业务流程</h4>
-<div class="imageblock data-line-282">
+<div class="imageblock text-center data-line-282">
 <div class="content">
-<img src="interface-workflow.jpg" alt="interface workflow">
+<img src="interface-workflow.jpg" alt="interface workflow" width="70%">
 </div>
 <div class="title">Figure 6. 指标数据接口处理流程</div>
 </div>
@@ -1364,9 +1364,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </div>
-<div class="imageblock data-line-359">
+<div class="imageblock text-ceneter data-line-359">
 <div class="content">
-<img src="metric-db.jpg" alt="metric db">
+<img src="metric-db.jpg" alt="metric db" width="90%">
 </div>
 <div class="title">Figure 7. 指标库数据模型示意</div>
 </div>
@@ -1581,9 +1581,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect2 data-line-424">
 <h3 id="_指标批量加载引擎">指标批量加载引擎</h3>
-<div class="sect3 data-line-426">
+<div class="paragraph data-line-425">
+<p>指标批量加载引擎的作用是计算和加载需要定期更新或补充的指标数据。引擎执行的周期取决于业务的要求和指标数据源的数据粒度。
+指标批量加载引擎由作业调度引擎启动，执行参数包括：</p>
+</div>
+<div class="olist arabic data-line-428">
+<ol class="arabic">
+<li class="data-line-428">
+<p>需要计算的基础指标集合，如果不指定则计算所有基础指标。</p>
+</li>
+<li class="data-line-429">
+<p>系统参数列表，如数据日期、数据时间等。</p>
+</li>
+</ol>
+</div>
+<div class="imageblock text-center data-line-432">
+<div class="content">
+<img src="batch-metric-load.jpg" alt="batch metric load" width="40%">
+</div>
+<div class="title">Figure 8. 处理流程</div>
+</div>
+<div class="sect3 data-line-434">
 <h4 id="_标记指标计算次序">标记指标计算次序</h4>
-<div class="listingblock data-line-429">
+<div class="listingblock data-line-437">
 <div class="title">伪代码</div>
 <div class="content">
 <pre>将所有衍生指标计算次序设置为-1
@@ -1598,11 +1618,69 @@ END WHILE</pre>
 </div>
 </div>
 </div>
-<div class="sect3 data-line-441">
-<h4 id="_指标汇总">指标汇总</h4>
-<div class="sect4 data-line-443">
+<div class="sect3 data-line-449">
+<h4 id="_基础指标计算">基础指标计算</h4>
+<div class="paragraph data-line-450">
+<p>基础指标数据加载利用用户配置的带参数的指标加载语句(SQL)从指定的数据源提取指标数据。指标加载语句（SQL）需要满足以下要求：
+. SELECT表达式中需要包含指标主表的该指标度量字段和该指标所具备的维度的全部粒度字段。
+. 语句的结果应该是该指标各维度上最细粒度的数据（粒度可以高于维度所定义的最细粒度）。
+. 语句的结果中不应包括任何汇总数据。</p>
+</div>
+<div class="listingblock data-line-456">
+<div class="title">伪代码</div>
+<div class="content">
+<pre>替换基础指标加载语句中的参数
+创建指标临时表 // <b class="conum">(1)</b>
+执行基础指标加载语句，将结果插入临时表 // <b class="conum">(2)</b>
+INSERT INTO &lt;指标主表&gt; (&lt;维度1-ID&gt;，&lt;维度2-ID&gt;，……，&lt;维度N-ID&gt;，0，0，……，&lt;指标字段M&gt;，……，0)
+SELECT &lt;维度1-ID&gt;，&lt;维度2-ID&gt;，……，&lt;维度N-ID&gt;，&lt;指标值M&gt;
+FROM &lt;临时表&gt;, &lt;维度表1&gt;, &lt;维度表2&gt;, ……，&lt;维度表N&gt;
+WHERE
+    临时表中所有和维度表1相关的维度字段 = 维度表1所有粒度字段 AND
+    临时表中所有和维度表2相关的维度字段 = 维度表2所有粒度字段 AND
+    ……
+    临时表中所有和维度表N相关的维度字段 = 维度表N所有粒度字段 AND
+ON DUPLICATE SET &lt;指标字段M&gt; = &lt;指标值M&gt;</pre>
+</div>
+</div>
+<div class="colist arabic data-line-471">
+<ol>
+<li>
+<p>该临时表中的字段包括指标维度字段和度量字段。度量字段存放计算出的指标值，字段名与指标主表中该指标对应的字段名称相同。维度字段中需要包含该指标涉及的维度的所有粒度字段。</p>
+</li>
+<li>
+<p>对于粒度小于该基础指标的粒度字段，需要填入NULL，例如日期维包含年、月、日三个粒度，如果指标本身粒度为月，则和日粒度对应的字段填NULL；粒度大于该基础指标的粒度字段需要填入与维度表中的维度数据一致的值。</p>
+</li>
+</ol>
+</div>
+<div class="sect4 data-line-473">
+<h5 id="_衍生指标计算">衍生指标计算</h5>
+<div class="paragraph data-line-474">
+<p>衍生指标的值通过执行用户配置的指标计算公式得到。指标计算公式中可以引用其他的基础指标或衍生指标。系统根据指标之间依赖关系的配置自动对指标的计算顺序进行合理的安排。衍生指标所依赖的指标的维度必须与该衍生指标相同。</p>
+</div>
+<div class="listingblock data-line-477">
+<div class="title">伪代码</div>
+<div class="content">
+<pre>将指标计算公式中引用的其他指标编号替换为对应的指标主表字段名
+找出该衍生指标的所有依赖指标所在的指标主表名称
+INSERT INTO &lt;指标主表&gt; (&lt;维度1-ID&gt;，&lt;维度2-ID&gt;，……，&lt;维度N-ID&gt;，0，0，……，&lt;指标字段M&gt;，……，0)
+SELECT 源指标主表1的所有维度ID字段，&lt;指标计算公式&gt;
+FROM &lt;源指标主表1&gt;, &lt;源指标主表2&gt;, ……，&lt;源指标主表N&gt;
+WHERE
+    源指标主表1的所有维度ID字段 = 源指标主表2的所有维度ID字段 AND
+    源指标主表1的所有维度ID字段 = 源指标主表3的所有维度ID字段 AND
+    ……
+    源指标主表1的所有维度ID字段 = 源指标主表N的所有维度ID字段
+ON DUPLICATE SET &lt;指标字段M&gt; = &lt;指标值M&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3 data-line-491">
+<h4 id="_指标沿维度粒度汇总">指标沿维度粒度汇总</h4>
+<div class="sect4 data-line-493">
 <h5 id="_指标维度表汇总记录计算">指标维度表汇总记录计算</h5>
-<div class="listingblock data-line-445">
+<div class="listingblock data-line-495">
 <div class="title">伪代码</div>
 <div class="content">
 <pre>INSERT INTO &lt;维度表名称&gt; (粒度1，粒度2，……，粒度N) // <b class="conum">(1)</b>
@@ -1621,7 +1699,7 @@ OR 粒度N IS NULL
 ;</pre>
 </div>
 </div>
-<div class="colist arabic data-line-461">
+<div class="colist arabic data-line-511">
 <ol>
 <li>
 <p>粒度从 1~N 逐渐细化。</p>
@@ -1629,9 +1707,9 @@ OR 粒度N IS NULL
 </ol>
 </div>
 </div>
-<div class="sect4 data-line-463">
+<div class="sect4 data-line-513">
 <h5 id="_指标主表度量字段从各维度向上汇总">指标主表度量字段从各维度向上汇总</h5>
-<div class="listingblock data-line-465">
+<div class="listingblock data-line-515">
 <div class="title">伪代码</div>
 <div class="content">
 <pre>FOR 指标主表的所有维度：
@@ -1658,7 +1736,7 @@ OR 粒度N IS NULL
     ;</pre>
 </div>
 </div>
-<div class="colist arabic data-line-492">
+<div class="colist arabic data-line-542">
 <ol>
 <li>
 <p>如果主表只有一个维度，此列表为空</p>
@@ -1668,13 +1746,14 @@ OR 粒度N IS NULL
 </li>
 </ol>
 </div>
-<div class="listingblock data-line-497">
+<div class="listingblock data-line-547">
 <div class="title">例子</div>
 <div class="content">
 <pre class="highlight"><code class="language-sql" data-lang="sql">insert into metric_fact (date_id, org_id, metric1, metric2)
 select dim_date.id as date_id, tmp_fact.org_id as org_id, metric1, metric2
 from (
-    select f.org_id, d.year_val, d.month_val, null as day_val, sum(metric1) as metric1, sum(metric2) as metric2
+    select f.org_id, d.year_val, d.month_val, null as day_val,
+        sum(metric1) as metric1, sum(metric2) as metric2
     from dim_date d, metric_fact f
     where d.id = f.date_id
     group by f.org_id, d.year_val, d.month_val
@@ -1689,7 +1768,8 @@ and coalesce(T.day_val, -1) = coalesce(dim_date.day_val, -1)
 insert into metric_fact (org_id, date_id, metric1, metric2)
 select dim_org.id as org_id, T.date_id as date_id, metric1, metric2
 from (
-    select f.date_id, d.level1, d.level2, null as level3, sum(metric1) as metric1, sum(metric2) as metric2
+    select f.date_id, d.level1, d.level2, null as level3,
+        sum(metric1) as metric1, sum(metric2) as metric2
     from dim_org d, metric_fact f
     where d.id = f.org_id
     group by f.date_id, d.level1, d.level2
@@ -1705,11 +1785,11 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </div>
 </div>
 </div>
-<div class="sect2 data-line-530">
+<div class="sect2 data-line-582">
 <h3 id="_流式指标加载引擎">流式指标加载引擎</h3>
 
 </div>
-<div class="sect2 data-line-532">
+<div class="sect2 data-line-584">
 <h3 id="_指标数据接口">指标数据接口</h3>
 
 </div>
@@ -1719,7 +1799,7 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2020-05-09 17:53:07 +0800
+Last updated 2020-05-11 16:34:47 +0800
 </div>
 </div>
 </body>
