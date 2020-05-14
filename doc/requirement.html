@@ -451,7 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_系统概述">系统概述</h2>
 <div class="sectionbody">
 <div class="paragraph data-line-6">
-<p>指标管理系统建立在大数据平台所采集和管理的海量数据基础上，帮助用户建立和管理全方位衡量业务发展目标的关键指标体系，是实现企业数据价值的重要工具。</p>
+<p>指标管理系统的主要作用是帮助用户充分挖掘大数据平台中海量数据的价值，根据用户的业务需求，将来自不同渠道、形式和结构各异的数据经过加工、整理，转变为为易于分析和使用的多维数据指标，为用户提供完整、及时、灵活响应需求的数据视图。</p>
 </div>
 <div class="paragraph data-line-8">
 <p>指标管理系统具备以下主要特点：</p>
@@ -459,28 +459,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist data-line-10">
 <ul>
 <li class="data-line-10">
-<p>支持指标数据查询分析，支持自定义数据仪表板。</p>
+<p>支持从多种指标数据源加载指标数据。</p>
 </li>
 <li class="data-line-11">
-<p>支持指标体系维护管理，支持公共指标体系和私有指标体系。</p>
-</li>
-<li class="data-line-12">
-<p>支持精细化的指标数据访问权限控制。</p>
-</li>
-<li class="data-line-13">
-<p>支持多种指标数据源。</p>
-</li>
-<li class="data-line-14">
 <p>支持自由定义的指标维度。</p>
 </li>
+<li class="data-line-12">
+<p>支持流式和批量的指标数据加载方式。</p>
+</li>
+<li class="data-line-13">
+<p>支持指标数据查询分析，支持自定义数据仪表板。</p>
+</li>
+<li class="data-line-14">
+<p>支持自定义指标体系，支持公共指标体系和私有指标体系。</p>
+</li>
 <li class="data-line-15">
-<p>支持自定义指标计算公式。</p>
+<p>支持精细化的指标数据访问权限控制。</p>
 </li>
 <li class="data-line-16">
-<p>支持通过数据接口对外提供指标数据。</p>
+<p>支持自定义指标计算公式。</p>
 </li>
 <li class="data-line-17">
-<p>支持实时和非实时的指标数据管理。</p>
+<p>支持通过数据接口对外提供指标数据。</p>
 </li>
 </ul>
 </div>
@@ -494,35 +494,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist data-line-24">
 <ul>
 <li class="data-line-24">
-<p>指标数据源：指标数据源表示基础指标的数据来源。指标数据源可以是关系数据库、本地或远程文件系统、消息队列或NoSQL数据库。<strong>目前仅支持使用关系数据库作为指标数据源。</strong></p>
+<p>指标数据源：指标数据源表示基础指标的数据来源。指标数据源可以是关系数据库、本地或远程文件系统、消息队列或NoSQL数据库。</p>
 </li>
 <li class="data-line-25">
-<p>基础指标：指能够从指标数据源直接查询得到的指标。基础指标的计算不依赖于其他指标。基础指标只存在于公共指标库中。</p>
+<p>基础指标：指能够从指标数据源中的数据直接计算得到的指标，基础指标的计算不依赖于其他指标。基础指标由专职部门部门进行维护，对所有部门可见。</p>
 </li>
 <li class="data-line-26">
-<p>衍生指标：指使用基础指标或其他衍生指标的值，经过用户定义的运算而得到的指标。衍生指标可以存在于公共指标库和私有指标库中。</p>
+<p>衍生指标：指使用基础指标或其他衍生指标的值，经过用户定义的运算而得到的指标。指标管理的专职部门和各业务部门都可以定义衍生指标，专职部门定义的衍生指标对所有部门可见，各业务部门定义的衍生指标只对本部门可见。</p>
 </li>
 <li class="data-line-27">
 <p>指标目录：是对基础指标和衍生指标进行的多级分类。指标目录中可以包含子目录或者具体指标，但不能两者兼有，指标只能包含在最下层指标目录中。</p>
 </li>
 <li class="data-line-28">
-<p>指标体系：指标体系代表从根节点开始的一颗完整的指标目录树及目录下所涵盖的指标。</p>
-<div class="ulist data-line-29">
-<ul>
+<p>指标体系：指标体系代表从根节点开始的一颗完整的指标目录树及目录下所涵盖的指标。专职部门维护的指标体系为公共指标体系，对所有部门可见，业务部门维护的指标体系只对本部门可见。指标体系中涵盖的指标都是对指标库中指标的引用。</p>
+</li>
 <li class="data-line-29">
-<p>公共指标体系：由专职部门维护管理，对指标管理系统的所有用户可见，公共指标体系中只包含公共指标库中的指标，任何用户都可以根据自己的权限查看或引用公共指标体系中的指标。</p>
+<p>指标库：用户定义的所有基础指标和衍生指标的集合，包括专职部门定义的公共指标（基础指标和衍生指标）和业务部门定义的私有衍生指标。其中业务部门定义的衍生指标只能被本部门的指标体系引用。</p>
 </li>
 <li class="data-line-30">
-<p>私有指标体系：由各业务部门自行维护管理，私有指标体系既可以包含公共指标库中的指标，也可以包含本部门私有指标库中的指标，私有指标体系只对本业务部门的用户可见。</p>
-</li>
-</ul>
-</div>
+<p>指标维度：指标可以拥有多个维度，如时间周期、管理机构（地区）等。维度可以包含多级粒度。所有指标都至少具备时间周期维度和管理机构（或地区）维度，可以根据需要增加其他维度。衍生指标的维度是它所引用的基础指标或其他衍生指标的公共维度以及粒度的子集。</p>
 </li>
 <li class="data-line-31">
-<p>指标库：用于存放指标数据的数据库，指标库在逻辑上划分为多个区域，分别用于存放公共指标数据和各部门私有指标数据。公共指标区域中的表分为指标主表和指标维表两部分，其中维度表由所有指标区域共享，各部门指标库区域只包含部门私有指标主表。</p>
-</li>
-<li class="data-line-32">
-<p>指标维度：指标可以拥有多个维度，如时间周期、管理机构（地区）等。维度可以包含多级粒度。所有指标都至少具备时间周期维度和管理机构（或地区）维度，可以根据需要增加其他维度。衍生指标的维度是它所引用的基础指标或其他衍生指标的公共维度以及粒度的子集。</p>
+<p>指标仓库：用于存放指标数据的数据库，指标仓库中包括指标主表和指标维表，指标维表存储指标维度数据，指标主表存放指标度量数据，公共指标和私有指标分别存放在不同的指标主表中。根据指标加载和使用方式的不同，指标仓库在物理上包括持久化指标仓库和内存指标仓库两部分。</p>
 </li>
 </ul>
 </div>
@@ -559,7 +552,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>部门指标管理人员：负责审核对部门指标体系和私有指标的调整，以及对指标接口的审核。</p>
 </li>
 <li class="data-line-47">
-<p>指标系统管理人员：负责指标管理系统的运行维护，包括数据源管理、指标库管理、指标接口管理。</p>
+<p>指标系统管理人员：负责指标管理系统的运行维护，包括数据源管理、指标仓库管理、指标接口管理。</p>
 </li>
 <li class="data-line-48">
 <p>指标数据安全管理人员：负责设置指标数据的安全级别和各用户岗位的数据访问权限。</p>
@@ -639,10 +632,9 @@ END WHILE</pre>
 <div class="paragraph data-line-91">
 <p>基础指标数据加载利用用户配置的带参数的指标加载语句(SQL)从指定的数据源提取指标数据。指标加载语句（SQL）需要满足以下要求：
 . SELECT表达式中需要包含指标主表的该指标度量字段和该指标所具备的维度的全部粒度字段。
-. 语句的结果应该是该指标各维度上最细粒度的数据（粒度可以高于维度所定义的最细粒度）。
-. 语句的结果中不应包括任何汇总数据。</p>
+. 语句的结果应该是该指标各维度上最细粒度的数据（粒度可以高于维度所定义的最细粒度）。</p>
 </div>
-<div class="listingblock data-line-97">
+<div class="listingblock data-line-96">
 <div class="title">伪代码</div>
 <div class="content">
 <pre>替换基础指标加载语句中的参数
@@ -659,7 +651,7 @@ WHERE
 ON DUPLICATE SET &lt;指标字段M&gt; = &lt;指标值M&gt;</pre>
 </div>
 </div>
-<div class="colist arabic data-line-112">
+<div class="colist arabic data-line-111">
 <ol>
 <li>
 <p>该临时表中的字段包括指标维度字段和度量字段。度量字段存放计算出的指标值，字段名与指标主表中该指标对应的字段名称相同。维度字段中需要包含该指标涉及的维度的所有粒度字段。</p>
@@ -669,12 +661,12 @@ ON DUPLICATE SET &lt;指标字段M&gt; = &lt;指标值M&gt;</pre>
 </li>
 </ol>
 </div>
-<div class="sect4 data-line-114">
+<div class="sect4 data-line-113">
 <h5 id="_衍生指标计算">衍生指标计算</h5>
-<div class="paragraph data-line-115">
+<div class="paragraph data-line-114">
 <p>衍生指标的值通过执行用户配置的指标计算公式得到。指标计算公式中可以引用其他的基础指标或衍生指标。系统根据指标之间依赖关系的配置自动对指标的计算顺序进行合理的安排。衍生指标所依赖的指标的维度必须与该衍生指标相同。</p>
 </div>
-<div class="listingblock data-line-118">
+<div class="listingblock data-line-117">
 <div class="title">伪代码</div>
 <div class="content">
 <pre>将指标计算公式中引用的其他指标编号替换为对应的指标主表字段名
@@ -692,11 +684,11 @@ ON DUPLICATE SET &lt;指标字段M&gt; = &lt;指标值M&gt;</pre>
 </div>
 </div>
 </div>
-<div class="sect3 data-line-132">
+<div class="sect3 data-line-131">
 <h4 id="_指标沿维度粒度汇总">指标沿维度粒度汇总</h4>
-<div class="sect4 data-line-134">
+<div class="sect4 data-line-133">
 <h5 id="_指标维度表汇总记录计算">指标维度表汇总记录计算</h5>
-<div class="listingblock data-line-136">
+<div class="listingblock data-line-135">
 <div class="title">伪代码</div>
 <div class="content">
 <pre>INSERT INTO &lt;维度表名称&gt; (粒度1，粒度2，……，粒度N) // <b class="conum">(1)</b>
@@ -715,7 +707,7 @@ OR 粒度N IS NULL
 ;</pre>
 </div>
 </div>
-<div class="colist arabic data-line-152">
+<div class="colist arabic data-line-151">
 <ol>
 <li>
 <p>粒度从 1~N 逐渐细化。</p>
@@ -723,9 +715,9 @@ OR 粒度N IS NULL
 </ol>
 </div>
 </div>
-<div class="sect4 data-line-154">
+<div class="sect4 data-line-153">
 <h5 id="_指标主表度量字段从各维度向上汇总">指标主表度量字段从各维度向上汇总</h5>
-<div class="listingblock data-line-156">
+<div class="listingblock data-line-155">
 <div class="title">伪代码</div>
 <div class="content">
 <pre>FOR 指标主表的所有维度：
@@ -752,7 +744,7 @@ OR 粒度N IS NULL
     ;</pre>
 </div>
 </div>
-<div class="colist arabic data-line-183">
+<div class="colist arabic data-line-182">
 <ol>
 <li>
 <p>如果主表只有一个维度，此列表为空</p>
@@ -762,7 +754,7 @@ OR 粒度N IS NULL
 </li>
 </ol>
 </div>
-<div class="listingblock data-line-188">
+<div class="listingblock data-line-187">
 <div class="title">例子</div>
 <div class="content">
 <pre class="highlight"><code class="language-sql" data-lang="sql">insert into metric_fact (date_id, org_id, metric1, metric2)
@@ -801,15 +793,15 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </div>
 </div>
 </div>
-<div class="sect2 data-line-223">
+<div class="sect2 data-line-222">
 <h3 id="_流式指标加载引擎">流式指标加载引擎</h3>
-<div class="paragraph data-line-225">
+<div class="paragraph data-line-224">
 <p>流式指标加载引擎用于处理持续更新的指标数据。流式指标的数据源为消息队列，为了实现对流式指标的高速访问，流式指标的计算结果存放在内存数据库中（如Redis）。</p>
 </div>
-<div class="sect3 data-line-227">
+<div class="sect3 data-line-226">
 <h4 id="_流式指标加载引擎的输入">流式指标加载引擎的输入</h4>
-<div class="listingblock data-line-231">
-<div class="title">实时指标加载引擎输入消息结构</div>
+<div class="listingblock data-line-230">
+<div class="title">输入消息结构</div>
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
     "fact_table": "metric_table_1",     // <b class="conum">(1)</b>
@@ -859,7 +851,7 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 }</code></pre>
 </div>
 </div>
-<div class="colist arabic data-line-284">
+<div class="colist arabic data-line-283">
 <ol>
 <li>
 <p>需要更新的指标主表名称</p>
@@ -882,96 +874,96 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </ol>
 </div>
 </div>
-<div class="sect3 data-line-286">
+<div class="sect3 data-line-285">
 <h4 id="_流式指标加载流程">流式指标加载流程</h4>
-<div class="imageblock text-center data-line-289">
+<div class="imageblock text-center data-line-288">
 <div class="content">
 <img src="streaming-metric-load.jpg" alt="streaming metric load" width="30%">
 </div>
 <div class="title">Figure 5. 处理流程</div>
 </div>
-<div class="ulist data-line-291">
+<div class="ulist data-line-290">
 <ul>
-<li class="data-line-291">
-<p>为提高处理效率，可以为每个指标主表分配一个流处理作业。</p>
+<li class="data-line-290">
+<p>为提高处理效率，可以为内存指标仓库中每个指标主表的加载分配一个专门的流处理作业。</p>
 </li>
-<li class="data-line-292">
+<li class="data-line-291">
 <p>各维度汇总指标数据的计算方法可参考批量指标加载的算法。</p>
 </li>
-<li class="data-line-293">
+<li class="data-line-292">
 <p>流式加载的衍生指标所依赖的基础指标和其他衍生指标都必须与被加载的衍生指标在同一个指标主表内。</p>
 </li>
-<li class="data-line-294">
-<p>指标加载次序的计算可参考批量指标加载的算法。</p>
+<li class="data-line-293">
+<p>当有多个流式衍生指标时，指标加载次序的计算可参考批量指标加载的算法。</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
-<div class="sect2 data-line-296">
+<div class="sect2 data-line-295">
 <h3 id="_指标数据接口">指标数据接口</h3>
-<div class="sect3 data-line-298">
+<div class="sect3 data-line-297">
 <h4 id="_设计原则">设计原则</h4>
-<div class="ulist data-line-300">
+<div class="ulist data-line-299">
 <ul>
-<li class="data-line-300">
+<li class="data-line-299">
 <p>指标管理系统以HTTP REST服务的形式为外界提供指标数据服务</p>
 </li>
-<li class="data-line-301">
+<li class="data-line-300">
 <p>使用一个公共接口提供对所有指标数据的访问</p>
 </li>
-<li class="data-line-302">
-<p>接口服务程序需要能够根据指标的配置从持久化或内存指标库中提取数据</p>
+<li class="data-line-301">
+<p>接口服务程序需要能够根据指标的配置从持久化或内存指标仓库中提取数据</p>
 </li>
-<li class="data-line-303">
+<li class="data-line-302">
 <p>接口服务程序可以使用微服务或集群方式部署，以满足性能扩展和负载均衡的要求</p>
 </li>
-<li class="data-line-304">
+<li class="data-line-303">
 <p>接口的访问权限控制、流量控制和用户认证由接口管理系统（SAPI）负责</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect3 data-line-306">
+<div class="sect3 data-line-305">
 <h4 id="_处理流程">处理流程</h4>
-<div class="imageblock text-center data-line-309">
+<div class="imageblock text-center data-line-308">
 <div class="content">
 <img src="interface-workflow.jpg" alt="interface workflow" width="70%">
 </div>
 <div class="title">Figure 6. 指标数据接口处理流程</div>
 </div>
 </div>
-<div class="sect3 data-line-312">
+<div class="sect3 data-line-311">
 <h4 id="_接口规格说明">接口规格说明</h4>
-<div class="ulist data-line-314">
+<div class="ulist data-line-313">
 <ul>
-<li class="data-line-314">
+<li class="data-line-313">
 <p>接口请求URL模式</p>
-<div class="listingblock data-line-317">
+<div class="listingblock data-line-316">
 <div class="content">
-<pre class="highlight"><code>https://&lt;hostname&gt;:&lt;port&gt;/api/&lt;指标接口代码/&lt;指标代码列表&gt;?&lt;查询参数&gt;</code></pre>
+<pre class="highlight"><code>https://&lt;hostname&gt;:&lt;port&gt;/api/&lt;指标接口代码?metric-list=&lt;指标代码列表&gt;&amp;&lt;查询参数&gt;</code></pre>
 </div>
 </div>
-<div class="olist arabic data-line-322">
+<div class="olist arabic data-line-321">
 <ol class="arabic">
-<li class="data-line-322">
+<li class="data-line-321">
 <p>指标接口代码是用户申请开放指标接口的数据接口代码</p>
 </li>
-<li class="data-line-323">
+<li class="data-line-322">
 <p>指标代码列表为逗号分隔的指标代码，这些指标代码必须属于指标接口代码所包含的指标集合</p>
 </li>
-<li class="data-line-324">
+<li class="data-line-323">
 <p>查询参数为请求的指标在各维度字段上的过滤条件，这些条件应用于指标代码列表中包含的所有指标</p>
 </li>
-<li class="data-line-325">
+<li class="data-line-324">
 <p>需要向接口用户提供各指标的详细维度说明</p>
 </li>
 </ol>
 </div>
 </li>
-<li class="data-line-327">
+<li class="data-line-326">
 <p>接口输出数据格式</p>
-<div class="listingblock data-line-330">
+<div class="listingblock data-line-329">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
     "code": 0,                              // <b class="conum">(1)</b>
@@ -1030,7 +1022,7 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 }</code></pre>
 </div>
 </div>
-<div class="colist arabic data-line-394">
+<div class="colist arabic data-line-393">
 <ol>
 <li>
 <p>接口返回码，0表示成功</p>
@@ -1063,70 +1055,70 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </div>
 </div>
 </div>
-<div class="sect2 data-line-396">
-<h3 id="_指标库数据同步">指标库数据同步</h3>
-<div class="paragraph data-line-397">
-<p>指标库数据同步用于在持久化指标库和内存指标库之间实现定时的数据同步。数据同步包括两个部分：</p>
+<div class="sect2 data-line-395">
+<h3 id="_指标仓库数据同步">指标仓库数据同步</h3>
+<div class="paragraph data-line-396">
+<p>指标仓库数据同步用于在持久化指标仓库和内存指标仓库之间实现定时的数据同步。数据同步包括两个部分：</p>
 </div>
-<div class="olist arabic data-line-399">
+<div class="olist arabic data-line-398">
 <ol class="arabic">
-<li class="data-line-399">
-<p>将内存指标库中的流式加载的指标同步到持久化指标库。</p>
-<div class="paragraph data-line-401">
-<p>同步的范围仅包括驻留在内存指标库中的指标主表中的流式加载指标（包括基础指标和衍生指标），同步的频率可由调度系统控制。</p>
+<li class="data-line-398">
+<p>将内存指标仓库中的流式加载的指标同步到持久化指标仓库。</p>
+<div class="paragraph data-line-400">
+<p>同步的范围仅包括驻留在内存指标仓库中的指标主表中的流式加载指标（包括基础指标和衍生指标），同步的频率可由调度系统控制。</p>
 </div>
 </li>
-<li class="data-line-402">
-<p>将持久化指标库中的批量加载指标同步到内存指标库中。</p>
-<div class="paragraph data-line-404">
-<p>同步的指标范围仅限于驻留在内存指标库中的指标主表所包含的指标，同步的频率应与批量指标加载相同。</p>
+<li class="data-line-401">
+<p>将持久化指标仓库中的批量加载指标同步到内存指标仓库中。</p>
+<div class="paragraph data-line-403">
+<p>同步的指标范围仅限于驻留在内存指标仓库中的指标主表所包含的指标，同步的频率应与批量指标加载相同。</p>
 </div>
 </li>
 </ol>
 </div>
-<div class="imageblock text-center data-line-407">
+<div class="imageblock text-center data-line-406">
 <div class="content">
 <img src="metric-store-sync.jpg" alt="metric store sync" width="70%">
 </div>
-<div class="title">Figure 7. 指标库同步示意图</div>
+<div class="title">Figure 7. 指标仓库同步示意图</div>
 </div>
 </div>
 </div>
 </div>
-<div class="sect1 data-line-410">
+<div class="sect1 data-line-409">
 <h2 id="_指标管理系统web应用">指标管理系统Web应用</h2>
 <div class="sectionbody">
-<div class="sect2 data-line-412">
+<div class="sect2 data-line-411">
 <h3 id="_指标查询分析">指标查询分析</h3>
-<div class="sect3 data-line-415">
+<div class="sect3 data-line-414">
 <h4 id="_指标数据查询浏览">指标数据查询浏览</h4>
-<div class="paragraph data-line-416">
+<div class="paragraph data-line-415">
 <p>指标数据检索：在选定的指标上设置维度筛选条件，检索指标数据。系统根据用户角色、指标安全级别和用户的组织机构属性对查询结果进行过滤，防止用户对数据的越权访问。</p>
 </div>
 </div>
-<div class="sect3 data-line-418">
+<div class="sect3 data-line-417">
 <h4 id="_指标数据导入导出">指标数据导入/导出</h4>
-<div class="paragraph data-line-419">
-<p>用户可以选择将查询结果中的指标数据导出到文件中。指标体系的维护人员可以从文件中导入指标数据，如果导入的数据和指标库中的数据有冲突，需要询问用户是否覆盖。指标数据的导入导出操作都需要记录到用户访问日志中。</p>
+<div class="paragraph data-line-418">
+<p>用户可以选择将查询结果中的指标数据导出到文件中。指标体系的维护人员可以从文件中导入指标数据，如果导入的数据和指标仓库中的数据有冲突，需要询问用户是否覆盖。指标数据的导入导出操作都需要记录到用户访问日志中。</p>
 </div>
 </div>
-<div class="sect3 data-line-421">
+<div class="sect3 data-line-420">
 <h4 id="_指标仪表盘">指标仪表盘</h4>
-<div class="paragraph data-line-422">
+<div class="paragraph data-line-421">
 <p>指标仪表盘提供指标的图形化展现和分析功能，用户可以选择需要在仪表盘上展现的指标数据和展现形式（折线图、饼图、柱状图等）。</p>
 </div>
-<div class="sect4 data-line-424">
+<div class="sect4 data-line-423">
 <h5 id="_指标仪表盘基本要素">指标仪表盘基本要素</h5>
 
 </div>
-<div class="sect4 data-line-426">
+<div class="sect4 data-line-425">
 <h5 id="_指标仪表盘功能">指标仪表盘功能</h5>
-<div class="ulist data-line-427">
+<div class="ulist data-line-426">
 <ul>
-<li class="data-line-427">
+<li class="data-line-426">
 <p>仪表盘浏览</p>
 </li>
-<li class="data-line-428">
+<li class="data-line-427">
 <p>定制仪表盘内容</p>
 </li>
 </ul>
@@ -1134,296 +1126,274 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </div>
 </div>
 </div>
-<div class="sect2 data-line-431">
+<div class="sect2 data-line-430">
 <h3 id="_指标体系管理">指标体系管理</h3>
-<div class="paragraph data-line-433">
+<div class="paragraph data-line-432">
 <p>公共指标体系维护人员和各业务部门指标体系维护人员可以创建、维护指标体系内容，指标体系（包括各级指标目录及所引用的指标）的修改需要经过审核才能生效。</p>
 </div>
-<div class="imageblock text-center data-line-436">
+<div class="imageblock text-center data-line-435">
 <div class="content">
 <img src="metric-hierarchy.jpg" alt="metric hierarchy" width="80%">
 </div>
 <div class="title">Figure 8. 指标体系框架</div>
 </div>
-<div class="sect3 data-line-438">
-<h4 id="_指标体系基本要素">指标体系基本要素</h4>
-<div class="ulist data-line-439">
-<ul>
-<li class="data-line-439">
-<p>指标体系名称</p>
-</li>
-<li class="data-line-440">
-<p>指标体系代码</p>
-</li>
-<li class="data-line-441">
-<p>指标体系根目录名称</p>
-</li>
-<li class="data-line-442">
-<p>指标体系根目录代码</p>
-</li>
-<li class="data-line-443">
-<p>指标体系部门代码</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3 data-line-445">
+<div class="sect3 data-line-437">
 <h4 id="_指标目录基本要素">指标目录基本要素</h4>
-<div class="paragraph data-line-446">
-<p>指标目录的归属部门与上级指标目录归属部门相同，根目录的归属部门为与该根目录对应的指标体系所归属的业务部门。</p>
+<div class="paragraph data-line-438">
+<p>指标目录的归属部门与上级指标目录归属部门相同，根目录的归属部门与对应的指标体系的归属部门相同。</p>
 </div>
-<div class="ulist data-line-448">
+<div class="ulist data-line-440">
 <ul>
-<li class="data-line-448">
+<li class="data-line-440">
 <p>指标目录名称</p>
 </li>
-<li class="data-line-449">
+<li class="data-line-441">
 <p>指标目录代码，在指标体系内不得重复。</p>
 </li>
-<li class="data-line-450">
+<li class="data-line-442">
 <p>上级指标目录代码</p>
 </li>
-<li class="data-line-451">
+<li class="data-line-443">
 <p>指标目录显示顺序</p>
 </li>
+<li class="data-line-444">
+<p>指标目录描述信息</p>
+</li>
+<li class="data-line-445">
+<p>业务部门代码</p>
+</li>
+<li class="data-line-446">
+<p>最后更新用户</p>
+</li>
+<li class="data-line-447">
+<p>最后审核用户</p>
+</li>
+<li class="data-line-448">
+<p>最后更新时间</p>
+</li>
+<li class="data-line-449">
+<p>最后审核时间</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3 data-line-451">
+<h4 id="_基础指标基本要素">基础指标基本要素</h4>
+<div class="ulist data-line-452">
+<ul>
 <li class="data-line-452">
-<p>指标体系代码</p>
+<p>指标名称</p>
 </li>
 <li class="data-line-453">
-<p>最后更新用户</p>
+<p>指标代码</p>
 </li>
 <li class="data-line-454">
-<p>最后审核用户</p>
+<p>业务部门代码</p>
 </li>
 <li class="data-line-455">
-<p>最后更新时间</p>
-</li>
-<li class="data-line-456">
-<p>最后审核时间</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3 data-line-458">
-<h4 id="_基础指标基本要素">基础指标基本要素</h4>
-<div class="ulist data-line-459">
-<ul>
-<li class="data-line-459">
-<p>指标名称</p>
-</li>
-<li class="data-line-460">
-<p>指标代码</p>
-</li>
-<li class="data-line-461">
-<p>业务部门代码</p>
-</li>
-<li class="data-line-462">
 <p>指标数据源代码</p>
 </li>
-<li class="data-line-463">
+<li class="data-line-456">
 <p>指标主表代码</p>
 </li>
-<li class="data-line-464">
-<p>指标库度量字段代码</p>
+<li class="data-line-457">
+<p>指标主表度量字段代码</p>
 </li>
-<li class="data-line-465">
+<li class="data-line-458">
 <p>指标数据单位</p>
 </li>
-<li class="data-line-466">
+<li class="data-line-459">
 <p>指标加载类型（批量/流式）</p>
 </li>
-<li class="data-line-467">
+<li class="data-line-460">
 <p>指标计算周期</p>
 </li>
-<li class="data-line-468">
+<li class="data-line-461">
 <p>指标描述</p>
 </li>
-<li class="data-line-469">
+<li class="data-line-462">
 <p>最后更新用户</p>
 </li>
-<li class="data-line-470">
+<li class="data-line-463">
 <p>最后审核用户</p>
 </li>
-<li class="data-line-471">
+<li class="data-line-464">
 <p>最后更新时间</p>
 </li>
-<li class="data-line-472">
+<li class="data-line-465">
 <p>最后审核时间</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect3 data-line-474">
+<div class="sect3 data-line-467">
 <h4 id="_衍生指标基本要素">衍生指标基本要素</h4>
-<div class="ulist data-line-475">
+<div class="ulist data-line-468">
 <ul>
-<li class="data-line-475">
+<li class="data-line-468">
 <p>指标名称</p>
 </li>
-<li class="data-line-476">
+<li class="data-line-469">
 <p>指标代码</p>
 </li>
-<li class="data-line-477">
+<li class="data-line-470">
 <p>业务部门代码</p>
 </li>
-<li class="data-line-478">
+<li class="data-line-471">
 <p>指标计算公式模板</p>
 </li>
-<li class="data-line-479">
+<li class="data-line-472">
 <p>指标主表代码</p>
 </li>
-<li class="data-line-480">
-<p>指标库度量字段代码</p>
+<li class="data-line-473">
+<p>指标主表度量字段代码</p>
 </li>
-<li class="data-line-481">
+<li class="data-line-474">
 <p>指标数据单位</p>
 </li>
-<li class="data-line-482">
+<li class="data-line-475">
 <p>指标计算周期</p>
 </li>
-<li class="data-line-483">
+<li class="data-line-476">
 <p>指标描述</p>
 </li>
-<li class="data-line-484">
+<li class="data-line-477">
 <p>最后更新用户</p>
 </li>
-<li class="data-line-485">
+<li class="data-line-478">
 <p>最后审核用户</p>
 </li>
-<li class="data-line-486">
+<li class="data-line-479">
 <p>最后更新时间</p>
 </li>
-<li class="data-line-487">
+<li class="data-line-480">
 <p>最后审核时间</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect3 data-line-489">
+<div class="sect3 data-line-482">
 <h4 id="_指标体系管理功能">指标体系管理功能</h4>
-<div class="sect4 data-line-491">
+<div class="sect4 data-line-485">
 <h5 id="_指标体系浏览">指标体系浏览</h5>
-<div class="paragraph data-line-492">
+<div class="paragraph data-line-486">
 <p>指标体系的浏览采用类似Windows资源管理器的方式，窗口左边为指标分类树，点击分类树底层节点时，在窗口右侧显示该目录下引用的指标列表。</p>
 </div>
-<div class="ulist data-line-494">
+<div class="ulist data-line-488">
 <ul>
-<li class="data-line-494">
+<li class="data-line-488">
+<p>指标目录浏览</p>
+<div class="paragraph data-line-490">
+<p>浏览各级指标目录及其包含的指标信息。</p>
+</div>
+</li>
+<li class="data-line-492">
 <p>指标浏览查询</p>
-<div class="paragraph data-line-496">
+<div class="paragraph data-line-494">
 <p>根据指标名称、指标代码、指标所属部门、指标数据源、指标主表检索符合条件的指标配置信息。</p>
 </div>
 </li>
-<li class="data-line-498">
+<li class="data-line-496">
 <p>指标依赖关系视图</p>
-<div class="paragraph data-line-500">
+<div class="paragraph data-line-498">
 <p>以有向图的方式展示基础指标和衍生指标之间的依赖关系。</p>
 </div>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect4 data-line-502">
+<div class="sect4 data-line-500">
 <h5 id="_指标体系维护">指标体系维护</h5>
+<div class="ulist data-line-502">
+<ul>
+<li class="data-line-502">
+<p>指标分类目录维护</p>
 <div class="ulist data-line-503">
 <ul>
 <li class="data-line-503">
-<p>指标体系创建</p>
-<div class="paragraph data-line-505">
-<p>由指标管理部门创建的指标体系为公共指标体系，其他业务部门创建的指标体系为部门私有指标体系。</p>
-</div>
-</li>
-<li class="data-line-507">
-<p>指标体系基本属性维护</p>
-</li>
-<li class="data-line-509">
-<p>指标分类目录维护</p>
-<div class="ulist data-line-510">
-<ul>
-<li class="data-line-510">
 <p>创建、删除目录</p>
-<div class="paragraph data-line-512">
+<div class="paragraph data-line-505">
 <p>不允许删除非空的指标目录。</p>
 </div>
 </li>
-<li class="data-line-513">
+<li class="data-line-506">
 <p>在目录下增加、删除指标</p>
-<div class="paragraph data-line-515">
+<div class="paragraph data-line-508">
 <p>不允许指标目录既有子目录，又包含指标。</p>
 </div>
 </li>
-<li class="data-line-516">
+<li class="data-line-509">
 <p>修改目录属性</p>
-<div class="paragraph data-line-518">
+<div class="paragraph data-line-511">
 <p>不可修改指标目录代码和归属部门。</p>
 </div>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-520">
+<li class="data-line-513">
 <p>指标维护</p>
-<div class="ulist data-line-522">
+<div class="ulist data-line-515">
 <ul>
-<li class="data-line-522">
+<li class="data-line-515">
 <p>基础指标配置/修改</p>
-<div class="olist arabic data-line-523">
+<div class="olist arabic data-line-516">
 <ol class="arabic">
-<li class="data-line-523">
+<li class="data-line-516">
 <p>设置指标基本属性</p>
-<div class="olist loweralpha data-line-524">
+<div class="olist loweralpha data-line-517">
 <ol class="loweralpha" type="a">
-<li class="data-line-524">
+<li class="data-line-517">
 <p>指标名称</p>
 </li>
-<li class="data-line-525">
+<li class="data-line-518">
 <p>指标代码</p>
 </li>
-<li class="data-line-526">
+<li class="data-line-519">
 <p>指标数据单位</p>
 </li>
 </ol>
 </div>
 </li>
-<li class="data-line-527">
+<li class="data-line-520">
 <p>设置指标维度和各维度的数据粒度</p>
 </li>
-<li class="data-line-528">
+<li class="data-line-521">
 <p>设置指标数据源</p>
-<div class="olist loweralpha data-line-529">
+<div class="olist loweralpha data-line-522">
 <ol class="loweralpha" type="a">
-<li class="data-line-529">
+<li class="data-line-522">
 <p>选择指标数据源</p>
 </li>
-<li class="data-line-530">
+<li class="data-line-523">
 <p>编写数据筛选语句或上传数据筛选脚本</p>
 </li>
 </ol>
 </div>
 </li>
-<li class="data-line-531">
+<li class="data-line-524">
 <p>指标主表和度量字段设置</p>
-<div class="paragraph data-line-533">
+<div class="paragraph data-line-526">
 <p>系统根据用户设置的指标维度自动选择指标主表并增加主表度量字段。</p>
 </div>
 </li>
-<li class="data-line-534">
+<li class="data-line-527">
 <p>设置指标计算周期</p>
-<div class="paragraph data-line-536">
+<div class="paragraph data-line-529">
 <p>支持以下计算周期设置：</p>
 </div>
-<div class="olist loweralpha data-line-538">
+<div class="olist loweralpha data-line-531">
 <ol class="loweralpha" type="a">
-<li class="data-line-538">
+<li class="data-line-531">
 <p>固定日期（不定期）</p>
 </li>
-<li class="data-line-539">
+<li class="data-line-532">
 <p>固定间隔</p>
 </li>
-<li class="data-line-540">
+<li class="data-line-533">
 <p>固定周期（每年/季/月/周的第几天）</p>
 </li>
-<li class="data-line-541">
+<li class="data-line-534">
 <p>CRON表达式</p>
 </li>
 </ol>
@@ -1432,65 +1402,65 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </ol>
 </div>
 </li>
-<li class="data-line-543">
+<li class="data-line-536">
 <p>衍生指标配置/修改</p>
-<div class="olist arabic data-line-544">
+<div class="olist arabic data-line-537">
 <ol class="arabic">
-<li class="data-line-544">
+<li class="data-line-537">
 <p>设置指标基本属性</p>
-<div class="olist loweralpha data-line-545">
+<div class="olist loweralpha data-line-538">
 <ol class="loweralpha" type="a">
-<li class="data-line-545">
+<li class="data-line-538">
 <p>指标名称</p>
 </li>
-<li class="data-line-546">
+<li class="data-line-539">
 <p>指标代码</p>
 </li>
-<li class="data-line-547">
+<li class="data-line-540">
 <p>指标数据单位</p>
 </li>
 </ol>
 </div>
 </li>
-<li class="data-line-548">
+<li class="data-line-541">
 <p>设置指标维度和各维度的数据粒度</p>
 </li>
-<li class="data-line-549">
+<li class="data-line-542">
 <p>设置指标计算公式模板</p>
-<div class="olist loweralpha data-line-550">
+<div class="olist loweralpha data-line-543">
 <ol class="loweralpha" type="a">
-<li class="data-line-550">
+<li class="data-line-543">
 <p>挑选用于指标计算的基础指标和其他衍生指标</p>
 </li>
-<li class="data-line-551">
+<li class="data-line-544">
 <p>编写指标计算公式</p>
 </li>
 </ol>
 </div>
 </li>
-<li class="data-line-552">
+<li class="data-line-545">
 <p>指标主表和度量字段设置</p>
-<div class="paragraph data-line-554">
+<div class="paragraph data-line-547">
 <p>系统根据用户设置的指标维度自动选择指标主表并增加主表度量字段。</p>
 </div>
 </li>
-<li class="data-line-555">
+<li class="data-line-548">
 <p>设置指标计算周期</p>
-<div class="paragraph data-line-557">
+<div class="paragraph data-line-550">
 <p>支持以下计算周期设置：</p>
 </div>
-<div class="olist loweralpha data-line-559">
+<div class="olist loweralpha data-line-552">
 <ol class="loweralpha" type="a">
-<li class="data-line-559">
+<li class="data-line-552">
 <p>固定日期（不定期）</p>
 </li>
-<li class="data-line-560">
+<li class="data-line-553">
 <p>固定间隔</p>
 </li>
-<li class="data-line-561">
+<li class="data-line-554">
 <p>固定周期（每年/季/月/周的第几天）</p>
 </li>
-<li class="data-line-562">
+<li class="data-line-555">
 <p>CRON表达式</p>
 </li>
 </ol>
@@ -1499,47 +1469,50 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </ol>
 </div>
 </li>
-<li class="data-line-564">
+<li class="data-line-557">
 <p>指标配置删除</p>
-<div class="paragraph data-line-566">
+<div class="paragraph data-line-559">
 <p>不可删除被其他衍生指标所引用的基础指标或衍生指标。</p>
 </div>
 </li>
-<li class="data-line-568">
+<li class="data-line-561">
 <p>指标试算</p>
-<div class="paragraph data-line-570">
+<div class="paragraph data-line-563">
 <p>验证指标数据源查询或指标计算模板的正确性。</p>
 </div>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-572">
+<li class="data-line-565">
 <p>指标体系发布</p>
-<div class="paragraph data-line-574">
+<div class="paragraph data-line-567">
 <p>指标体系修改后需要通过发布动作启动审核流程，审核通过后才能生效。</p>
 </div>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect4 data-line-576">
+<div class="sect4 data-line-569">
 <h5 id="_指标体系审核">指标体系审核</h5>
-<div class="paragraph data-line-577">
-<p>对指标体系及指标定义的修改需经过审核才能生效，审核界面应标注新增、修改、及删除的目录。 公共指标体系的审核由指标管理系统管理部门负责，其他业务部门私有指标体系的审核由本部门负责。</p>
+<div class="paragraph data-line-570">
+<p>对各级指标目录及指标定义的修改需经过审核才能生效，审核界面应标注新增、修改、及删除的目录。</p>
 </div>
-<div class="ulist data-line-579">
+<div class="paragraph data-line-572">
+<p>公共指标体系的审核由指标管理系统管理部门负责，其他业务部门私有指标体系的审核由本部门负责。</p>
+</div>
+<div class="ulist data-line-574">
 <ul>
-<li class="data-line-579">
+<li class="data-line-574">
 <p>浏览指标体系修改内容</p>
-<div class="paragraph data-line-581">
+<div class="paragraph data-line-576">
 <p>查看指标体系中新增、修改和删除的指标和指标目录。</p>
 </div>
 </li>
-<li class="data-line-582">
+<li class="data-line-577">
 <p>批准指标体系更新</p>
 </li>
-<li class="data-line-583">
+<li class="data-line-578">
 <p>拒绝指标体系更新</p>
 </li>
 </ul>
@@ -1547,45 +1520,45 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </div>
 </div>
 </div>
-<div class="sect2 data-line-585">
+<div class="sect2 data-line-580">
 <h3 id="_数据权限管理">数据权限管理</h3>
-<div class="paragraph data-line-587">
-<p>由于数据权限的管理策略同用户的组织架构有密切关系，因此需要定义一个能够适应大部分用户情况的比较通用的组织架构形式，作为实施指标数据权限管理的前提条件。</p>
+<div class="paragraph data-line-582">
+<p>由于数据权限的管理很大程度上依托用户现有的行政和业务组织架构，因此需要定义一个能够适应大部分用户情况的比较通用的组织架构形式，作为实施指标数据权限管理的基础。</p>
 </div>
-<div class="sect3 data-line-589">
+<div class="sect3 data-line-584">
 <h4 id="_指标管理系统用户组织架构">指标管理系统用户组织架构</h4>
-<div class="paragraph data-line-590">
+<div class="paragraph data-line-585">
 <p>用户组织架构包括两个交叉的体系，分别为行政管理体系和业务管辖体系，图中蓝色实线表示行政隶属关系，红色虚线表示业务管辖关系。</p>
 </div>
-<div class="imageblock text-center data-line-593">
+<div class="imageblock text-center data-line-588">
 <div class="content">
 <img src="organization-hierarchy.jpg" alt="organization hierarchy" width="60%">
 </div>
 <div class="title">Figure 9. 用户组织架构</div>
 </div>
 </div>
-<div class="sect3 data-line-595">
+<div class="sect3 data-line-590">
 <h4 id="_指标数据权限管理框架">指标数据权限管理框架</h4>
-<div class="paragraph data-line-597">
+<div class="paragraph data-line-592">
 <p>用户对指标的访问权限可以从三个维度进行管理：</p>
 </div>
-<div class="ulist data-line-599">
+<div class="ulist data-line-594">
 <ul>
-<li class="data-line-599">
+<li class="data-line-594">
 <p>用户的业务部门</p>
-<div class="paragraph data-line-601">
+<div class="paragraph data-line-596">
 <p>用户可以浏览和访问的指标（及指标目录）包括所有公共指标体系和用户所在业务部门的私有指标体系。</p>
 </div>
 </li>
-<li class="data-line-602">
+<li class="data-line-597">
 <p>用户所处行政管理机构</p>
-<div class="paragraph data-line-604">
+<div class="paragraph data-line-599">
 <p>所有指标数据都具备管理机构（或地区）维度，对于非公开指标，用户只能访问处于他所在管理机构管辖范围内的指标数据。</p>
 </div>
 </li>
-<li class="data-line-605">
+<li class="data-line-600">
 <p>指标数据安全级别</p>
-<div class="paragraph data-line-607">
+<div class="paragraph data-line-602">
 <p>所有指标都需要设置安全级别，例如公开、内部、保密、绝密等。用户的角色（或岗位）决定了他能够访问的指标数据的最高安全级别。
 可以为同一指标在不同维度和维度级别上的数据设置不同的安全级别。</p>
 </div>
@@ -1593,33 +1566,33 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </ul>
 </div>
 </div>
-<div class="sect3 data-line-610">
+<div class="sect3 data-line-605">
 <h4 id="_指标数据权限管理功能">指标数据权限管理功能</h4>
-<div class="ulist data-line-612">
+<div class="ulist data-line-607">
 <ul>
-<li class="data-line-612">
+<li class="data-line-607">
 <p>用户角色数据权限管理</p>
-<div class="ulist data-line-613">
+<div class="ulist data-line-608">
 <ul>
-<li class="data-line-613">
+<li class="data-line-608">
 <p>用户角色数据权限浏览</p>
 </li>
-<li class="data-line-614">
+<li class="data-line-609">
 <p>用户角色数据权限维护</p>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-615">
+<li class="data-line-610">
 <p>指标数据安全级别管理</p>
-<div class="ulist data-line-616">
+<div class="ulist data-line-611">
 <ul>
-<li class="data-line-616">
+<li class="data-line-611">
 <p>指标数据安全级别查询浏览</p>
 </li>
-<li class="data-line-617">
+<li class="data-line-612">
 <p>指标数据安全级别维护</p>
-<div class="paragraph data-line-619">
+<div class="paragraph data-line-614">
 <p>可以为指标的不同维度、不同粒度的数据设置不同的安全级别。</p>
 </div>
 </li>
@@ -1630,109 +1603,125 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </div>
 </div>
 </div>
-<div class="sect2 data-line-621">
+<div class="sect2 data-line-616">
 <h3 id="_数据接口管理">数据接口管理</h3>
-<div class="paragraph data-line-623">
+<div class="paragraph data-line-618">
 <p>指标管理系统的指标数据可以通过接口供其他系统使用。接口的数据访问权限与申请开放接口的用户所具备的数据访问权限相同。数据接口的开放和更新需要经过指标体系管理人员的审核。</p>
 </div>
-<div class="sect3 data-line-625">
+<div class="paragraph data-line-620">
+<p>如果使用SAPI的用户身份认证和流量控制功能，指标数据接口中的相应功能可以被关闭。</p>
+</div>
+<div class="sect3 data-line-622">
 <h4 id="_指标数据接口基本要素">指标数据接口基本要素</h4>
-<div class="ulist data-line-626">
+<div class="ulist data-line-623">
 <ul>
-<li class="data-line-626">
+<li class="data-line-623">
 <p>接口申请用户</p>
 </li>
-<li class="data-line-627">
+<li class="data-line-624">
 <p>接口审批用户</p>
 </li>
-<li class="data-line-628">
+<li class="data-line-625">
 <p>接口名称</p>
 </li>
-<li class="data-line-629">
+<li class="data-line-626">
 <p>接口代码</p>
 </li>
-<li class="data-line-630">
+<li class="data-line-627">
 <p>接口对应的指标列表</p>
 </li>
-<li class="data-line-631">
+<li class="data-line-628">
 <p>指标数据筛选条件</p>
 </li>
-<li class="data-line-632">
+<li class="data-line-629">
 <p>接口访问频次和数据量限制</p>
 </li>
-<li class="data-line-633">
+<li class="data-line-630">
 <p>接口有效期限</p>
 </li>
-<li class="data-line-634">
+<li class="data-line-631">
 <p>接口访问令牌</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect3 data-line-636">
+<div class="sect3 data-line-633">
 <h4 id="_指标数据接口管理功能">指标数据接口管理功能</h4>
-<div class="ulist data-line-638">
+<div class="ulist data-line-635">
 <ul>
-<li class="data-line-638">
+<li class="data-line-635">
 <p>数据接口查询浏览</p>
 </li>
-<li class="data-line-639">
+<li class="data-line-636">
 <p>数据接口申请</p>
-<div class="olist arabic data-line-640">
+<div class="olist arabic data-line-637">
 <ol class="arabic">
-<li class="data-line-640">
+<li class="data-line-637">
 <p>设置接口名称、接口代码</p>
 </li>
-<li class="data-line-641">
+<li class="data-line-638">
 <p>选择指标列表</p>
 </li>
-<li class="data-line-642">
+<li class="data-line-639">
 <p>设置数据筛选条件</p>
 </li>
-<li class="data-line-643">
+<li class="data-line-640">
 <p>设置访问频次和数据量限制</p>
 </li>
-<li class="data-line-644">
+<li class="data-line-641">
 <p>设置有效期限</p>
 </li>
 </ol>
 </div>
 </li>
-<li class="data-line-646">
+<li class="data-line-643">
 <p>数据接口审核</p>
-<div class="olist arabic data-line-647">
+<div class="olist arabic data-line-644">
 <ol class="arabic">
-<li class="data-line-647">
+<li class="data-line-644">
 <p>浏览数据接口开放或更新申请</p>
 </li>
-<li class="data-line-648">
+<li class="data-line-645">
 <p>同意/拒绝接口开放或更新申请</p>
 </li>
-<li class="data-line-649">
+<li class="data-line-646">
 <p>生成接口访问令牌</p>
 </li>
 </ol>
 </div>
 </li>
-<li class="data-line-651">
+<li class="data-line-648">
 <p>数据接口启用/停用</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
-<div class="sect2 data-line-654">
+<div class="sect2 data-line-651">
 <h3 id="_系统管理">系统管理</h3>
-<div class="sect3 data-line-655">
+<div class="sect3 data-line-652">
 <h4 id="_系统日志分析">系统日志分析</h4>
-<div class="ulist data-line-656">
+<div class="ulist data-line-653">
 <ul>
-<li class="data-line-656">
+<li class="data-line-653">
 <p>指标加载日志分析</p>
+<div class="ulist data-line-654">
+<ul>
+<li class="data-line-654">
+<p>指标加载日志查询（指定指标代码、时间段、错误级别等条件）</p>
+</li>
+<li class="data-line-655">
+<p>日志全文检索</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-656">
+<p>指标访问日志分析</p>
 <div class="ulist data-line-657">
 <ul>
 <li class="data-line-657">
-<p>指标加载日志查询（指定指标代码、时间段、错误级别等条件）</p>
+<p>指标访问日志查询（指定指标代码、时间段、用户、部门等条件）</p>
 </li>
 <li class="data-line-658">
 <p>日志全文检索</p>
@@ -1741,41 +1730,28 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </div>
 </li>
 <li class="data-line-659">
-<p>指标访问日志分析</p>
+<p>指标维护日志分析</p>
 <div class="ulist data-line-660">
 <ul>
 <li class="data-line-660">
-<p>指标访问日志查询（指定指标代码、时间段、用户、部门等条件）</p>
-</li>
-<li class="data-line-661">
-<p>日志全文检索</p>
-</li>
-</ul>
-</div>
-</li>
-<li class="data-line-662">
-<p>指标维护日志分析</p>
-<div class="ulist data-line-663">
-<ul>
-<li class="data-line-663">
 <p>指标体系维护日志查询（指定指标代码、时间段、用户、部门等条件）</p>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-664">
+<li class="data-line-661">
 <p>数据接口日志分析</p>
-<div class="ulist data-line-665">
+<div class="ulist data-line-662">
 <ul>
-<li class="data-line-665">
+<li class="data-line-662">
 <p>数据接口访问日志查询</p>
-<div class="paragraph data-line-667">
+<div class="paragraph data-line-664">
 <p>根据给定的接口名称、接口代码、日期区间、接口用户查询接口访问日志明细。</p>
 </div>
 </li>
-<li class="data-line-668">
+<li class="data-line-665">
 <p>数据接口访问统计</p>
-<div class="paragraph data-line-670">
+<div class="paragraph data-line-667">
 <p>按照用户指定的分组标准（包括：接口、日期、接口用户、正常/异常，异常类型）对接口访问日志进行分组统计。</p>
 </div>
 </li>
@@ -1785,53 +1761,72 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </ul>
 </div>
 </div>
-<div class="sect3 data-line-672">
+<div class="sect3 data-line-669">
 <h4 id="_用户角色管理">用户角色管理</h4>
-<div class="ulist data-line-673">
+<div class="paragraph data-line-670">
+<p>用户在指标管理系统中的角色决定了用户执行各种系统功能的权限以及用户对数据的访问权限。除了系统内置的角色，用户可以自己根据管理需要定义新的角色。为了更好地适应统一系统运维的使用场景，需要支持在本系统用户角色和独立于各IT系统之外的，客户统一定义的角色之间的映射。</p>
+</div>
+<div class="ulist data-line-672">
 <ul>
-<li class="data-line-673">
+<li class="data-line-672">
 <p>用户角色查询浏览</p>
 </li>
-<li class="data-line-674">
+<li class="data-line-673">
 <p>用户角色信息维护</p>
+<div class="ulist data-line-674">
+<ul>
+<li class="data-line-674">
+<p>用户角色维护</p>
+</li>
+<li class="data-line-675">
+<p>用户角色权限维护</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="data-line-676">
+<p>外部用户角色映射</p>
+<div class="paragraph data-line-678">
+<p>在指标管理系统用户角色和外部用户角色（如用户岗位）之间建立映射关系。</p>
+</div>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect3 data-line-676">
+<div class="sect3 data-line-680">
 <h4 id="_数据源管理">数据源管理</h4>
-<div class="paragraph data-line-677">
+<div class="paragraph data-line-681">
 <p>对基础指标的数据源进行管理，包括数据源的增加、修改、删除和查询。</p>
 </div>
-<div class="sect4 data-line-679">
+<div class="sect4 data-line-683">
 <h5 id="_数据源的基本属性">数据源的基本属性</h5>
-<div class="ulist data-line-681">
+<div class="ulist data-line-685">
 <ul>
-<li class="data-line-681">
+<li class="data-line-685">
 <p>数据源名称</p>
 </li>
-<li class="data-line-682">
+<li class="data-line-686">
 <p>数据源类型，用于区分数据库、文件、及其他结构化数据源。</p>
 </li>
-<li class="data-line-683">
+<li class="data-line-687">
 <p>数据源访问参数，表示访问该数据源需要提供的参数，如用户名、口令、地址、端口等。</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect4 data-line-685">
+<div class="sect4 data-line-689">
 <h5 id="_数据源管理功能">数据源管理功能</h5>
-<div class="ulist data-line-686">
+<div class="ulist data-line-690">
 <ul>
-<li class="data-line-686">
+<li class="data-line-690">
 <p>数据源浏览</p>
 </li>
-<li class="data-line-687">
+<li class="data-line-691">
 <p>数据源新增、修改</p>
 </li>
-<li class="data-line-688">
+<li class="data-line-692">
 <p>数据源删除</p>
-<div class="paragraph data-line-690">
+<div class="paragraph data-line-694">
 <p>被基础指标引用的数据源不能被删除。</p>
 </div>
 </li>
@@ -1839,58 +1834,58 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </div>
 </div>
 </div>
-<div class="sect3 data-line-692">
-<h4 id="_指标库管理">指标库管理</h4>
-<div class="paragraph data-line-694">
-<p>指标库由主表和维表构成。维表定义了指标可以使用的维度，主表用于存放指标数据。在物理层面，指标库分为持久化指标库和内存指标库，分别用于存放批量加载和流式加载的指标，两个库拥有相同的主表和维表，内容定期同步。</p>
+<div class="sect3 data-line-696">
+<h4 id="_指标仓库管理">指标仓库管理</h4>
+<div class="paragraph data-line-698">
+<p>指标仓库由主表和维表构成。维表定义了指标可以使用的维度，主表用于存放指标数据。在物理层面，指标仓库分为持久化指标仓库和内存指标仓库，分别用于存放批量加载和流式加载的指标，两个仓库拥有相同的主表和维表，内容定期同步。</p>
 </div>
-<div class="ulist data-line-696">
+<div class="ulist data-line-700">
 <ul>
-<li class="data-line-696">
+<li class="data-line-700">
 <p>指标维表：定义指标维度的表。指标的每个维度（如日期、地域、币种等）都对应到不同的指标维表。维度可以包含多个粒度，维度粒度用维度表的字段表示。维度表和指标主表之间使用维度表的记录ID关联。</p>
 </li>
-<li class="data-line-697">
-<p>指标主表：指标主表存储指标数据。指标库中可以有多个指标主表。指标的维度由与指标主表关联的指标维表所定义。存储在同一个指标主表中的所有指标都具备相同的维度。指标主表可以包含多个度量字段，每个度量字段对应一个指标（可以是基础指标或衍生指标）。一个主表中可以存放若干个基础指标和衍生指标的指标数据。指标库的度量字段根据指标的配置动态增加或删除。</p>
+<li class="data-line-701">
+<p>指标主表：指标主表存储指标数据。指标仓库中可以有多个指标主表。指标的维度由与指标主表关联的指标维表所定义。存储在同一个指标主表中的所有指标都具备相同的维度。指标主表可以包含多个度量字段，每个度量字段对应一个指标（可以是基础指标或衍生指标）。一个主表中可以存放若干个基础指标和衍生指标的指标数据。指标仓库的度量字段根据指标的配置动态增加或删除。</p>
 </li>
 </ul>
 </div>
-<div class="imageblock text-ceneter data-line-700">
+<div class="imageblock text-ceneter data-line-704">
 <div class="content">
 <img src="metric-db.jpg" alt="metric db" width="90%">
 </div>
-<div class="title">Figure 10. 指标库数据模型示意</div>
+<div class="title">Figure 10. 指标仓库数据模型示意</div>
 </div>
-<div class="sect4 data-line-702">
-<h5 id="_指标库基本要素">指标库基本要素</h5>
-<div class="ulist data-line-703">
-<ul>
-<li class="data-line-703">
-<p>指标库维度列表</p>
-<div class="ulist data-line-704">
-<ul>
-<li class="data-line-704">
-<p>维度名称</p>
-</li>
-<li class="data-line-705">
-<p>维度表名称</p>
-</li>
-<li class="data-line-706">
-<p>维度粒度列表</p>
+<div class="sect4 data-line-706">
+<h5 id="_指标仓库基本要素">指标仓库基本要素</h5>
 <div class="ulist data-line-707">
 <ul>
 <li class="data-line-707">
-<p>粒度名称</p>
-</li>
+<p>指标仓库维度</p>
+<div class="ulist data-line-708">
+<ul>
 <li class="data-line-708">
-<p>粒度字段名称</p>
+<p>维度名称</p>
 </li>
 <li class="data-line-709">
-<p>粒度等级</p>
+<p>维度表名称</p>
 </li>
 <li class="data-line-710">
+<p>维度粒度列表</p>
+<div class="ulist data-line-711">
+<ul>
+<li class="data-line-711">
+<p>粒度名称</p>
+</li>
+<li class="data-line-712">
+<p>粒度字段名称</p>
+</li>
+<li class="data-line-713">
+<p>粒度等级</p>
+</li>
+<li class="data-line-714">
 <p>粒度字段数据类型</p>
 </li>
-<li class="data-line-711">
+<li class="data-line-715">
 <p>粒度描述</p>
 </li>
 </ul>
@@ -1899,43 +1894,43 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </ul>
 </div>
 </li>
-<li class="data-line-712">
-<p>指标库主表列表</p>
-<div class="ulist data-line-713">
+<li class="data-line-716">
+<p>指标仓库主表</p>
+<div class="ulist data-line-717">
 <ul>
-<li class="data-line-713">
+<li class="data-line-717">
 <p>主表名称</p>
 </li>
-<li class="data-line-714">
+<li class="data-line-718">
 <p>主表所属部门</p>
 </li>
-<li class="data-line-715">
+<li class="data-line-719">
 <p>主表维度列表</p>
-<div class="ulist data-line-716">
+<div class="ulist data-line-720">
 <ul>
-<li class="data-line-716">
+<li class="data-line-720">
 <p>维度名称</p>
 </li>
-<li class="data-line-717">
+<li class="data-line-721">
 <p>维度粒度名称</p>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-718">
+<li class="data-line-722">
 <p>主表指标字段列表</p>
-<div class="ulist data-line-719">
+<div class="ulist data-line-723">
 <ul>
-<li class="data-line-719">
+<li class="data-line-723">
 <p>指标字段名称</p>
 </li>
-<li class="data-line-720">
+<li class="data-line-724">
 <p>指标字段物理名称</p>
 </li>
-<li class="data-line-721">
+<li class="data-line-725">
 <p>指标字段数据类型</p>
 </li>
-<li class="data-line-722">
+<li class="data-line-726">
 <p>指标字段描述</p>
 </li>
 </ul>
@@ -1947,70 +1942,70 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </ul>
 </div>
 </div>
-<div class="sect4 data-line-724">
-<h5 id="_指标库管理功能">指标库管理功能</h5>
-<div class="ulist data-line-725">
+<div class="sect4 data-line-728">
+<h5 id="_指标仓库管理功能">指标仓库管理功能</h5>
+<div class="ulist data-line-729">
 <ul>
-<li class="data-line-725">
+<li class="data-line-729">
 <p>指标维度管理</p>
-<div class="ulist data-line-726">
+<div class="ulist data-line-730">
 <ul>
-<li class="data-line-726">
+<li class="data-line-730">
 <p>指标维度浏览</p>
 </li>
-<li class="data-line-727">
+<li class="data-line-731">
 <p>指标维度新建、编辑</p>
-<div class="ulist data-line-728">
+<div class="ulist data-line-732">
 <ul>
-<li class="data-line-728">
+<li class="data-line-732">
 <p>维度粒度管理</p>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-729">
+<li class="data-line-733">
 <p>指标维度删除</p>
-<div class="paragraph data-line-731">
+<div class="paragraph data-line-735">
 <p>被指标主表引用的指标维度不可删除</p>
 </div>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-732">
+<li class="data-line-736">
 <p>指标主表管理</p>
-<div class="paragraph data-line-734">
+<div class="paragraph data-line-738">
 <p>指标主表在用户维护指标时根据指标的维度自动创建并增加/删除度量字段。</p>
 </div>
-<div class="ulist data-line-736">
+<div class="ulist data-line-740">
 <ul>
-<li class="data-line-736">
+<li class="data-line-740">
 <p>指标主表浏览</p>
 </li>
-<li class="data-line-737">
+<li class="data-line-741">
 <p>指标主表拆分</p>
-<div class="paragraph data-line-739">
+<div class="paragraph data-line-743">
 <p>将数据量过大的指标主表拆分为多个维度相同的主表，可以提高指标查询效率。</p>
 </div>
 </li>
-<li class="data-line-740">
+<li class="data-line-744">
 <p>指标主表删除</p>
-<div class="paragraph data-line-742">
+<div class="paragraph data-line-746">
 <p>被指标所引用的指标主表不可删除。</p>
 </div>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-743">
-<p>指标库模型视图</p>
-<div class="paragraph data-line-745">
-<p>以图形化方式展现指标库中各指标维度和指标主表之间的关系</p>
+<li class="data-line-747">
+<p>指标仓库模型视图</p>
+<div class="paragraph data-line-749">
+<p>以图形化方式展现指标仓库中各指标维度和指标主表之间的关系</p>
 </div>
 </li>
-<li class="data-line-746">
+<li class="data-line-750">
 <p>指标数据量分析</p>
-<div class="paragraph data-line-748">
+<div class="paragraph data-line-752">
 <p>提供指标主表和指标级别的数据量分析功能。</p>
 </div>
 </li>
@@ -2018,48 +2013,48 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 </div>
 </div>
 </div>
-<div class="sect3 data-line-751">
+<div class="sect3 data-line-755">
 <h4 id="_系统运行报告">系统运行报告</h4>
-<div class="paragraph data-line-752">
+<div class="paragraph data-line-756">
 <p>+
 包含下列基本要素：</p>
 </div>
-<div class="ulist data-line-755">
+<div class="ulist data-line-759">
 <ul>
-<li class="data-line-755">
+<li class="data-line-759">
 <p>报告日期区间</p>
 </li>
-<li class="data-line-756">
+<li class="data-line-760">
 <p>指标体系维护情况</p>
-<div class="ulist data-line-757">
+<div class="ulist data-line-761">
 <ul>
-<li class="data-line-757">
+<li class="data-line-761">
 <p>审核通过的各指标体系的新增、修改和删除的指标</p>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-758">
+<li class="data-line-762">
 <p>指标加载情况</p>
-<div class="ulist data-line-759">
+<div class="ulist data-line-763">
 <ul>
-<li class="data-line-759">
+<li class="data-line-763">
 <p>故障情况分析：故障天数、故障原因分析</p>
 </li>
-<li class="data-line-760">
+<li class="data-line-764">
 <p>指标数据量分析：各主表数据量、各主表数据增量</p>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-761">
+<li class="data-line-765">
 <p>指标访问情况</p>
-<div class="ulist data-line-762">
+<div class="ulist data-line-766">
 <ul>
-<li class="data-line-762">
+<li class="data-line-766">
 <p>用户访问情况：各部门访问指标数据次数排名</p>
 </li>
-<li class="data-line-763">
+<li class="data-line-767">
 <p>接口访问情况：指标访问数据量排名、接口账号活跃度排名</p>
 </li>
 </ul>
@@ -2075,7 +2070,7 @@ and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2020-05-13 16:18:59 +0800
+Last updated 2020-05-14 17:27:48 +0800
 </div>
 </div>
 </body>
