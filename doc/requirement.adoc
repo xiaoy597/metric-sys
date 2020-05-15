@@ -1,6 +1,7 @@
 = 指标管理系统需求分析和总体设计
 肖燏 <yu.xiao@seaboxdata.com>
 v1.0
+:toc:
 
 == 系统概述
 指标管理系统的主要作用是帮助用户充分挖掘大数据平台中海量数据的价值，根据用户的业务需求，将来自不同渠道、形式和结构各异的数据经过加工、整理，转变为为易于分析和使用的多维数据指标，为用户提供完整、及时、灵活响应需求的数据视图。
@@ -181,43 +182,44 @@ FOR 指标主表的所有维度：
 <1> 如果主表只有一个维度，此列表为空
 <2> 如果维度只有一个粒度，此列表为空
 
-
-.例子
-[source, sql]
-----
-insert into metric_fact (date_id, org_id, metric1, metric2)
-select dim_date.id as date_id, tmp_fact.org_id as org_id, metric1, metric2
-from (
-    select f.org_id, d.year_val, d.month_val, null as day_val, 
-        sum(metric1) as metric1, sum(metric2) as metric2
-    from dim_date d, metric_fact f
-    where d.id = f.date_id
-    group by f.org_id, d.year_val, d.month_val
-    with ROLLUP
-    having f.org_id is not null
-) T, dim_date 
-where coalesce(T.year_val, -1) = coalesce(dim_date.year_val, -1)
-and coalesce(T.month_val, -1) = coalesce(dim_date.month_val, -1)
-and coalesce(T.day_val, -1) = coalesce(dim_date.day_val, -1)
-;
-
-insert into metric_fact (org_id, date_id, metric1, metric2)
-select dim_org.id as org_id, T.date_id as date_id, metric1, metric2
-from (
-    select f.date_id, d.level1, d.level2, null as level3, 
-        sum(metric1) as metric1, sum(metric2) as metric2
-    from dim_org d, metric_fact f
-    where d.id = f.org_id
-    group by f.date_id, d.level1, d.level2
-    with ROLLUP
-    having f.date_id is not null
-) T, dim_org 
-where coalesce(T.level1, -1) = coalesce(dim_org.level1, -1)
-and coalesce(T.level2, -1) = coalesce(dim_org.level2, -1)
-and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
-;
-
-----
+//
+//.例子
+//[source, sql]
+//----
+//insert into metric_fact (date_id, org_id, metric1, metric2)
+//select dim_date.id as date_id, tmp_fact.org_id as org_id, metric1, metric2
+//from (
+//    select f.org_id, d.year_val, d.month_val, null as day_val, 
+//        sum(metric1) as metric1, sum(metric2) as metric2
+//    from dim_date d, metric_fact f
+//    where d.id = f.date_id
+//    group by f.org_id, d.year_val, d.month_val
+//    with ROLLUP
+//    having f.org_id is not null
+//) T, dim_date 
+//where coalesce(T.year_val, -1) = coalesce(dim_date.year_val, -1)
+//and coalesce(T.month_val, -1) = coalesce(dim_date.month_val, -1)
+//and coalesce(T.day_val, -1) = coalesce(dim_date.day_val, -1)
+//;
+//
+//insert into metric_fact (org_id, date_id, metric1, metric2)
+//select dim_org.id as org_id, T.date_id as date_id, metric1, metric2
+//from (
+//    select f.date_id, d.level1, d.level2, null as level3, 
+//        sum(metric1) as metric1, sum(metric2) as metric2
+//    from dim_org d, metric_fact f
+//    where d.id = f.org_id
+//    group by f.date_id, d.level1, d.level2
+//    with ROLLUP
+//    having f.date_id is not null
+//) T, dim_org 
+//where coalesce(T.level1, -1) = coalesce(dim_org.level1, -1)
+//and coalesce(T.level2, -1) = coalesce(dim_org.level2, -1)
+//and coalesce(T.level3, -1) = coalesce(dim_org.level3, -1)
+//;
+//
+//----
+//
 
 === 流式指标加载引擎
 
@@ -330,16 +332,17 @@ https://<hostname>:<port>/api/<指标接口代码?metric-list=<指标代码列�
 {
     "code": 0,                              // <1>
     "message": "",                          // <2>
-    "count": 2,                             // <3>
+    "requestId": "12345"                    // <3>
+    "count": 2,                             // <4>
     "data": [
         {
             "dimentions": [
                 {
-                    "name": "dim_1",            // <4>
+                    "name": "dim_1",            // <5>
                     "fields": [
                         {
-                            "name": "dim_1_field_1",    // <5>
-                            "value": "field_1_value"    // <6>
+                            "name": "dim_1_field_1",    // <6>
+                            "value": "field_1_value"    // <7>
                         },
                         {
                             "name": "dim_1_field_2",
@@ -368,8 +371,8 @@ https://<hostname>:<port>/api/<指标接口代码?metric-list=<指标代码列�
             ],
             "metrics": [
                 {
-                    "code": "metric-1",         // <7>
-                    "value": 100                // <8>
+                    "code": "metric-1",         // <8>
+                    "value": 100                // <9>
                 },
                 {
                     "code": "metric-2",
@@ -385,12 +388,13 @@ https://<hostname>:<port>/api/<指标接口代码?metric-list=<指标代码列�
 ----
 <1> 接口返回码，0表示成功
 <2> 接口返回码不为0时表示调用出错信息
-<3> 本次调用返回的记录数
-<4> 指标维度对应的维度表名称
-<5> 维度表中的维度字段名称
-<6> 维度字段的取值
-<7> 指标代码
-<8> 指标值
+<3> 本地调用的请求ID
+<4> 本次调用返回的记录数
+<5> 指标维度对应的维度表名称
+<6> 维度表中的维度字段名称
+<7> 维度字段的取值
+<8> 指标代码
+<9> 指标值
 
 === 指标仓库数据同步
 指标仓库数据同步用于在持久化指标仓库和内存指标仓库之间实现定时的数据同步。数据同步包括两个部分：
