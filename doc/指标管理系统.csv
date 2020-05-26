@@ -101,3 +101,4 @@
 角色权限,role_privilege,,X,X,X,X
 角色映射,role_mapping,,X,X,X,X
 外部角色代码,external_role_cd,,X,X,X,X
+审批流编号,task_flow_id,,X,X,X,X

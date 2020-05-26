@@ -25,6 +25,7 @@ CREATE TABLE metric
 	approver             CHAR(10) NULL,
 	update_tm            DATETIME NULL,
 	approve_tm           DATETIME NULL,
+	task_flow_id         INTEGER NULL,
 	PRIMARY KEY (metric_row_id)
 );
 
@@ -42,6 +43,7 @@ CREATE TABLE metric_class
 	disp_order           INTEGER NULL,
 	dept_cd              VARCHAR(3) NULL,
 	metric_class_desc    VARCHAR(512) NULL,
+	task_flow_id         INTEGER NULL,
 	PRIMARY KEY (mc_row_id)
 );
 
@@ -56,6 +58,7 @@ CREATE TABLE metric_class_r
 	approver             CHAR(10) NULL,
 	update_tm            DATETIME NULL,
 	approve_tm           DATETIME NULL,
+	task_flow_id         INTEGER NULL,
 	PRIMARY KEY (mc_r_row_id)
 );
 
@@ -109,6 +112,7 @@ CREATE TABLE metric_interface
 	approve_tm           DATETIME NULL,
 	token_expire_tm      DATETIME NULL,
 	app_memo             VARCHAR(512) NULL,
+	task_flow_id         INTEGER NULL,
 	PRIMARY KEY (mif_row_id)
 );
 
@@ -263,6 +267,7 @@ ALTER TABLE metric COMMENT = '指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric MODIFY COLUMN `approver` CHAR(10) NULL COMMENT '审核用户 -- ';
   ALTER TABLE metric MODIFY COLUMN `update_tm` DATETIME NULL COMMENT '更新时间 -- ';
   ALTER TABLE metric MODIFY COLUMN `approve_tm` DATETIME NULL COMMENT '审核时间 -- ';
+  ALTER TABLE metric MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
   
 ALTER TABLE metric_class COMMENT = '指标目录 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_class MODIFY COLUMN `mc_row_id` BIGINT AUTO_INCREMENT COMMENT '指标目录记录标识 -- ';
@@ -282,6 +287,7 @@ ALTER TABLE metric_class COMMENT = '指标目录 -- ' ENGINE=InnoDB DEFAULT CHAR
   ALTER TABLE metric_class MODIFY COLUMN `disp_order` INTEGER NULL COMMENT '显示顺序 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `dept_cd` VARCHAR(3) NULL COMMENT '部门代码 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `metric_class_desc` VARCHAR(512) NULL COMMENT '指标目录描述 -- ';
+  ALTER TABLE metric_class MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
   
 ALTER TABLE metric_class_r COMMENT = '指标分类 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_class_r MODIFY COLUMN `mc_r_row_id` BIGINT AUTO_INCREMENT COMMENT '指标分类记录标识 -- ';
@@ -293,6 +299,7 @@ ALTER TABLE metric_class_r COMMENT = '指标分类 -- ' ENGINE=InnoDB DEFAULT CH
   ALTER TABLE metric_class_r MODIFY COLUMN `approver` CHAR(10) NULL COMMENT '审核用户 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `update_tm` DATETIME NULL COMMENT '更新时间 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `approve_tm` DATETIME NULL COMMENT '审核时间 -- ';
+  ALTER TABLE metric_class_r MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
   
 ALTER TABLE metric_column COMMENT = '指标字段 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_column MODIFY COLUMN `metric_col_cd` CHAR(10) NOT NULL COMMENT '指标字段代码 -- ';
@@ -332,6 +339,7 @@ ALTER TABLE metric_interface COMMENT = '指标数据接口 -- ' ENGINE=InnoDB DE
   ALTER TABLE metric_interface MODIFY COLUMN `approve_tm` DATETIME NULL COMMENT '审核时间 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `token_expire_tm` DATETIME NULL COMMENT '令牌失效时间 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `app_memo` VARCHAR(512) NULL COMMENT '接口申请备注 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
   
 ALTER TABLE metric_param COMMENT = '指标计算参数 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_param MODIFY COLUMN `param_cd` CHAR(6) NOT NULL COMMENT '参数代码 -- ';
