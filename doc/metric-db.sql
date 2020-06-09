@@ -34,7 +34,7 @@ CREATE TABLE metric_class
 	mc_row_id            BIGINT AUTO_INCREMENT,
 	metric_class_cd      CHAR(8) NULL,
 	metric_class_nm      VARCHAR(60) NULL,
-	super_class_nm       CHAR(8) NULL,
+	super_class_cd       CHAR(8) NULL,
 	update_flag          INTEGER NULL,
 	commiter             CHAR(10) NULL,
 	approver             CHAR(10) NULL,
@@ -273,7 +273,7 @@ ALTER TABLE metric_class COMMENT = '指标目录 -- ' ENGINE=InnoDB DEFAULT CHAR
   ALTER TABLE metric_class MODIFY COLUMN `mc_row_id` BIGINT AUTO_INCREMENT COMMENT '指标目录记录标识 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `metric_class_cd` CHAR(8) NULL COMMENT '指标目录代码 -- 不得重复';
   ALTER TABLE metric_class MODIFY COLUMN `metric_class_nm` VARCHAR(60) NULL COMMENT '指标目录名称 -- ';
-  ALTER TABLE metric_class MODIFY COLUMN `super_class_nm` CHAR(8) NULL COMMENT '上级指标目录代码 -- ';
+  ALTER TABLE metric_class MODIFY COLUMN `super_class_cd` CHAR(8) NULL COMMENT '上级指标目录代码 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `update_flag` INTEGER NULL COMMENT '修改标识 -- 0：无修改，1：新增，2：更新，3：删除
 ，4：失效。
 增删改操作提交时，将新记录（或被删除记录）插入表中（使用自增的记录标识），并将这些记录的修改标识设置为相应的值（1-3）。指标体系审核通过后，对于：
@@ -363,10 +363,10 @@ ALTER TABLE metric_src COMMENT = '指标数据源 -- ' ENGINE=InnoDB DEFAULT CHA
   ALTER TABLE metric_src MODIFY COLUMN `metric_src_cd` CHAR(4) NOT NULL COMMENT '指标数据源代码 -- ';
   ALTER TABLE metric_src MODIFY COLUMN `metric_src_nm` VARCHAR(60) NULL COMMENT '指标数据源名称 -- ';
   ALTER TABLE metric_src MODIFY COLUMN `metric_src_param` VARCHAR(256) NULL COMMENT '数据源访问参数 -- ';
-  ALTER TABLE metric_src MODIFY COLUMN `metric_src_type_cd` CHAR(2) NULL COMMENT '指标数据源类型代码 -- ';
+  ALTER TABLE metric_src MODIFY COLUMN `metric_src_type_cd` CHAR(2) NULL COMMENT '指标数据源类型代码 -- 01：Hive，02：MySQL，03：MPP，04：文件系统';
   
 ALTER TABLE metric_src_type COMMENT = '指标数据源类型 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE metric_src_type MODIFY COLUMN `metric_src_type_cd` CHAR(2) NOT NULL COMMENT '指标数据源类型代码 -- ';
+  ALTER TABLE metric_src_type MODIFY COLUMN `metric_src_type_cd` CHAR(2) NOT NULL COMMENT '指标数据源类型代码 -- 01：Hive，02：MySQL，03：MPP，04：文件系统';
   ALTER TABLE metric_src_type MODIFY COLUMN `metric_src_type_nm` VARCHAR(60) NULL COMMENT '指标数据源类型名称 -- ';
   
 ALTER TABLE metric_tbl COMMENT = '指标主表 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;

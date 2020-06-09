@@ -64,7 +64,7 @@
 安全级别名称,sec_level_nm,,X,X,X,X
 数据安全级别,security_level,,X,X,X,X
 上级管理机构代码,super_admin_org_cd,,X,X,X,X
-上级指标目录代码,super_class_nm,,X,X,X,X
+上级指标目录代码,super_class_cd,,X,X,X,X
 修改标识,update_flag,,X,X,X,X
 更新时间,update_tm,,X,X,X,X
 更新用户,commiter,,X,X,X,X

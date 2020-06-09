@@ -187,7 +187,7 @@ FOR 指标主表的所有维度：
 //[source, sql]
 //----
 //insert into metric_fact (date_id, org_id, metric1, metric2)
-//select dim_date.id as date_id, tmp_fact.org_id as org_id, metric1, metric2
+//select dim_date.id as date_id, T.org_id as org_id, metric1, metric2
 //from (
 //    select f.org_id, d.year_val, d.month_val, null as day_val, 
 //        sum(metric1) as metric1, sum(metric2) as metric2
