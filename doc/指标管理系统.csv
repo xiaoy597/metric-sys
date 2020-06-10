@@ -11,6 +11,7 @@
 显示顺序,disp_order,,X,X,X,X
 下游指标代码,dstream_metric,,X,X,X,X
 指标更新周期,load_cycle,,X,X,X,X
+外部用户角色,external_user_role,,X,X,X,X
 本级管理机构代码,local_admin_org_cd,,X,X,X,X
 指标分类记录标识,mc_r_row_id,,X,X,X,X
 指标目录记录标识,mc_row_id,,X,X,X,X
@@ -26,10 +27,10 @@
 指标字段类型,metric_col_type,,X,X,X,X
 指标字段物理名称,metric_col_phy_nm,,X,X,X,X
 指标字段,metric_column,,X,X,X,X
-指标字段代码,metric_col_cd,,,,,
+指标字段代码,metric_col_cd,,X,X,X,X
 指标描述,metric_desc,,X,X,X,X
 指标维度,metric_dim,,X,X,X,X
-指标维度字段,metric_dim_col,,,,,
+指标维度字段,metric_dim_col,,X,X,X,X
 维度字段代码,metric_dim_col_cd,,X,X,X,X
 指标计算模板,metric_formula,,X,X,X,X
 指标名称,metric_nm,,X,X,X,X
@@ -102,3 +103,4 @@
 角色映射,role_mapping,,X,X,X,X
 外部角色代码,external_role_cd,,X,X,X,X
 审批流编号,task_flow_id,,X,X,X,X
+上级业务机构代码,super_busi_org_cd,,X,X,X,X

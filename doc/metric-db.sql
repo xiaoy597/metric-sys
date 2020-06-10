@@ -1,9 +1,16 @@
 
 CREATE TABLE busi_department
 (
-	dept_cd              VARCHAR(3) NOT NULL,
+	dept_cd              VARCHAR(4) NOT NULL,
 	dept_nm              VARCHAR(60) NULL,
 	PRIMARY KEY (dept_cd)
+);
+
+CREATE TABLE external_user_role
+(
+	external_user_cd     CHAR(16) NOT NULL,
+	external_role_cd     CHAR(16) NOT NULL,
+	PRIMARY KEY (external_user_cd,external_role_cd)
 );
 
 CREATE TABLE metric
@@ -12,7 +19,7 @@ CREATE TABLE metric
 	metric_cd            VARCHAR(10) NULL,
 	metric_nm            VARCHAR(60) NULL,
 	metric_type          INTEGER NULL,
-	dept_cd              VARCHAR(3) NULL,
+	dept_cd              VARCHAR(4) NULL,
 	metric_unit          VARCHAR(16) NULL,
 	metric_tbl_cd        CHAR(6) NULL,
 	metric_tbl_col_cd    CHAR(10) NULL,
@@ -41,7 +48,7 @@ CREATE TABLE metric_class
 	update_tm            DATETIME NULL,
 	approve_tm           DATETIME NULL,
 	disp_order           INTEGER NULL,
-	dept_cd              VARCHAR(3) NULL,
+	dept_cd              VARCHAR(4) NULL,
 	metric_class_desc    VARCHAR(512) NULL,
 	task_flow_id         INTEGER NULL,
 	PRIMARY KEY (mc_row_id)
@@ -50,9 +57,9 @@ CREATE TABLE metric_class
 CREATE TABLE metric_class_r
 (
 	mc_r_row_id          BIGINT AUTO_INCREMENT,
-	disp_order           INTEGER NULL,
 	metric_cd            VARCHAR(10) NULL,
 	metric_class_cd      CHAR(8) NULL,
+	disp_order           INTEGER NULL,
 	update_flag          INTEGER NULL,
 	commiter             CHAR(10) NULL,
 	approver             CHAR(10) NULL,
@@ -120,7 +127,7 @@ CREATE TABLE metric_param
 (
 	param_cd             CHAR(6) NOT NULL,
 	param_nm             VARCHAR(60) NULL,
-	param_value          VARCHAR(128) NULL,
+	param_value          VARCHAR(512) NULL,
 	PRIMARY KEY (param_cd)
 );
 
@@ -163,7 +170,7 @@ CREATE TABLE metric_tbl
 	metric_tbl_cd        CHAR(6) NOT NULL,
 	metric_tbl_nm        VARCHAR(60) NULL,
 	metric_tbl_phy_nm    VARCHAR(30) NULL,
-	dept_cd              VARCHAR(3) NULL,
+	dept_cd              VARCHAR(4) NULL,
 	PRIMARY KEY (metric_tbl_cd)
 );
 
@@ -176,12 +183,13 @@ CREATE TABLE metric_tbl_dim
 
 CREATE TABLE organization
 (
-	org_cd               CHAR(8) NOT NULL,
+	org_cd               VARCHAR(20) NOT NULL,
 	org_nm               VARCHAR(60) NULL,
-	dept_cd              VARCHAR(3) NULL,
+	dept_cd              VARCHAR(4) NULL,
 	org_type             INTEGER NULL,
-	local_admin_org_cd   CHAR(8) NULL,
-	super_admin_org_cd   CHAR(8) NULL,
+	local_admin_org_cd   VARCHAR(20) NULL,
+	super_admin_org_cd   VARCHAR(20) NULL,
+	super_busi_org_cd    VARCHAR(20) NULL,
 	PRIMARY KEY (org_cd)
 );
 
@@ -228,14 +236,18 @@ CREATE TABLE user_mapping
 	user_cd              INTEGER NOT NULL,
 	external_user_cd     CHAR(16) NULL,
 	user_nm              VARCHAR(60) NULL,
-	org_cd               CHAR(8) NULL,
+	org_cd               VARCHAR(20) NULL,
 	user_login_id        CHAR(10) NULL,
 	PRIMARY KEY (user_cd)
 );
 
 ALTER TABLE busi_department COMMENT = '业务部门 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE busi_department MODIFY COLUMN `dept_cd` VARCHAR(3) NOT NULL COMMENT '部门代码 -- ';
+  ALTER TABLE busi_department MODIFY COLUMN `dept_cd` VARCHAR(4) NOT NULL COMMENT '部门代码 -- ';
   ALTER TABLE busi_department MODIFY COLUMN `dept_nm` VARCHAR(60) NULL COMMENT '部门名称 -- ';
+  
+ALTER TABLE external_user_role COMMENT = '外部用户角色 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE external_user_role MODIFY COLUMN `external_user_cd` CHAR(16) NOT NULL COMMENT '外部用户代码 -- ';
+  ALTER TABLE external_user_role MODIFY COLUMN `external_role_cd` CHAR(16) NOT NULL COMMENT '外部角色代码 -- ';
   
 ALTER TABLE metric COMMENT = '指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric MODIFY COLUMN `metric_row_id` BIGINT AUTO_INCREMENT COMMENT '指标记录标识 -- ';
@@ -243,7 +255,7 @@ ALTER TABLE metric COMMENT = '指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric MODIFY COLUMN `metric_nm` VARCHAR(60) NULL COMMENT '指标名称 -- ';
   ALTER TABLE metric MODIFY COLUMN `metric_type` INTEGER NULL COMMENT '指标类型 -- 0：基础指标
 1：衍生指标';
-  ALTER TABLE metric MODIFY COLUMN `dept_cd` VARCHAR(3) NULL COMMENT '业务部门代码 -- ';
+  ALTER TABLE metric MODIFY COLUMN `dept_cd` VARCHAR(4) NULL COMMENT '业务部门代码 -- ';
   ALTER TABLE metric MODIFY COLUMN `metric_unit` VARCHAR(16) NULL COMMENT '指标数据单位 -- ';
   ALTER TABLE metric MODIFY COLUMN `metric_tbl_cd` CHAR(6) NULL COMMENT '指标主表代码 -- ';
   ALTER TABLE metric MODIFY COLUMN `metric_tbl_col_cd` CHAR(10) NULL COMMENT '指标度量字段代码 -- ';
@@ -285,15 +297,15 @@ ALTER TABLE metric_class COMMENT = '指标目录 -- ' ENGINE=InnoDB DEFAULT CHAR
   ALTER TABLE metric_class MODIFY COLUMN `update_tm` DATETIME NULL COMMENT '更新时间 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `approve_tm` DATETIME NULL COMMENT '审核时间 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `disp_order` INTEGER NULL COMMENT '显示顺序 -- ';
-  ALTER TABLE metric_class MODIFY COLUMN `dept_cd` VARCHAR(3) NULL COMMENT '部门代码 -- ';
+  ALTER TABLE metric_class MODIFY COLUMN `dept_cd` VARCHAR(4) NULL COMMENT '部门代码 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `metric_class_desc` VARCHAR(512) NULL COMMENT '指标目录描述 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
   
 ALTER TABLE metric_class_r COMMENT = '指标分类 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_class_r MODIFY COLUMN `mc_r_row_id` BIGINT AUTO_INCREMENT COMMENT '指标分类记录标识 -- ';
-  ALTER TABLE metric_class_r MODIFY COLUMN `disp_order` INTEGER NULL COMMENT '显示顺序 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `metric_cd` VARCHAR(10) NULL COMMENT '指标代码 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `metric_class_cd` CHAR(8) NULL COMMENT '指标目录代码 -- ';
+  ALTER TABLE metric_class_r MODIFY COLUMN `disp_order` INTEGER NULL COMMENT '显示顺序 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `update_flag` INTEGER NULL COMMENT '修改标识 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `commiter` CHAR(10) NULL COMMENT '更新用户 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `approver` CHAR(10) NULL COMMENT '审核用户 -- ';
@@ -344,7 +356,7 @@ ALTER TABLE metric_interface COMMENT = '指标数据接口 -- ' ENGINE=InnoDB DE
 ALTER TABLE metric_param COMMENT = '指标计算参数 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_param MODIFY COLUMN `param_cd` CHAR(6) NOT NULL COMMENT '参数代码 -- ';
   ALTER TABLE metric_param MODIFY COLUMN `param_nm` VARCHAR(60) NULL COMMENT '参数名称 -- ';
-  ALTER TABLE metric_param MODIFY COLUMN `param_value` VARCHAR(128) NULL COMMENT '参数值 -- ';
+  ALTER TABLE metric_param MODIFY COLUMN `param_value` VARCHAR(512) NULL COMMENT '参数值 -- ';
   
 ALTER TABLE metric_relation COMMENT = '指标依赖关系 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_relation MODIFY COLUMN `ustream_metric` VARCHAR(10) NOT NULL COMMENT '上游指标代码 -- ';
@@ -373,20 +385,21 @@ ALTER TABLE metric_tbl COMMENT = '指标主表 -- ' ENGINE=InnoDB DEFAULT CHARSE
   ALTER TABLE metric_tbl MODIFY COLUMN `metric_tbl_cd` CHAR(6) NOT NULL COMMENT '指标主表代码 -- ';
   ALTER TABLE metric_tbl MODIFY COLUMN `metric_tbl_nm` VARCHAR(60) NULL COMMENT '指标主表名称 -- ';
   ALTER TABLE metric_tbl MODIFY COLUMN `metric_tbl_phy_nm` VARCHAR(30) NULL COMMENT '指标主表物理表名称 -- ';
-  ALTER TABLE metric_tbl MODIFY COLUMN `dept_cd` VARCHAR(3) NULL COMMENT '部门代码 -- ';
+  ALTER TABLE metric_tbl MODIFY COLUMN `dept_cd` VARCHAR(4) NULL COMMENT '部门代码 -- ';
   
 ALTER TABLE metric_tbl_dim COMMENT = '指标主表维度 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_tbl_dim MODIFY COLUMN `metric_tbl_cd` CHAR(6) NOT NULL COMMENT '指标主表代码 -- ';
   ALTER TABLE metric_tbl_dim MODIFY COLUMN `dim_cd` CHAR(4) NOT NULL COMMENT '维度代码 -- ';
   
 ALTER TABLE organization COMMENT = '组织机构 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE organization MODIFY COLUMN `org_cd` CHAR(8) NOT NULL COMMENT '机构代码 -- ';
+  ALTER TABLE organization MODIFY COLUMN `org_cd` VARCHAR(20) NOT NULL COMMENT '机构代码 -- ';
   ALTER TABLE organization MODIFY COLUMN `org_nm` VARCHAR(60) NULL COMMENT '机构名称 -- ';
-  ALTER TABLE organization MODIFY COLUMN `dept_cd` VARCHAR(3) NULL COMMENT '部门代码 -- ';
+  ALTER TABLE organization MODIFY COLUMN `dept_cd` VARCHAR(4) NULL COMMENT '部门代码 -- ';
   ALTER TABLE organization MODIFY COLUMN `org_type` INTEGER NULL COMMENT '机构类型 -- 0：管理机构
 1：业务部门';
-  ALTER TABLE organization MODIFY COLUMN `local_admin_org_cd` CHAR(8) NULL COMMENT '本级管理机构代码 -- ';
-  ALTER TABLE organization MODIFY COLUMN `super_admin_org_cd` CHAR(8) NULL COMMENT '上级管理机构代码 -- ';
+  ALTER TABLE organization MODIFY COLUMN `local_admin_org_cd` VARCHAR(20) NULL COMMENT '本级管理机构代码 -- ';
+  ALTER TABLE organization MODIFY COLUMN `super_admin_org_cd` VARCHAR(20) NULL COMMENT '上级管理机构代码 -- ';
+  ALTER TABLE organization MODIFY COLUMN `super_busi_org_cd` VARCHAR(20) NULL COMMENT '上级业务机构代码 -- ';
   
 ALTER TABLE role_mapping COMMENT = '角色映射 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE role_mapping MODIFY COLUMN `external_role_cd` CHAR(16) NOT NULL COMMENT '外部角色代码 -- ';
@@ -415,7 +428,7 @@ ALTER TABLE user_mapping COMMENT = '用户映射 -- ' ENGINE=InnoDB DEFAULT CHAR
   ALTER TABLE user_mapping MODIFY COLUMN `user_cd` INTEGER NOT NULL COMMENT '用户代码 -- ';
   ALTER TABLE user_mapping MODIFY COLUMN `external_user_cd` CHAR(16) NULL COMMENT '外部用户代码 -- ';
   ALTER TABLE user_mapping MODIFY COLUMN `user_nm` VARCHAR(60) NULL COMMENT '用户名称 -- ';
-  ALTER TABLE user_mapping MODIFY COLUMN `org_cd` CHAR(8) NULL COMMENT '机构代码 -- ';
+  ALTER TABLE user_mapping MODIFY COLUMN `org_cd` VARCHAR(20) NULL COMMENT '机构代码 -- ';
   ALTER TABLE user_mapping MODIFY COLUMN `user_login_id` CHAR(10) NULL COMMENT '用户登录标识 -- ';
   
 
