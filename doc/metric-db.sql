@@ -1,4 +1,65 @@
 
+DROP TABLE metric_tbl_dim;
+
+DROP TABLE metric_relation;
+
+DROP TABLE metric_class;
+
+DROP TABLE metric_class_r;
+
+DROP TABLE metric_sec_level;
+
+DROP TABLE metric_dim_col;
+
+DROP TABLE metric_dim;
+
+DROP TABLE metric;
+
+DROP TABLE metric_src;
+
+DROP TABLE metric_src_type;
+
+DROP TABLE metric_tbl;
+
+DROP TABLE metric_column;
+
+DROP TABLE metric_interface;
+
+DROP TABLE metric_if_content;
+
+DROP TABLE metric_param;
+
+DROP TABLE user_role_privilege;
+
+DROP TABLE app_module;
+
+DROP TABLE role_mapping;
+
+DROP TABLE external_user_role;
+
+DROP TABLE user_role_assign;
+
+DROP TABLE user_role;
+
+DROP TABLE security_level;
+
+DROP TABLE user_organization_assign;
+
+DROP TABLE organization;
+
+DROP TABLE busi_department;
+
+DROP TABLE user;
+
+CREATE TABLE app_module
+(
+	module_id            INTEGER NOT NULL,
+	super_module_id      INTEGER NULL,
+	module_name          VARCHAR(60) NULL,
+	module_url           VARCHAR(128) NULL,
+	PRIMARY KEY (module_id)
+);
+
 CREATE TABLE busi_department
 (
 	dept_cd              VARCHAR(4) NOT NULL,
@@ -8,9 +69,9 @@ CREATE TABLE busi_department
 
 CREATE TABLE external_user_role
 (
-	external_user_cd     CHAR(16) NOT NULL,
-	external_role_cd     CHAR(16) NOT NULL,
-	PRIMARY KEY (external_user_cd,external_role_cd)
+	external_role_cd     VARCHAR(16) NOT NULL,
+	external_role_nm     VARCHAR(60) NULL,
+	PRIMARY KEY (external_role_cd)
 );
 
 CREATE TABLE metric
@@ -28,8 +89,8 @@ CREATE TABLE metric
 	load_cycle           INTEGER NULL,
 	metric_desc          VARCHAR(512) NULL,
 	update_flag          INTEGER NULL,
-	commiter             CHAR(16) NULL,
-	approver             CHAR(10) NULL,
+	commiter             VARCHAR(16) NULL,
+	approver             VARCHAR(16) NULL,
 	update_tm            DATETIME NULL,
 	approve_tm           DATETIME NULL,
 	task_flow_id         INTEGER NULL,
@@ -43,8 +104,8 @@ CREATE TABLE metric_class
 	metric_class_nm      VARCHAR(60) NULL,
 	super_class_cd       CHAR(8) NULL,
 	update_flag          INTEGER NULL,
-	commiter             CHAR(10) NULL,
-	approver             CHAR(10) NULL,
+	commiter             VARCHAR(16) NULL,
+	approver             VARCHAR(16) NULL,
 	update_tm            DATETIME NULL,
 	approve_tm           DATETIME NULL,
 	disp_order           INTEGER NULL,
@@ -61,8 +122,8 @@ CREATE TABLE metric_class_r
 	metric_class_cd      CHAR(8) NULL,
 	disp_order           INTEGER NULL,
 	update_flag          INTEGER NULL,
-	commiter             CHAR(10) NULL,
-	approver             CHAR(10) NULL,
+	commiter             VARCHAR(16) NULL,
+	approver             VARCHAR(16) NULL,
 	update_tm            DATETIME NULL,
 	approve_tm           DATETIME NULL,
 	task_flow_id         INTEGER NULL,
@@ -109,8 +170,8 @@ CREATE TABLE metric_interface
 	metric_if_cd         CHAR(8) NULL,
 	metric_if_nm         VARCHAR(60) NULL,
 	approve_status       INTEGER NULL,
-	applicant            CHAR(10) NULL,
-	approver             CHAR(10) NULL,
+	applicant            VARCHAR(16) NULL,
+	approver             VARCHAR(16) NULL,
 	expire_dt            DATE NULL,
 	freq_limit           INTEGER NULL,
 	volume_limit         INTEGER NULL,
@@ -195,16 +256,9 @@ CREATE TABLE organization
 
 CREATE TABLE role_mapping
 (
-	external_role_cd     CHAR(16) NOT NULL,
-	sys_role_cd          CHAR(2) NOT NULL,
-	PRIMARY KEY (external_role_cd,sys_role_cd)
-);
-
-CREATE TABLE role_privilege
-(
-	sys_role_cd          CHAR(2) NOT NULL,
-	sys_func_cd          CHAR(4) NOT NULL,
-	PRIMARY KEY (sys_role_cd,sys_func_cd)
+	external_role_cd     VARCHAR(16) NOT NULL,
+	user_role_id         INTEGER NOT NULL,
+	PRIMARY KEY (external_role_cd,user_role_id)
 );
 
 CREATE TABLE security_level
@@ -214,40 +268,68 @@ CREATE TABLE security_level
 	PRIMARY KEY (sec_level_cd)
 );
 
-CREATE TABLE sys_role
+CREATE TABLE user
 (
-	sys_role_cd          CHAR(2) NOT NULL,
-	sys_role_nm          VARCHAR(60) NULL,
-	sys_role_desc        VARCHAR(512) NULL,
-	sec_level_cd         CHAR(2) NULL,
-	PRIMARY KEY (sys_role_cd)
+	user_id              VARCHAR(16) NOT NULL,
+	user_name            VARCHAR(60) NULL,
+	user_type            INTEGER NULL,
+	reg_date             DATE NULL,
+	user_status          INTEGER NULL,
+	last_login_time      DATETIME NULL,
+	user_pwd             VARCHAR(100) NULL,
+	user_name_cn         VARCHAR(200) NULL,
+	office_phone         VARCHAR(45) NULL,
+	mobile_phone         VARCHAR(45) NULL,
+	email                VARCHAR(45) NULL,
+	social_code          VARCHAR(45) NULL,
+	PRIMARY KEY (user_id)
 );
 
-CREATE TABLE system_func
+CREATE TABLE user_organization_assign
 (
-	sys_func_cd          CHAR(4) NOT NULL,
-	sys_func_nm          VARCHAR(60) NULL,
-	sys_func_url         VARCHAR(128) NULL,
-	PRIMARY KEY (sys_func_cd)
-);
-
-CREATE TABLE user_mapping
-(
-	user_cd              INTEGER NOT NULL,
-	external_user_cd     CHAR(16) NULL,
-	user_nm              VARCHAR(60) NULL,
+	id                   INTEGER NOT NULL,
+	user_id              VARCHAR(16) NULL,
 	org_cd               VARCHAR(20) NULL,
-	user_login_id        CHAR(10) NULL,
-	PRIMARY KEY (user_cd)
+	PRIMARY KEY (id)
 );
 
+CREATE TABLE user_role
+(
+	user_role_id         INTEGER NOT NULL,
+	user_role_name       VARCHAR(60) NULL,
+	user_role_desc       VARCHAR(512) NULL,
+	sec_level_cd         CHAR(2) NULL,
+	PRIMARY KEY (user_role_id)
+);
+
+CREATE TABLE user_role_assign
+(
+	user_id              VARCHAR(16) NOT NULL,
+	user_role_id         INTEGER NOT NULL,
+	PRIMARY KEY (user_id,user_role_id)
+);
+
+CREATE TABLE user_role_privilege
+(
+	user_role_id         INTEGER NOT NULL,
+	module_id            INTEGER NOT NULL,
+	access_privilege     VARCHAR(128) NULL,
+	PRIMARY KEY (user_role_id,module_id)
+);
+
+ALTER TABLE app_module COMMENT = '系统功能 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE app_module MODIFY COLUMN `module_id` INTEGER NOT NULL COMMENT '功能代码 -- ';
+  ALTER TABLE app_module MODIFY COLUMN `super_module_id` INTEGER NULL COMMENT '上级功能代码 -- ';
+  ALTER TABLE app_module MODIFY COLUMN `module_name` VARCHAR(60) NULL COMMENT '功能名称 -- ';
+  ALTER TABLE app_module MODIFY COLUMN `module_url` VARCHAR(128) NULL COMMENT '功能访问地址 -- ';
+  
 ALTER TABLE busi_department COMMENT = '业务部门 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE busi_department MODIFY COLUMN `dept_cd` VARCHAR(4) NOT NULL COMMENT '部门代码 -- ';
   ALTER TABLE busi_department MODIFY COLUMN `dept_nm` VARCHAR(60) NULL COMMENT '部门名称 -- ';
   
 ALTER TABLE external_user_role COMMENT = '外部用户角色 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE external_user_role MODIFY COLUMN `external_user_cd` CHAR(16) NOT NULL COMMENT '外部用户代码 -- ';
-  ALTER TABLE external_user_role MODIFY COLUMN `external_role_cd` CHAR(16) NOT NULL COMMENT '外部角色代码 -- ';
+  ALTER TABLE external_user_role MODIFY COLUMN `external_role_cd` VARCHAR(16) NOT NULL COMMENT '外部角色代码 -- ';
+  ALTER TABLE external_user_role MODIFY COLUMN `external_role_nm` VARCHAR(60) NULL COMMENT '外部角色名称 -- ';
   
 ALTER TABLE metric COMMENT = '指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric MODIFY COLUMN `metric_row_id` BIGINT AUTO_INCREMENT COMMENT '指标记录标识 -- ';
@@ -275,8 +357,8 @@ ALTER TABLE metric COMMENT = '指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 1、新增记录，将该记录修改标识更新为0。
 2、修改记录，将修改前记录状态置为4，将修改后记录状态置为0。
 3、删除记录，将被删除记录状态从0改为4，删除状态为3的记录。';
-  ALTER TABLE metric MODIFY COLUMN `commiter` CHAR(16) NULL COMMENT '更新用户 -- ';
-  ALTER TABLE metric MODIFY COLUMN `approver` CHAR(10) NULL COMMENT '审核用户 -- ';
+  ALTER TABLE metric MODIFY COLUMN `commiter` VARCHAR(16) NULL COMMENT '更新用户 -- ';
+  ALTER TABLE metric MODIFY COLUMN `approver` VARCHAR(16) NULL COMMENT '审核用户 -- ';
   ALTER TABLE metric MODIFY COLUMN `update_tm` DATETIME NULL COMMENT '更新时间 -- ';
   ALTER TABLE metric MODIFY COLUMN `approve_tm` DATETIME NULL COMMENT '审核时间 -- ';
   ALTER TABLE metric MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
@@ -292,8 +374,8 @@ ALTER TABLE metric_class COMMENT = '指标目录 -- ' ENGINE=InnoDB DEFAULT CHAR
 1、新增记录，将该记录修改标识更新为0。
 2、修改记录，将修改前记录状态置为4，将修改后记录状态置为0。
 3、删除记录，将被删除记录状态从0改为4，删除状态为3的记录。';
-  ALTER TABLE metric_class MODIFY COLUMN `commiter` CHAR(10) NULL COMMENT '更新用户 -- ';
-  ALTER TABLE metric_class MODIFY COLUMN `approver` CHAR(10) NULL COMMENT '审核用户 -- ';
+  ALTER TABLE metric_class MODIFY COLUMN `commiter` VARCHAR(16) NULL COMMENT '更新用户 -- ';
+  ALTER TABLE metric_class MODIFY COLUMN `approver` VARCHAR(16) NULL COMMENT '审核用户 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `update_tm` DATETIME NULL COMMENT '更新时间 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `approve_tm` DATETIME NULL COMMENT '审核时间 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `disp_order` INTEGER NULL COMMENT '显示顺序 -- ';
@@ -307,8 +389,8 @@ ALTER TABLE metric_class_r COMMENT = '指标分类 -- ' ENGINE=InnoDB DEFAULT CH
   ALTER TABLE metric_class_r MODIFY COLUMN `metric_class_cd` CHAR(8) NULL COMMENT '指标目录代码 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `disp_order` INTEGER NULL COMMENT '显示顺序 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `update_flag` INTEGER NULL COMMENT '修改标识 -- ';
-  ALTER TABLE metric_class_r MODIFY COLUMN `commiter` CHAR(10) NULL COMMENT '更新用户 -- ';
-  ALTER TABLE metric_class_r MODIFY COLUMN `approver` CHAR(10) NULL COMMENT '审核用户 -- ';
+  ALTER TABLE metric_class_r MODIFY COLUMN `commiter` VARCHAR(16) NULL COMMENT '更新用户 -- ';
+  ALTER TABLE metric_class_r MODIFY COLUMN `approver` VARCHAR(16) NULL COMMENT '审核用户 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `update_tm` DATETIME NULL COMMENT '更新时间 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `approve_tm` DATETIME NULL COMMENT '审核时间 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
@@ -341,8 +423,8 @@ ALTER TABLE metric_interface COMMENT = '指标数据接口 -- ' ENGINE=InnoDB DE
   ALTER TABLE metric_interface MODIFY COLUMN `metric_if_cd` CHAR(8) NULL COMMENT '指标接口代码 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `metric_if_nm` VARCHAR(60) NULL COMMENT '指标接口名称 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `approve_status` INTEGER NULL COMMENT '审核状态 -- ';
-  ALTER TABLE metric_interface MODIFY COLUMN `applicant` CHAR(10) NULL COMMENT '申请用户 -- ';
-  ALTER TABLE metric_interface MODIFY COLUMN `approver` CHAR(10) NULL COMMENT '审核用户 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `applicant` VARCHAR(16) NULL COMMENT '申请用户 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `approver` VARCHAR(16) NULL COMMENT '审核用户 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `expire_dt` DATE NULL COMMENT '接口失效日期 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `freq_limit` INTEGER NULL COMMENT '访问频次阈值 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `volume_limit` INTEGER NULL COMMENT '访问数据量阈值 -- ';
@@ -401,35 +483,47 @@ ALTER TABLE organization COMMENT = '组织机构 -- ' ENGINE=InnoDB DEFAULT CHAR
   ALTER TABLE organization MODIFY COLUMN `super_admin_org_cd` VARCHAR(20) NULL COMMENT '上级管理机构代码 -- ';
   ALTER TABLE organization MODIFY COLUMN `super_busi_org_cd` VARCHAR(20) NULL COMMENT '上级业务机构代码 -- ';
   
-ALTER TABLE role_mapping COMMENT = '角色映射 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE role_mapping MODIFY COLUMN `external_role_cd` CHAR(16) NOT NULL COMMENT '外部角色代码 -- ';
-  ALTER TABLE role_mapping MODIFY COLUMN `sys_role_cd` CHAR(2) NOT NULL COMMENT '用户角色代码 -- ';
-  
-ALTER TABLE role_privilege COMMENT = '角色权限 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE role_privilege MODIFY COLUMN `sys_role_cd` CHAR(2) NOT NULL COMMENT '用户角色代码 -- ';
-  ALTER TABLE role_privilege MODIFY COLUMN `sys_func_cd` CHAR(4) NOT NULL COMMENT '功能代码 -- ';
+ALTER TABLE role_mapping COMMENT = '外部角色映射 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE role_mapping MODIFY COLUMN `external_role_cd` VARCHAR(16) NOT NULL COMMENT '外部角色代码 -- ';
+  ALTER TABLE role_mapping MODIFY COLUMN `user_role_id` INTEGER NOT NULL COMMENT '用户角色代码 -- ';
   
 ALTER TABLE security_level COMMENT = '数据安全级别 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE security_level MODIFY COLUMN `sec_level_cd` CHAR(2) NOT NULL COMMENT '安全级别代码 -- ';
   ALTER TABLE security_level MODIFY COLUMN `sec_level_nm` VARCHAR(60) NULL COMMENT '安全级别名称 -- ';
   
-ALTER TABLE sys_role COMMENT = '用户角色 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE sys_role MODIFY COLUMN `sys_role_cd` CHAR(2) NOT NULL COMMENT '用户角色代码 -- ';
-  ALTER TABLE sys_role MODIFY COLUMN `sys_role_nm` VARCHAR(60) NULL COMMENT '用户角色名称 -- ';
-  ALTER TABLE sys_role MODIFY COLUMN `sys_role_desc` VARCHAR(512) NULL COMMENT '用户角色描述 -- ';
-  ALTER TABLE sys_role MODIFY COLUMN `sec_level_cd` CHAR(2) NULL COMMENT '安全级别代码 -- ';
+ALTER TABLE user COMMENT = '用户 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE user MODIFY COLUMN `user_id` VARCHAR(16) NOT NULL COMMENT '用户代码 -- ';
+  ALTER TABLE user MODIFY COLUMN `user_name` VARCHAR(60) NULL COMMENT '用户名称 -- 用户登录所用的ID';
+  ALTER TABLE user MODIFY COLUMN `user_type` INTEGER NULL COMMENT '用户类型 -- ';
+  ALTER TABLE user MODIFY COLUMN `reg_date` DATE NULL COMMENT '注册日期 -- ';
+  ALTER TABLE user MODIFY COLUMN `user_status` INTEGER NULL COMMENT '用户状态 -- ';
+  ALTER TABLE user MODIFY COLUMN `last_login_time` DATETIME NULL COMMENT '上次登录时间 -- ';
+  ALTER TABLE user MODIFY COLUMN `user_pwd` VARCHAR(100) NULL COMMENT '用户密码 -- ';
+  ALTER TABLE user MODIFY COLUMN `user_name_cn` VARCHAR(200) NULL COMMENT '用户中文名称 -- ';
+  ALTER TABLE user MODIFY COLUMN `office_phone` VARCHAR(45) NULL COMMENT '办公电话 -- ';
+  ALTER TABLE user MODIFY COLUMN `mobile_phone` VARCHAR(45) NULL COMMENT '移动电话 -- ';
+  ALTER TABLE user MODIFY COLUMN `email` VARCHAR(45) NULL COMMENT '电子邮件 -- ';
+  ALTER TABLE user MODIFY COLUMN `social_code` VARCHAR(45) NULL COMMENT '社会统一代码 -- ';
   
-ALTER TABLE system_func COMMENT = '系统功能 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE system_func MODIFY COLUMN `sys_func_cd` CHAR(4) NOT NULL COMMENT '功能代码 -- ';
-  ALTER TABLE system_func MODIFY COLUMN `sys_func_nm` VARCHAR(60) NULL COMMENT '功能名称 -- ';
-  ALTER TABLE system_func MODIFY COLUMN `sys_func_url` VARCHAR(128) NULL COMMENT '功能访问地址 -- ';
+ALTER TABLE user_organization_assign COMMENT = '用户机构 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE user_organization_assign MODIFY COLUMN `id` INTEGER NOT NULL COMMENT '记录标识 -- ';
+  ALTER TABLE user_organization_assign MODIFY COLUMN `user_id` VARCHAR(16) NULL COMMENT '用户代码 -- ';
+  ALTER TABLE user_organization_assign MODIFY COLUMN `org_cd` VARCHAR(20) NULL COMMENT '机构代码 -- ';
   
-ALTER TABLE user_mapping COMMENT = '用户映射 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE user_mapping MODIFY COLUMN `user_cd` INTEGER NOT NULL COMMENT '用户代码 -- ';
-  ALTER TABLE user_mapping MODIFY COLUMN `external_user_cd` CHAR(16) NULL COMMENT '外部用户代码 -- ';
-  ALTER TABLE user_mapping MODIFY COLUMN `user_nm` VARCHAR(60) NULL COMMENT '用户名称 -- ';
-  ALTER TABLE user_mapping MODIFY COLUMN `org_cd` VARCHAR(20) NULL COMMENT '机构代码 -- ';
-  ALTER TABLE user_mapping MODIFY COLUMN `user_login_id` CHAR(10) NULL COMMENT '用户登录标识 -- ';
+ALTER TABLE user_role COMMENT = '用户角色 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE user_role MODIFY COLUMN `user_role_id` INTEGER NOT NULL COMMENT '用户角色代码 -- ';
+  ALTER TABLE user_role MODIFY COLUMN `user_role_name` VARCHAR(60) NULL COMMENT '用户角色名称 -- ';
+  ALTER TABLE user_role MODIFY COLUMN `user_role_desc` VARCHAR(512) NULL COMMENT '用户角色描述 -- ';
+  ALTER TABLE user_role MODIFY COLUMN `sec_level_cd` CHAR(2) NULL COMMENT '安全级别代码 -- ';
+  
+ALTER TABLE user_role_assign COMMENT = '用户角色映射 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE user_role_assign MODIFY COLUMN `user_id` VARCHAR(16) NOT NULL COMMENT '用户代码 -- ';
+  ALTER TABLE user_role_assign MODIFY COLUMN `user_role_id` INTEGER NOT NULL COMMENT '用户角色代码 -- ';
+  
+ALTER TABLE user_role_privilege COMMENT = '角色权限 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE user_role_privilege MODIFY COLUMN `user_role_id` INTEGER NOT NULL COMMENT '用户角色代码 -- ';
+  ALTER TABLE user_role_privilege MODIFY COLUMN `module_id` INTEGER NOT NULL COMMENT '功能代码 -- ';
+  ALTER TABLE user_role_privilege MODIFY COLUMN `access_privilege` VARCHAR(128) NULL COMMENT '功能访问权限 -- ';
   
 
 
