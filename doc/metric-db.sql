@@ -87,6 +87,7 @@ CREATE TABLE metric
 	metric_src_cd        CHAR(4) NULL,
 	metric_formula       VARCHAR(1024) NULL,
 	load_cycle           INTEGER NULL,
+	default_sec_level    CHAR(2) NULL,
 	metric_desc          VARCHAR(512) NULL,
 	update_flag          INTEGER NULL,
 	commiter             VARCHAR(16) NULL,
@@ -187,6 +188,7 @@ CREATE TABLE metric_interface
 CREATE TABLE metric_param
 (
 	param_cd             CHAR(6) NOT NULL,
+	param_type           INTEGER NULL,
 	param_nm             VARCHAR(60) NULL,
 	param_value          VARCHAR(512) NULL,
 	PRIMARY KEY (param_cd)
@@ -350,6 +352,7 @@ ALTER TABLE metric COMMENT = '指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 3：每月更新
 4：每季度更新
 5：每年更新';
+  ALTER TABLE metric MODIFY COLUMN `default_sec_level` CHAR(2) NULL COMMENT '默认安全级别 -- ';
   ALTER TABLE metric MODIFY COLUMN `metric_desc` VARCHAR(512) NULL COMMENT '指标描述 -- ';
   ALTER TABLE metric MODIFY COLUMN `update_flag` INTEGER NULL COMMENT '修改标识 -- 0：无修改，1：新增，2：更新，3：删除
 ，4：失效。
@@ -437,6 +440,7 @@ ALTER TABLE metric_interface COMMENT = '指标数据接口 -- ' ENGINE=InnoDB DE
   
 ALTER TABLE metric_param COMMENT = '指标计算参数 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_param MODIFY COLUMN `param_cd` CHAR(6) NOT NULL COMMENT '参数代码 -- ';
+  ALTER TABLE metric_param MODIFY COLUMN `param_type` INTEGER NULL COMMENT '参数类型 -- 0：指标加载参数，1：指标系统参数';
   ALTER TABLE metric_param MODIFY COLUMN `param_nm` VARCHAR(60) NULL COMMENT '参数名称 -- ';
   ALTER TABLE metric_param MODIFY COLUMN `param_value` VARCHAR(512) NULL COMMENT '参数值 -- ';
   

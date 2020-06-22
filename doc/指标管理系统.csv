@@ -1,3 +1,5 @@
+参数类型,param_type,,X,X,X,X
+默认安全级别,default_sec_level,,X,X,X,X
 审核时间,approve_tm,,X,X,X,X
 审核用户,approver,,X,X,X,X
 业务部门,busi_department,,X,X,X,X
