@@ -138,6 +138,7 @@ CREATE TABLE metric_column
 	metric_col_type      INTEGER NULL,
 	metric_col_data_type VARCHAR(20) NULL,
 	metric_col_phy_nm    VARCHAR(30) NULL,
+	metric_col_desc      VARCHAR(60) NULL,
 	PRIMARY KEY (metric_col_cd)
 );
 
@@ -405,6 +406,7 @@ ALTER TABLE metric_column COMMENT = '指标字段 -- ' ENGINE=InnoDB DEFAULT CHA
 1：指标度量';
   ALTER TABLE metric_column MODIFY COLUMN `metric_col_data_type` VARCHAR(20) NULL COMMENT '指标字段数据类型 -- ';
   ALTER TABLE metric_column MODIFY COLUMN `metric_col_phy_nm` VARCHAR(30) NULL COMMENT '指标字段物理名称 -- ';
+  ALTER TABLE metric_column MODIFY COLUMN `metric_col_desc` VARCHAR(60) NULL COMMENT '指标字段备注 -- ';
   
 ALTER TABLE metric_dim COMMENT = '指标维度 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_dim MODIFY COLUMN `dim_cd` CHAR(4) NOT NULL COMMENT '维度代码 -- ';
