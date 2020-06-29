@@ -1,3 +1,7 @@
+指标查询条件,common_mqry_condition,,X,X,X,X
+常用指标数据查询名称,common_mqry_name,,X,X,X,X
+常用指标数据查询标识,common_mqry_id,,X,X,X,X
+常用指标数据查询,common_metric_query,,X,X,X,X
 指标字段备注,metric_col_desc,,X,X,X,X
 参数类型,param_type,,X,X,X,X
 默认安全级别,default_sec_level,,X,X,X,X

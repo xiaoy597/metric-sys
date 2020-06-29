@@ -13,16 +13,6 @@ DROP TABLE metric_dim_col;
 
 DROP TABLE metric_dim;
 
-DROP TABLE metric;
-
-DROP TABLE metric_src;
-
-DROP TABLE metric_src_type;
-
-DROP TABLE metric_tbl;
-
-DROP TABLE metric_column;
-
 DROP TABLE metric_interface;
 
 DROP TABLE metric_if_content;
@@ -41,15 +31,27 @@ DROP TABLE user_role_assign;
 
 DROP TABLE user_role;
 
-DROP TABLE security_level;
-
 DROP TABLE user_organization_assign;
 
 DROP TABLE organization;
 
-DROP TABLE busi_department;
+DROP TABLE common_metric_query;
+
+DROP TABLE metric;
+
+DROP TABLE security_level;
 
 DROP TABLE user;
+
+DROP TABLE metric_src;
+
+DROP TABLE metric_src_type;
+
+DROP TABLE metric_tbl;
+
+DROP TABLE busi_department;
+
+DROP TABLE metric_column;
 
 CREATE TABLE app_module
 (
@@ -65,6 +67,15 @@ CREATE TABLE busi_department
 	dept_cd              VARCHAR(4) NOT NULL,
 	dept_nm              VARCHAR(60) NULL,
 	PRIMARY KEY (dept_cd)
+);
+
+CREATE TABLE common_metric_query
+(
+	common_mqry_id       INTEGER AUTO_INCREMENT,
+	common_mqry_name     VARCHAR(20) NULL,
+	metric_row_id        BIGINT NULL,
+	common_mqry_condition VARCHAR(512) NULL,
+	PRIMARY KEY (common_mqry_id)
 );
 
 CREATE TABLE external_user_role
@@ -329,6 +340,12 @@ ALTER TABLE app_module COMMENT = '系统功能 -- ' ENGINE=InnoDB DEFAULT CHARSE
 ALTER TABLE busi_department COMMENT = '业务部门 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE busi_department MODIFY COLUMN `dept_cd` VARCHAR(4) NOT NULL COMMENT '部门代码 -- ';
   ALTER TABLE busi_department MODIFY COLUMN `dept_nm` VARCHAR(60) NULL COMMENT '部门名称 -- ';
+  
+ALTER TABLE common_metric_query COMMENT = '常用指标数据查询 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_id` INTEGER AUTO_INCREMENT COMMENT '常用指标数据查询标识 -- ';
+  ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_name` VARCHAR(20) NULL COMMENT '常用指标数据查询名称 -- ';
+  ALTER TABLE common_metric_query MODIFY COLUMN `metric_row_id` BIGINT NULL COMMENT '指标记录标识 -- ';
+  ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_condition` VARCHAR(512) NULL COMMENT '指标查询条件 -- 使用JSON结构表示查询条件的各元素。其中对于简单查询，需要保存各谓词中的字段名称，操作符和操作数，各谓词之间只支持AND‘；自定义查询可直接保存完整的查询条件。JSON中需要设置字段区分简单查询和自定义查询。';
   
 ALTER TABLE external_user_role COMMENT = '外部用户角色 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE external_user_role MODIFY COLUMN `external_role_cd` VARCHAR(16) NOT NULL COMMENT '外部角色代码 -- ';
