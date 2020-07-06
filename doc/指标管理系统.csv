@@ -86,6 +86,7 @@
 访问数据量阈值,volume_limit,,X,X,X,X
 访问频次阈值,freq_limit,,X,X,X,X
 接口申请备注,app_memo,,X,X,X,X
+接口审核备注,approve_memo,,X,X,X,X
 接口访问令牌,access_token,,X,X,X,X
 令牌失效时间,token_expire_tm,,X,X,X,X
 审核状态,approve_status,,X,X,X,X

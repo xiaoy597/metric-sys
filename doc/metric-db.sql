@@ -101,6 +101,7 @@ CREATE TABLE metric
 	default_sec_level    CHAR(2) NULL,
 	metric_desc          VARCHAR(512) NULL,
 	update_flag          INTEGER NULL,
+	approve_status       INTEGER NULL,
 	commiter             VARCHAR(16) NULL,
 	approver             VARCHAR(16) NULL,
 	update_tm            DATETIME NULL,
@@ -115,14 +116,15 @@ CREATE TABLE metric_class
 	metric_class_cd      CHAR(8) NULL,
 	metric_class_nm      VARCHAR(60) NULL,
 	super_class_cd       CHAR(8) NULL,
+	dept_cd              VARCHAR(4) NULL,
+	disp_order           INTEGER NULL,
+	metric_class_desc    VARCHAR(512) NULL,
 	update_flag          INTEGER NULL,
+	approve_status       INTEGER NULL,
 	commiter             VARCHAR(16) NULL,
 	approver             VARCHAR(16) NULL,
 	update_tm            DATETIME NULL,
 	approve_tm           DATETIME NULL,
-	disp_order           INTEGER NULL,
-	dept_cd              VARCHAR(4) NULL,
-	metric_class_desc    VARCHAR(512) NULL,
 	task_flow_id         INTEGER NULL,
 	PRIMARY KEY (mc_row_id)
 );
@@ -134,6 +136,7 @@ CREATE TABLE metric_class_r
 	metric_class_cd      CHAR(8) NULL,
 	disp_order           INTEGER NULL,
 	update_flag          INTEGER NULL,
+	approve_status       INTEGER NULL,
 	commiter             VARCHAR(16) NULL,
 	approver             VARCHAR(16) NULL,
 	update_tm            DATETIME NULL,
@@ -182,17 +185,18 @@ CREATE TABLE metric_interface
 	mif_row_id           BIGINT AUTO_INCREMENT,
 	metric_if_cd         CHAR(8) NULL,
 	metric_if_nm         VARCHAR(60) NULL,
+	expire_dt            DATE NULL,
+	volume_limit         INTEGER NULL,
+	freq_limit           INTEGER NULL,
+	app_memo             VARCHAR(512) NULL,
+	approve_memo         VARCHAR(512) NULL,
+	access_token         CHAR(32) NULL,
+	token_expire_tm      DATETIME NULL,
 	approve_status       INTEGER NULL,
 	applicant            VARCHAR(16) NULL,
 	approver             VARCHAR(16) NULL,
-	expire_dt            DATE NULL,
-	freq_limit           INTEGER NULL,
-	volume_limit         INTEGER NULL,
-	access_token         CHAR(32) NULL,
 	applicate_tm         DATETIME NULL,
 	approve_tm           DATETIME NULL,
-	token_expire_tm      DATETIME NULL,
-	app_memo             VARCHAR(512) NULL,
 	task_flow_id         INTEGER NULL,
 	PRIMARY KEY (mif_row_id)
 );
@@ -378,6 +382,7 @@ ALTER TABLE metric COMMENT = '指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 1、新增记录，将该记录修改标识更新为0。
 2、修改记录，将修改前记录状态置为4，将修改后记录状态置为0。
 3、删除记录，将被删除记录状态从0改为4，删除状态为3的记录。';
+  ALTER TABLE metric MODIFY COLUMN `approve_status` INTEGER NULL COMMENT '审核状态 -- 0：待审核，1：审核通过，2：审核拒绝';
   ALTER TABLE metric MODIFY COLUMN `commiter` VARCHAR(16) NULL COMMENT '更新用户 -- ';
   ALTER TABLE metric MODIFY COLUMN `approver` VARCHAR(16) NULL COMMENT '审核用户 -- ';
   ALTER TABLE metric MODIFY COLUMN `update_tm` DATETIME NULL COMMENT '更新时间 -- ';
@@ -389,19 +394,20 @@ ALTER TABLE metric_class COMMENT = '指标目录 -- ' ENGINE=InnoDB DEFAULT CHAR
   ALTER TABLE metric_class MODIFY COLUMN `metric_class_cd` CHAR(8) NULL COMMENT '指标目录代码 -- 不得重复';
   ALTER TABLE metric_class MODIFY COLUMN `metric_class_nm` VARCHAR(60) NULL COMMENT '指标目录名称 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `super_class_cd` CHAR(8) NULL COMMENT '上级指标目录代码 -- ';
+  ALTER TABLE metric_class MODIFY COLUMN `dept_cd` VARCHAR(4) NULL COMMENT '部门代码 -- ';
+  ALTER TABLE metric_class MODIFY COLUMN `disp_order` INTEGER NULL COMMENT '显示顺序 -- ';
+  ALTER TABLE metric_class MODIFY COLUMN `metric_class_desc` VARCHAR(512) NULL COMMENT '指标目录描述 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `update_flag` INTEGER NULL COMMENT '修改标识 -- 0：无修改，1：新增，2：更新，3：删除
 ，4：失效。
 增删改操作提交时，将新记录（或被删除记录）插入表中（使用自增的记录标识），并将这些记录的修改标识设置为相应的值（1-3）。指标体系审核通过后，对于：
 1、新增记录，将该记录修改标识更新为0。
 2、修改记录，将修改前记录状态置为4，将修改后记录状态置为0。
 3、删除记录，将被删除记录状态从0改为4，删除状态为3的记录。';
+  ALTER TABLE metric_class MODIFY COLUMN `approve_status` INTEGER NULL COMMENT '审核状态 -- 0：待审核，1：审核通过，2：审核拒绝';
   ALTER TABLE metric_class MODIFY COLUMN `commiter` VARCHAR(16) NULL COMMENT '更新用户 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `approver` VARCHAR(16) NULL COMMENT '审核用户 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `update_tm` DATETIME NULL COMMENT '更新时间 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `approve_tm` DATETIME NULL COMMENT '审核时间 -- ';
-  ALTER TABLE metric_class MODIFY COLUMN `disp_order` INTEGER NULL COMMENT '显示顺序 -- ';
-  ALTER TABLE metric_class MODIFY COLUMN `dept_cd` VARCHAR(4) NULL COMMENT '部门代码 -- ';
-  ALTER TABLE metric_class MODIFY COLUMN `metric_class_desc` VARCHAR(512) NULL COMMENT '指标目录描述 -- ';
   ALTER TABLE metric_class MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
   
 ALTER TABLE metric_class_r COMMENT = '指标分类 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -410,6 +416,7 @@ ALTER TABLE metric_class_r COMMENT = '指标分类 -- ' ENGINE=InnoDB DEFAULT CH
   ALTER TABLE metric_class_r MODIFY COLUMN `metric_class_cd` CHAR(8) NULL COMMENT '指标目录代码 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `disp_order` INTEGER NULL COMMENT '显示顺序 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `update_flag` INTEGER NULL COMMENT '修改标识 -- ';
+  ALTER TABLE metric_class_r MODIFY COLUMN `approve_status` INTEGER NULL COMMENT '审核状态 -- 0：待审核，1：审核通过，2：审核拒绝';
   ALTER TABLE metric_class_r MODIFY COLUMN `commiter` VARCHAR(16) NULL COMMENT '更新用户 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `approver` VARCHAR(16) NULL COMMENT '审核用户 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `update_tm` DATETIME NULL COMMENT '更新时间 -- ';
@@ -444,17 +451,18 @@ ALTER TABLE metric_interface COMMENT = '指标数据接口 -- ' ENGINE=InnoDB DE
   ALTER TABLE metric_interface MODIFY COLUMN `mif_row_id` BIGINT AUTO_INCREMENT COMMENT '接口记录标识 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `metric_if_cd` CHAR(8) NULL COMMENT '指标接口代码 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `metric_if_nm` VARCHAR(60) NULL COMMENT '指标接口名称 -- ';
-  ALTER TABLE metric_interface MODIFY COLUMN `approve_status` INTEGER NULL COMMENT '审核状态 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `expire_dt` DATE NULL COMMENT '接口失效日期 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `volume_limit` INTEGER NULL COMMENT '访问数据量阈值 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `freq_limit` INTEGER NULL COMMENT '访问频次阈值 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `app_memo` VARCHAR(512) NULL COMMENT '接口申请备注 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `approve_memo` VARCHAR(512) NULL COMMENT '接口审核备注 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `access_token` CHAR(32) NULL COMMENT '接口访问令牌 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `token_expire_tm` DATETIME NULL COMMENT '令牌失效时间 -- ';
+  ALTER TABLE metric_interface MODIFY COLUMN `approve_status` INTEGER NULL COMMENT '审核状态 -- 0：待审核，1：审核通过，2：审核拒绝';
   ALTER TABLE metric_interface MODIFY COLUMN `applicant` VARCHAR(16) NULL COMMENT '申请用户 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `approver` VARCHAR(16) NULL COMMENT '审核用户 -- ';
-  ALTER TABLE metric_interface MODIFY COLUMN `expire_dt` DATE NULL COMMENT '接口失效日期 -- ';
-  ALTER TABLE metric_interface MODIFY COLUMN `freq_limit` INTEGER NULL COMMENT '访问频次阈值 -- ';
-  ALTER TABLE metric_interface MODIFY COLUMN `volume_limit` INTEGER NULL COMMENT '访问数据量阈值 -- ';
-  ALTER TABLE metric_interface MODIFY COLUMN `access_token` CHAR(32) NULL COMMENT '接口访问令牌 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `applicate_tm` DATETIME NULL COMMENT '申请时间 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `approve_tm` DATETIME NULL COMMENT '审核时间 -- ';
-  ALTER TABLE metric_interface MODIFY COLUMN `token_expire_tm` DATETIME NULL COMMENT '令牌失效时间 -- ';
-  ALTER TABLE metric_interface MODIFY COLUMN `app_memo` VARCHAR(512) NULL COMMENT '接口申请备注 -- ';
   ALTER TABLE metric_interface MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
   
 ALTER TABLE metric_param COMMENT = '指标计算参数 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
