@@ -1,4 +1,6 @@
 
+DROP TABLE admin_unit;
+
 DROP TABLE metric_tbl_dim;
 
 DROP TABLE metric_relation;
@@ -53,6 +55,13 @@ DROP TABLE busi_department;
 
 DROP TABLE metric_column;
 
+CREATE TABLE admin_unit
+(
+	admin_cd             VARCHAR(20) NOT NULL,
+	admin_nm             VARCHAR(20) NULL,
+	PRIMARY KEY (admin_cd)
+);
+
 CREATE TABLE app_module
 (
 	module_id            INTEGER NOT NULL,
@@ -74,7 +83,7 @@ CREATE TABLE common_metric_query
 	common_mqry_id       INTEGER AUTO_INCREMENT,
 	common_mqry_name     VARCHAR(20) NULL,
 	metric_row_id        BIGINT NULL,
-	common_mqry_condition VARCHAR(512) NULL,
+	common_mqry_condition TEXT NULL,
 	PRIMARY KEY (common_mqry_id)
 );
 
@@ -291,7 +300,7 @@ CREATE TABLE user
 	user_id              VARCHAR(16) NOT NULL,
 	user_name            VARCHAR(60) NULL,
 	user_type            INTEGER NULL,
-	reg_date             DATE NULL,
+	reg_dt               DATE NULL,
 	user_status          INTEGER NULL,
 	last_login_time      DATETIME NULL,
 	user_pwd             VARCHAR(100) NULL,
@@ -335,6 +344,10 @@ CREATE TABLE user_role_privilege
 	PRIMARY KEY (user_role_id,module_id)
 );
 
+ALTER TABLE admin_unit COMMENT = '行政区划 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE admin_unit MODIFY COLUMN `admin_cd` VARCHAR(20) NOT NULL COMMENT '行政区划代码 -- ';
+  ALTER TABLE admin_unit MODIFY COLUMN `admin_nm` VARCHAR(20) NULL COMMENT '行政区划名称 -- ';
+  
 ALTER TABLE app_module COMMENT = '系统功能 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE app_module MODIFY COLUMN `module_id` INTEGER NOT NULL COMMENT '功能代码 -- ';
   ALTER TABLE app_module MODIFY COLUMN `super_module_id` INTEGER NULL COMMENT '上级功能代码 -- ';
@@ -349,7 +362,7 @@ ALTER TABLE common_metric_query COMMENT = '常用指标数据查询 -- ' ENGINE=
   ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_id` INTEGER AUTO_INCREMENT COMMENT '常用指标数据查询标识 -- ';
   ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_name` VARCHAR(20) NULL COMMENT '常用指标数据查询名称 -- ';
   ALTER TABLE common_metric_query MODIFY COLUMN `metric_row_id` BIGINT NULL COMMENT '指标记录标识 -- ';
-  ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_condition` VARCHAR(512) NULL COMMENT '指标查询条件 -- 使用JSON结构表示查询条件的各元素。其中对于简单查询，需要保存各谓词中的字段名称，操作符和操作数，各谓词之间只支持AND‘；自定义查询可直接保存完整的查询条件。JSON中需要设置字段区分简单查询和自定义查询。';
+  ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_condition` TEXT NULL COMMENT '指标查询条件 -- 使用JSON结构表示查询条件的各元素。其中对于简单查询，需要保存各谓词中的字段名称，操作符和操作数，各谓词之间只支持AND‘；自定义查询可直接保存完整的查询条件。JSON中需要设置字段区分简单查询和自定义查询。';
   
 ALTER TABLE external_user_role COMMENT = '外部用户角色 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE external_user_role MODIFY COLUMN `external_role_cd` VARCHAR(16) NOT NULL COMMENT '外部角色代码 -- ';
@@ -526,7 +539,7 @@ ALTER TABLE user COMMENT = '用户 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE user MODIFY COLUMN `user_id` VARCHAR(16) NOT NULL COMMENT '用户代码 -- ';
   ALTER TABLE user MODIFY COLUMN `user_name` VARCHAR(60) NULL COMMENT '用户名称 -- 用户登录所用的ID';
   ALTER TABLE user MODIFY COLUMN `user_type` INTEGER NULL COMMENT '用户类型 -- ';
-  ALTER TABLE user MODIFY COLUMN `reg_date` DATE NULL COMMENT '注册日期 -- ';
+  ALTER TABLE user MODIFY COLUMN `reg_dt` DATE NULL COMMENT '注册日期 -- ';
   ALTER TABLE user MODIFY COLUMN `user_status` INTEGER NULL COMMENT '用户状态 -- ';
   ALTER TABLE user MODIFY COLUMN `last_login_time` DATETIME NULL COMMENT '上次登录时间 -- ';
   ALTER TABLE user MODIFY COLUMN `user_pwd` VARCHAR(100) NULL COMMENT '用户密码 -- ';
