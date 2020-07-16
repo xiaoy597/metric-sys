@@ -55,12 +55,12 @@ insert into metric_tbl values ('C00003', '指标主表3-日期-区划-行业', '
 
 delete from metric_tbl_dim;
 
-insert into metric_tbl_dim values ('C00001', '0001');
-insert into metric_tbl_dim values ('C00002', '0001');
-insert into metric_tbl_dim values ('C00002', '0002');
-insert into metric_tbl_dim values ('C00003', '0001');
-insert into metric_tbl_dim values ('C00003', '0002');
-insert into metric_tbl_dim values ('C00003', '0004');
+insert into metric_tbl_dim values ('C00001', '0001', 1);
+insert into metric_tbl_dim values ('C00002', '0001', 1);
+insert into metric_tbl_dim values ('C00002', '0002', 2);
+insert into metric_tbl_dim values ('C00003', '0001', 1);
+insert into metric_tbl_dim values ('C00003', '0002', 2);
+insert into metric_tbl_dim values ('C00003', '0004', 3);
 
 
 delete from metric_column;

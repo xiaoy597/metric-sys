@@ -215,3 +215,4 @@
 指标主表3,metric_tbl_3,,X,X,X,X
 维度描述,dim_desc,,X,X,X,X
 指标上卷方式,rollup_type,,X,X,X,X
+维度序号,dim_order,,X,X,X,X

@@ -204,6 +204,7 @@ CREATE TABLE metric_tbl_dim
 (
 	metric_tbl_cd        CHAR(6) NOT NULL,
 	dim_cd               CHAR(4) NOT NULL,
+	dim_order            INTEGER NULL,
 	PRIMARY KEY (metric_tbl_cd,dim_cd)
 );
 
@@ -451,6 +452,7 @@ ALTER TABLE metric_tbl COMMENT = '指标主表 -- ' ENGINE=InnoDB DEFAULT CHARSE
 ALTER TABLE metric_tbl_dim COMMENT = '指标主表维度 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_tbl_dim MODIFY COLUMN `metric_tbl_cd` CHAR(6) NOT NULL COMMENT '指标主表代码 -- ';
   ALTER TABLE metric_tbl_dim MODIFY COLUMN `dim_cd` CHAR(4) NOT NULL COMMENT '维度代码 -- ';
+  ALTER TABLE metric_tbl_dim MODIFY COLUMN `dim_order` INTEGER NULL COMMENT '维度序号 -- 从1开始递增';
   
 ALTER TABLE organization COMMENT = '组织机构 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE organization MODIFY COLUMN `org_cd` VARCHAR(20) NOT NULL COMMENT '机构代码 -- ';
