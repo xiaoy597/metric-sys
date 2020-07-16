@@ -1,67 +1,4 @@
 
-DROP TABLE admin_unit;
-
-DROP TABLE metric_tbl_dim;
-
-DROP TABLE metric_relation;
-
-DROP TABLE metric_class;
-
-DROP TABLE metric_class_r;
-
-DROP TABLE metric_sec_level;
-
-DROP TABLE metric_dim_col;
-
-DROP TABLE metric_dim;
-
-DROP TABLE metric_interface;
-
-DROP TABLE metric_if_content;
-
-DROP TABLE metric_param;
-
-DROP TABLE user_role_privilege;
-
-DROP TABLE app_module;
-
-DROP TABLE role_mapping;
-
-DROP TABLE external_user_role;
-
-DROP TABLE user_role_assign;
-
-DROP TABLE user_role;
-
-DROP TABLE user_organization_assign;
-
-DROP TABLE organization;
-
-DROP TABLE common_metric_query;
-
-DROP TABLE metric;
-
-DROP TABLE security_level;
-
-DROP TABLE user;
-
-DROP TABLE metric_src;
-
-DROP TABLE metric_src_type;
-
-DROP TABLE metric_tbl;
-
-DROP TABLE busi_department;
-
-DROP TABLE metric_column;
-
-CREATE TABLE admin_unit
-(
-	admin_cd             VARCHAR(20) NOT NULL,
-	admin_nm             VARCHAR(20) NULL,
-	PRIMARY KEY (admin_cd)
-);
-
 CREATE TABLE app_module
 (
 	module_id            INTEGER NOT NULL,
@@ -107,6 +44,7 @@ CREATE TABLE metric
 	metric_src_cd        CHAR(4) NULL,
 	metric_formula       VARCHAR(1024) NULL,
 	load_cycle           INTEGER NULL,
+	rollup_type          INTEGER NULL,
 	default_sec_level    CHAR(2) NULL,
 	metric_desc          VARCHAR(512) NULL,
 	update_flag          INTEGER NULL,
@@ -344,10 +282,6 @@ CREATE TABLE user_role_privilege
 	PRIMARY KEY (user_role_id,module_id)
 );
 
-ALTER TABLE admin_unit COMMENT = '行政区划 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE admin_unit MODIFY COLUMN `admin_cd` VARCHAR(20) NOT NULL COMMENT '行政区划代码 -- ';
-  ALTER TABLE admin_unit MODIFY COLUMN `admin_nm` VARCHAR(20) NULL COMMENT '行政区划名称 -- ';
-  
 ALTER TABLE app_module COMMENT = '系统功能 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE app_module MODIFY COLUMN `module_id` INTEGER NOT NULL COMMENT '功能代码 -- ';
   ALTER TABLE app_module MODIFY COLUMN `super_module_id` INTEGER NULL COMMENT '上级功能代码 -- ';
@@ -387,6 +321,7 @@ ALTER TABLE metric COMMENT = '指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
 3：每月更新
 4：每季度更新
 5：每年更新';
+  ALTER TABLE metric MODIFY COLUMN `rollup_type` INTEGER NULL COMMENT '指标上卷方式 -- 0：SUM，1：MIN，2：MAX，3：AVG';
   ALTER TABLE metric MODIFY COLUMN `default_sec_level` CHAR(2) NULL COMMENT '默认安全级别 -- ';
   ALTER TABLE metric MODIFY COLUMN `metric_desc` VARCHAR(512) NULL COMMENT '指标描述 -- ';
   ALTER TABLE metric MODIFY COLUMN `update_flag` INTEGER NULL COMMENT '修改标识 -- 0：无修改，1：新增，2：更新，3：删除
@@ -480,7 +415,7 @@ ALTER TABLE metric_interface COMMENT = '指标数据接口 -- ' ENGINE=InnoDB DE
   
 ALTER TABLE metric_param COMMENT = '指标计算参数 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_param MODIFY COLUMN `param_cd` CHAR(6) NOT NULL COMMENT '参数代码 -- ';
-  ALTER TABLE metric_param MODIFY COLUMN `param_type` INTEGER NULL COMMENT '参数类型 -- 0：指标加载参数，1：指标系统参数';
+  ALTER TABLE metric_param MODIFY COLUMN `param_type` INTEGER NULL COMMENT '参数类型 -- 0：指标加载参数，1：指标系统参数。注：指标加载参数就是可以嵌入基础指标和衍生指标计算公式或者语句的参数，指标系统参数是除了指标加载参数之外的其他参数。';
   ALTER TABLE metric_param MODIFY COLUMN `param_nm` VARCHAR(60) NULL COMMENT '参数名称 -- ';
   ALTER TABLE metric_param MODIFY COLUMN `param_value` VARCHAR(512) NULL COMMENT '参数值 -- ';
   
