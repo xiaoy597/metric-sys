@@ -83,15 +83,17 @@ insert into metric_column values ('D000000024', '行业门类', 0, 'STRING', 'd_
 
 insert into metric_column values ('M000000001', '大专学历以上人口数量', 1, 'NUMERIC', 'b000000001', '大专学历以上人口数量');
 insert into metric_column values ('M000000002', '累计新冠患者数量', 1, 'NUMERIC', 'b000000002', '累计新冠患者数量');
-insert into metric_column values ('M000000003', '基础指标0003', 1, 'NUMERIC', 'b000000003', '基础指标0003');
+insert into metric_column values ('M000000003', '新增新冠患者数量', 1, 'NUMERIC', 'b000000003', '新增新冠患者数量');
 insert into metric_column values ('M000000004', '基础指标0004', 1, 'NUMERIC', 'b000000004', '基础指标0004');
 insert into metric_column values ('M000000005', '基础指标0005', 1, 'NUMERIC', 'b000000005', '基础指标0005');
+
+insert into metric_column values ('M000000020', '新冠患者占人口比例', 1, 'NUMERIC', 'd000000001', '新冠患者占人口比例');
 
 insert into metric_column values ('M000000006', '人口规模', 1, 'NUMERIC', 'b000000010', '人口规模');
 insert into metric_column values ('M000000007', '核酸检测人次', 1, 'NUMERIC', 'b000000011', '核酸检测人次');
 insert into metric_column values ('M000000016', '健康异常人数', 1, 'NUMERIC', 'b000000012', '健康异常人数');
 
-insert into metric_column values ('M000000008', '衍生指标0011', 1, 'NUMERIC', 'd000000011', '衍生指标0011');
+insert into metric_column values ('M000000008', '健康异常人口比例', 1, 'NUMERIC', 'd000000011', '健康异常人口比例');
 insert into metric_column values ('M000000009', '衍生指标0012', 1, 'NUMERIC', 'd000000012', '衍生指标0012');
 insert into metric_column values ('M000000010', '衍生指标0013', 1, 'NUMERIC', 'd000000013', '衍生指标0013');
 
@@ -102,8 +104,8 @@ insert into metric_column values ('M000000018', '大型企业数量', 1, 'NUMERI
 insert into metric_column values ('M000000019', '企业净利润', 1, 'NUMERIC', 'b000000024', '企业净利润');
 
 
-insert into metric_column values ('M000000013', '衍生指标0021', 1, 'NUMERIC', 'd000000021', '衍生指标0021');
-insert into metric_column values ('M000000014', '衍生指标0022', 1, 'NUMERIC', 'd000000022', '衍生指标0022');
+insert into metric_column values ('M000000013', '中小企业数量', 1, 'NUMERIC', 'd000000021', '中小企业数量');
+insert into metric_column values ('M000000014', '中小企业数量占比', 1, 'NUMERIC', 'd000000022', '中小企业数量占比');
 insert into metric_column values ('M000000015', '衍生指标0023', 1, 'NUMERIC', 'd000000023', '衍生指标0023');
 
 delete from metric_dim_col;
@@ -126,62 +128,150 @@ insert into metric_dim_col values ('0004', 'D000000024', 3);
 
 delete from metric;
 
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000001', '大专学历以上人口数量', 0, 'C00001', 'M000000001', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000002', '累计新冠患者数量', 0, 'C00001', 'M000000002', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000003', '基础指标0003', 0, 'C00001', 'M000000003', '0003', '00');
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000001', '大专学历以上人口数量', 0, 'C00001', 'M000000001', '0003', '00'
+, 'select ${sys_date}, count(*) from person  where degree > 3 and birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null');
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000002', '累计新冠患者数量', 0, 'C00001', 'M000000002', '0003', '00'
+, 'select count(*) from covid_treatment where begin_dt <= ${sys_date}');
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000003', '新增新冠患者数量', 0, 'C00001', 'M000000003', '0003', '00'
+, 'select count(*) from covid_treatment where begin_dt = ${sys_date}');
+
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
 values ('b000000004', '基础指标0004', 0, 'C00001', 'M000000004', '0003', '00');
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
 values ('b000000005', '基础指标0005', 0, 'C00001', 'M000000005', '0003', '00');
 
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000010', '人口规模', 0, 'C00002', 'M000000006', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000011', '核酸检测人次', 0, 'C00002', 'M000000007', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000012', '健康异常人数', 0, 'C00002', 'M000000016', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000020', '就业人数', 0, 'C00003', 'M000000011', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000021', '小微企业数量', 0, 'C00003', 'M000000012', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000022', '中型企业数量', 0, 'C00003', 'M000000017', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000023', '大型企业数量', 0, 'C00003', 'M000000018', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('b000000024', '企业净利润', 0, 'C00003', 'M000000019', '0003', '00');
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000010', '人口规模', 0, 'C00002', 'M000000006', '0003', '00'
+, 'select ${sys_date}, addr_admin_cd, count(*) from person where birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null) group by addr_admin_cd');
 
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('d000000011', '衍生指标0011', 1, 'C00002', 'M000000008', '0003', '00');
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000011', '核酸检测人次', 0, 'C00002', 'M000000007', '0003', '00'
+, 'select ${sys_date}, addr_admin_cd, count(*) 
+from person p, rna_test_record r
+where p.person_id = r.person_id and r.data_dt = ${sys_date}
+group by p.addr_admin_cd');
+
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000012', '健康异常人数', 0, 'C00002', 'M000000016', '0003', '00'
+, 'select ${sys_date}, addr_admin_cd, count(*)
+from person p, person_health_record r
+where p.person_id = r.person_id and r.data_dt = ${sys_date}
+and (r.is_cough <> 0 or r.is_chest_tight <> 0 or r.body_temp > 37) 
+group by p.addr_admin_cd');
+
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000020', '就业人数', 0, 'C00003', 'M000000011', '0003', '00'
+, 'select ${sys_date}, addr_admin_cd, busi_cd, count(*)
+from person p, corporation c 
+where p.corp_id = c.corp_id
+and p.birth_dt <= ${sys_date} and (p.death_dt > ${sys_date} or p.death_dt is null)
+group by addr_admin_cd, busi_cd');
+
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000021', '小微企业数量', 0, 'C00003', 'M000000012', '0003', '00'
+, 'select ${sys_date}, reg_admin_cd, busi_cd, count(*)
+from corporation
+where reg_dt <= ${sys_date} and corp_scale = 0
+group by reg_admin_cd, busi_cd');
+
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000022', '中型企业数量', 0, 'C00003', 'M000000017', '0003', '00'
+, 'select ${sys_date}, reg_admin_cd, busi_cd, count(*)
+from corporation
+where reg_dt <= ${sys_date} and corp_scale = 1
+group by reg_admin_cd, busi_cd');
+
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000023', '大型企业数量', 0, 'C00003', 'M000000018', '0003', '00'
+, 'select ${sys_date}, reg_admin_cd, busi_cd, count(*)
+from corporation
+where reg_dt <= ${sys_date} and corp_scale = 2
+group by reg_admin_cd, busi_cd');
+
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('b000000024', '企业净利润', 0, 'C00003', 'M000000019', '0003', '00'
+, 'select ${sys_date}, reg_admin_cd, busi_cd, sum(net_profit)
+from corporation c, corp_finance_index i
+where c.corp_id = i.corp_id 
+and i.data_dt = ${sys_date}
+group by c.reg_admin_cd, c.busi_cd');
+
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('d000000001', '新冠患者占人口比例', 1, 'C00001', 'M000000020', '0003', '00'
+, '$[b000000002]/$[b000000010]*100');
+
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('d000000011', '健康异常人口比例', 1, 'C00002', 'M000000008', '0003', '00'
+, '$[b000000012]/$[b000000010]*100');
+
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
 values ('d000000012', '衍生指标0012', 1, 'C00002', 'M000000009', '0003', '00');
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
 values ('d000000013', '衍生指标0013', 1, 'C00002', 'M000000010', '0003', '00');
 
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('d000000021', '衍生指标0021', 1, 'C00003', 'M000000013', '0003', '00');
-insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
-values ('d000000022', '衍生指标0022', 1, 'C00003', 'M000000014', '0003', '00');
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('d000000021', '中小企业数量', 1, 'C00003', 'M000000013', '0003', '00'
+, '$[b000000021]+$[b000000022]');
+
+insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
+values ('d000000022', '中小企业数量占比', 1, 'C00003', 'M000000014', '0003', '00'
+, '$[d000000021]/$[d000000021]+$[b000000023]');
+
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
 values ('d000000023', '衍生指标0023', 1, 'C00003', 'M000000015', '0003', '00');
 
+delete from metric_dim_rollup;
+
+insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000001';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000002';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000010';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000010';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000011';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000011';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000012';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000012';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000020';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000020';
+insert into metric_dim_rollup select '0004', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000020';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000021';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000021';
+insert into metric_dim_rollup select '0004', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000021';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000022';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000022';
+insert into metric_dim_rollup select '0004', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000022';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000023';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000023';
+insert into metric_dim_rollup select '0004', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000023';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000024';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000024';
+insert into metric_dim_rollup select '0004', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000024';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 0 from metric m where m.metric_cd = 'd000000001';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 0 from metric m where m.metric_cd = 'd000000011';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'd000000011';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 0 from metric m where m.metric_cd = 'd000000021';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'd000000021';
+insert into metric_dim_rollup select '0004', m.metric_row_id, 0 from metric m where m.metric_cd = 'd000000021';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 0 from metric m where m.metric_cd = 'd000000022';
+insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'd000000022';
+insert into metric_dim_rollup select '0004', m.metric_row_id, 0 from metric m where m.metric_cd = 'd000000022';
+
+
 delete from metric_relation;
 
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000010', 'd000000011', 1);
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000010', 'd000000012', 1);
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000011', 'd000000012', 1);
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000010', 'd000000013', 1);
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000011', 'd000000013', 1);
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('d000000011', 'd000000013', 1);
+insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000002', 'd000000001', 1);
+insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000010', 'd000000001', 1);
 
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000020', 'd000000011', 1);
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000020', 'd000000012', 1);
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000021', 'd000000012', 1);
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('d000000021', 'd000000023', 1);
-insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('d000000022', 'd000000023', 1);
+insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000012', 'd000000011', 1);
+insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000010', 'd000000011', 1);
+
+insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000021', 'd000000021', 1);
+insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000022', 'd000000021', 1);
+
+insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('b000000023', 'd000000022', 1);
+insert into metric_relation (ustream_metric, dstream_metric, relation_type) values ('d000000021', 'd000000022', 1);
 
 
 delete from metric_class;
@@ -226,6 +316,7 @@ insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag)
 insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000021', '21100000', 0);
 
 
+insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000001', '21100000', 0);
 insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000011', '21100000', 0);
 insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000012', '21100000', 0);
 insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000013', '21200000', 0);
