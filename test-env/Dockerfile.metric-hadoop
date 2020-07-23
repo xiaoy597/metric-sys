@@ -1,0 +1,4 @@
+FROM metric-hadoop-base:latest
+WORKDIR /root
+SHELL ["/bin/bash", "-c"]
+CMD ["./startup.sh"]

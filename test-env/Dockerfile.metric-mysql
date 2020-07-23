@@ -1,0 +1,3 @@
+FROM mysql-5.7-base:latest
+COPY init-db.sql /docker-entrypoint-initdb.d/
+COPY hive.sql metric_db.sql metric_warehouse.sql /sample-data/

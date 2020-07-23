@@ -1,0 +1,11 @@
+version: '3'
+services:
+    mysql:
+        image: "metric-mysql"
+        network_mode: "host"
+        stop_grace_period: 1m30s
+    hadoop:
+        image: "metric-hadoop"
+        network_mode: "host"
+        stop_grace_period: 1m30s
+
