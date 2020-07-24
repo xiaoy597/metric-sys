@@ -44,7 +44,9 @@
 指标计算参数,metric_param,,X,X,X,X
 指标依赖关系,metric_relation,,X,X,X,X
 指标记录标识,metric_row_id,,X,X,X,X
-指标数据安全级别,metric_sec_level,,X,X,X,X
+指标数据安全控制标识,metric_sec_ctrl_id,,X,X,X,X
+指标数据安全控制,metric_sec_control,,X,X,X,X
+指标数据安全控制定义,metric_sec_ctrl_def,,X,X,X,X
 指标数据源,metric_src,,X,X,X,X
 指标数据源代码,metric_src_cd,,X,X,X,X
 指标数据源名称,metric_src_nm,,X,X,X,X

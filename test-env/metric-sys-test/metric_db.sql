@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2020-07-20 17:59:22
+Date: 2020-07-24 17:43:47
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS `app_module`;
 CREATE TABLE `app_module` (
   `module_id` int(11) NOT NULL COMMENT '功能代码 -- ',
   `super_module_id` int(11) DEFAULT NULL COMMENT '上级功能代码 -- ',
-  `module_name` varchar(80) DEFAULT NULL COMMENT '功能名称 -- ',
+  `module_name` varchar(60) DEFAULT NULL COMMENT '功能名称 -- ',
   `module_url` varchar(128) DEFAULT NULL COMMENT '功能访问地址 -- ',
   PRIMARY KEY (`module_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统功能 -- ';
@@ -30,6 +30,30 @@ CREATE TABLE `app_module` (
 -- ----------------------------
 -- Records of app_module
 -- ----------------------------
+INSERT INTO `app_module` VALUES ('1', '0', '指标查询分析', '/metricAnalysis');
+INSERT INTO `app_module` VALUES ('2', '0', '指标体系管理', '/metricStructure');
+INSERT INTO `app_module` VALUES ('3', '0', '指标接口管理', '/metricInterface');
+INSERT INTO `app_module` VALUES ('4', '0', '系统管理', '/sysManage');
+INSERT INTO `app_module` VALUES ('5', '0', '数据权限管理', '/dataPermission');
+INSERT INTO `app_module` VALUES ('6', '0', '权限管理', '/sys');
+INSERT INTO `app_module` VALUES ('11', '1', '指标数据查询', '/metricAnalysis/dataQuery');
+INSERT INTO `app_module` VALUES ('12', '1', '指标仪表盘', '/metricAnalysis/charts');
+INSERT INTO `app_module` VALUES ('21', '2', '指标目录维护', '/metricStructure/cataMaintain');
+INSERT INTO `app_module` VALUES ('22', '2', '指标维护', '/metricStructure/metricMaintain');
+INSERT INTO `app_module` VALUES ('23', '2', '指标目录审核', '/metricStructure/cataVerify');
+INSERT INTO `app_module` VALUES ('24', '2', '指标审核', '/metricStructure/metricVerify');
+INSERT INTO `app_module` VALUES ('31', '3', '指标接口维护', '/metricInterface/maintain');
+INSERT INTO `app_module` VALUES ('32', '3', '指标接口审核', '/metricInterface/verify');
+INSERT INTO `app_module` VALUES ('42', '4', '系统日志分析', '/sysManage/logAnalysis');
+INSERT INTO `app_module` VALUES ('43', '4', '用户角色管理', '/sysManage/userRole');
+INSERT INTO `app_module` VALUES ('44', '4', '数据源管理', '/sysManage/dataSource');
+INSERT INTO `app_module` VALUES ('45', '4', '指标仓库管理', '/sysManage/warehouse');
+INSERT INTO `app_module` VALUES ('46', '4', '系统运行报告', '/sysManage/logReport');
+INSERT INTO `app_module` VALUES ('55', '5', '数据安全级别维护', '/dataPermission/safetyMaintain');
+INSERT INTO `app_module` VALUES ('61', '6', '功能查看', '/sys/menu');
+INSERT INTO `app_module` VALUES ('62', '6', '用户管理', '/sys/user');
+INSERT INTO `app_module` VALUES ('63', '6', '角色管理', '/sys/role');
+INSERT INTO `app_module` VALUES ('64', '6', '机构管理', '/sys/record/recordOriginManager');
 
 -- ----------------------------
 -- Table structure for busi_department
@@ -37,7 +61,7 @@ CREATE TABLE `app_module` (
 DROP TABLE IF EXISTS `busi_department`;
 CREATE TABLE `busi_department` (
   `dept_cd` varchar(4) NOT NULL COMMENT '部门代码 -- ',
-  `dept_nm` varchar(80) DEFAULT NULL COMMENT '部门名称 -- ',
+  `dept_nm` varchar(60) DEFAULT NULL COMMENT '部门名称 -- ',
   PRIMARY KEY (`dept_cd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='业务部门 -- ';
 
@@ -67,7 +91,7 @@ CREATE TABLE `common_metric_query` (
 DROP TABLE IF EXISTS `external_user_role`;
 CREATE TABLE `external_user_role` (
   `external_role_cd` varchar(16) NOT NULL COMMENT '外部角色代码 -- ',
-  `external_role_nm` varchar(80) DEFAULT NULL COMMENT '外部角色名称 -- ',
+  `external_role_nm` varchar(60) DEFAULT NULL COMMENT '外部角色名称 -- ',
   PRIMARY KEY (`external_role_cd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='外部用户角色 -- ';
 
@@ -90,7 +114,7 @@ DROP TABLE IF EXISTS `metric`;
 CREATE TABLE `metric` (
   `metric_row_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '指标记录标识 -- ',
   `metric_cd` varchar(10) DEFAULT NULL COMMENT '指标代码 -- 不得重复',
-  `metric_nm` varchar(80) DEFAULT NULL COMMENT '指标名称 -- ',
+  `metric_nm` varchar(60) DEFAULT NULL COMMENT '指标名称 -- ',
   `metric_type` int(11) DEFAULT NULL COMMENT '指标类型 -- 0：基础指标\r\n1：衍生指标',
   `dept_cd` varchar(4) DEFAULT NULL COMMENT '业务部门代码 -- ',
   `metric_unit` varchar(16) DEFAULT NULL COMMENT '指标数据单位 -- ',
@@ -114,26 +138,26 @@ CREATE TABLE `metric` (
 -- ----------------------------
 -- Records of metric
 -- ----------------------------
-INSERT INTO `metric` VALUES ('1', 'b000000001', '大专学历以上人口数量', '0', null, null, 'C00001', 'M000000001', '0003', 'select ${sys_date}, count(*) from person  where degree > 3 and birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('2', 'b000000002', '累计新冠患者数量', '0', null, null, 'C00001', 'M000000002', '0003', 'select count(*) from covid_treatment where begin_dt <= ${sys_date}', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('3', 'b000000003', '新增新冠患者数量', '0', null, null, 'C00001', 'M000000003', '0003', 'select count(*) from covid_treatment where begin_dt = ${sys_date}', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('4', 'b000000004', '基础指标0004', '0', null, null, 'C00001', 'M000000004', '0003', null, null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('5', 'b000000005', '基础指标0005', '0', null, null, 'C00001', 'M000000005', '0003', null, null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('6', 'b000000010', '人口规模', '0', null, null, 'C00002', 'M000000006', '0003', 'select ${sys_date}, addr_admin_cd, count(*) from person where birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null) group by addr_admin_cd', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('7', 'b000000011', '核酸检测人次', '0', null, null, 'C00002', 'M000000007', '0003', 'select ${sys_date}, addr_admin_cd, count(*) \r\nfrom person p, rna_test_record r\r\nwhere p.person_id = r.person_id and r.data_dt = ${sys_date}\r\ngroup by p.addr_admin_cd', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('8', 'b000000012', '健康异常人数', '0', null, null, 'C00002', 'M000000016', '0003', 'select ${sys_date}, addr_admin_cd, count(*)\r\nfrom person p, person_health_record r\r\nwhere p.person_id = r.person_id and r.data_dt = ${sys_date}\r\nand (r.is_cough <> 0 or r.is_chest_tight <> 0 or r.body_temp > 37) \r\ngroup by p.addr_admin_cd', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('9', 'b000000020', '就业人数', '0', null, null, 'C00003', 'M000000011', '0003', 'select ${sys_date}, addr_admin_cd, busi_cd, count(*)\r\nfrom person p, corporation c \r\nwhere p.corp_id = c.corp_id\r\nand p.birth_dt <= ${sys_date} and (p.death_dt > ${sys_date} or p.death_dt is null)\r\ngroup by addr_admin_cd, busi_cd', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('10', 'b000000021', '小微企业数量', '0', null, null, 'C00003', 'M000000012', '0003', 'select ${sys_date}, reg_admin_cd, busi_cd, count(*)\r\nfrom corporation\r\nwhere reg_dt <= ${sys_date} and corp_scale = 0\r\ngroup by reg_admin_cd, busi_cd', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('11', 'b000000022', '中型企业数量', '0', null, null, 'C00003', 'M000000017', '0003', 'select ${sys_date}, reg_admin_cd, busi_cd, count(*)\r\nfrom corporation\r\nwhere reg_dt <= ${sys_date} and corp_scale = 1\r\ngroup by reg_admin_cd, busi_cd', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('12', 'b000000023', '大型企业数量', '0', null, null, 'C00003', 'M000000018', '0003', 'select ${sys_date}, reg_admin_cd, busi_cd, count(*)\r\nfrom corporation\r\nwhere reg_dt <= ${sys_date} and corp_scale = 2\r\ngroup by reg_admin_cd, busi_cd', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('13', 'b000000024', '企业净利润', '0', null, null, 'C00003', 'M000000019', '0003', 'select ${sys_date}, reg_admin_cd, busi_cd, sum(net_profit)\r\nfrom corporation c, corp_finance_index i\r\nwhere c.corp_id = i.corp_id \r\nand i.data_dt = ${sys_date}\r\ngroup by c.reg_admin_cd, c.busi_cd', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('14', 'd000000001', '新冠患者占人口比例', '1', null, null, 'C00001', 'M000000020', '0003', '$[b000000002]/$[b000000010]*100', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('15', 'd000000011', '健康异常人口比例', '1', null, null, 'C00002', 'M000000008', '0003', '$[b000000012]/$[b000000010]*100', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('16', 'd000000012', '衍生指标0012', '1', null, null, 'C00002', 'M000000009', '0003', null, null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('17', 'd000000013', '衍生指标0013', '1', null, null, 'C00002', 'M000000010', '0003', null, null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('18', 'd000000021', '中小企业数量', '1', null, null, 'C00003', 'M000000013', '0003', '$[b000000021]+$[b000000022]', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('19', 'd000000022', '中小企业数量占比', '1', null, null, 'C00003', 'M000000014', '0003', '$[d000000021]/$[d000000021]+$[b000000023]', null, '00', null, null, null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('20', 'd000000023', '衍生指标0023', '1', null, null, 'C00003', 'M000000015', '0003', null, null, '00', null, null, null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('1', 'b000000001', '大专学历以上人口数量', '0', null, null, 'C00001', 'M000000001', '0003', 'select ${sys_date}, count(*) from person  where degree > 3 and birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('2', 'b000000002', '累计新冠患者数量', '0', null, null, 'C00001', 'M000000002', '0003', 'select count(*) from covid_treatment where begin_dt <= ${sys_date}', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('3', 'b000000003', '新增新冠患者数量', '0', null, null, 'C00001', 'M000000003', '0003', 'select count(*) from covid_treatment where begin_dt = ${sys_date}', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('4', 'b000000004', '基础指标0004', '0', null, null, 'C00001', 'M000000004', '0003', null, null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('5', 'b000000005', '基础指标0005', '0', null, null, 'C00001', 'M000000005', '0003', null, null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('6', 'b000000010', '人口规模', '0', null, null, 'C00002', 'M000000006', '0003', 'select ${sys_date}, addr_admin_cd, count(*) from person where birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null) group by addr_admin_cd', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('7', 'b000000011', '核酸检测人次', '0', null, null, 'C00002', 'M000000007', '0003', 'select ${sys_date}, addr_admin_cd, count(*) \r\nfrom person p, rna_test_record r\r\nwhere p.person_id = r.person_id and r.data_dt = ${sys_date}\r\ngroup by p.addr_admin_cd', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('8', 'b000000012', '健康异常人数', '0', null, null, 'C00002', 'M000000016', '0003', 'select ${sys_date}, addr_admin_cd, count(*)\r\nfrom person p, person_health_record r\r\nwhere p.person_id = r.person_id and r.data_dt = ${sys_date}\r\nand (r.is_cough <> 0 or r.is_chest_tight <> 0 or r.body_temp > 37) \r\ngroup by p.addr_admin_cd', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('9', 'b000000020', '就业人数', '0', null, null, 'C00003', 'M000000011', '0003', 'select ${sys_date}, addr_admin_cd, busi_cd, count(*)\r\nfrom person p, corporation c \r\nwhere p.corp_id = c.corp_id\r\nand p.birth_dt <= ${sys_date} and (p.death_dt > ${sys_date} or p.death_dt is null)\r\ngroup by addr_admin_cd, busi_cd', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('10', 'b000000021', '小微企业数量', '0', null, null, 'C00003', 'M000000012', '0003', 'select ${sys_date}, reg_admin_cd, busi_cd, count(*)\r\nfrom corporation\r\nwhere reg_dt <= ${sys_date} and corp_scale = 0\r\ngroup by reg_admin_cd, busi_cd', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('11', 'b000000022', '中型企业数量', '0', null, null, 'C00003', 'M000000017', '0003', 'select ${sys_date}, reg_admin_cd, busi_cd, count(*)\r\nfrom corporation\r\nwhere reg_dt <= ${sys_date} and corp_scale = 1\r\ngroup by reg_admin_cd, busi_cd', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('12', 'b000000023', '大型企业数量', '0', null, null, 'C00003', 'M000000018', '0003', 'select ${sys_date}, reg_admin_cd, busi_cd, count(*)\r\nfrom corporation\r\nwhere reg_dt <= ${sys_date} and corp_scale = 2\r\ngroup by reg_admin_cd, busi_cd', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('13', 'b000000024', '企业净利润', '0', null, null, 'C00003', 'M000000019', '0003', 'select ${sys_date}, reg_admin_cd, busi_cd, sum(net_profit)\r\nfrom corporation c, corp_finance_index i\r\nwhere c.corp_id = i.corp_id \r\nand i.data_dt = ${sys_date}\r\ngroup by c.reg_admin_cd, c.busi_cd', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('14', 'd000000001', '新冠患者占人口比例', '1', null, null, 'C00001', 'M000000020', '0003', '$[b000000002]/$[b000000010]*100', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('15', 'd000000011', '健康异常人口比例', '1', null, null, 'C00002', 'M000000008', '0003', '$[b000000012]/$[b000000010]*100', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('16', 'd000000012', '衍生指标0012', '1', null, null, 'C00002', 'M000000009', '0003', null, null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('17', 'd000000013', '衍生指标0013', '1', null, null, 'C00002', 'M000000010', '0003', null, null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('18', 'd000000021', '中小企业数量', '1', null, null, 'C00003', 'M000000013', '0003', '$[b000000021]+$[b000000022]', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('19', 'd000000022', '中小企业数量占比', '1', null, null, 'C00003', 'M000000014', '0003', '$[d000000021]/$[d000000021]+$[b000000023]', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('20', 'd000000023', '衍生指标0023', '1', null, null, 'C00003', 'M000000015', '0003', null, null, '00', null, '0', null, null, null, null, null, null);
 
 -- ----------------------------
 -- Table structure for metric_class
@@ -142,7 +166,7 @@ DROP TABLE IF EXISTS `metric_class`;
 CREATE TABLE `metric_class` (
   `mc_row_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '指标目录记录标识 -- ',
   `metric_class_cd` char(8) DEFAULT NULL COMMENT '指标目录代码 -- 不得重复',
-  `metric_class_nm` varchar(80) DEFAULT NULL COMMENT '指标目录名称 -- ',
+  `metric_class_nm` varchar(60) DEFAULT NULL COMMENT '指标目录名称 -- ',
   `super_class_cd` char(8) DEFAULT NULL COMMENT '上级指标目录代码 -- ',
   `dept_cd` varchar(4) DEFAULT NULL COMMENT '部门代码 -- ',
   `disp_order` int(11) DEFAULT NULL COMMENT '显示顺序 -- ',
@@ -220,11 +244,11 @@ INSERT INTO `metric_class_r` VALUES ('21', 'd000000011', '21200000', '0', '0', n
 DROP TABLE IF EXISTS `metric_column`;
 CREATE TABLE `metric_column` (
   `metric_col_cd` char(10) NOT NULL COMMENT '指标字段代码 -- ',
-  `metric_col_nm` varchar(80) DEFAULT NULL COMMENT '指标字段名称 -- ',
+  `metric_col_nm` varchar(60) DEFAULT NULL COMMENT '指标字段名称 -- ',
   `metric_col_type` int(11) DEFAULT NULL COMMENT '指标字段类型 -- 0：指标维度\r\n1：指标度量',
   `metric_col_data_type` varchar(20) DEFAULT NULL COMMENT '指标字段数据类型 -- ',
   `metric_col_phy_nm` varchar(30) DEFAULT NULL COMMENT '指标字段物理名称 -- ',
-  `metric_col_desc` varchar(80) DEFAULT NULL COMMENT '指标字段备注 -- ',
+  `metric_col_desc` varchar(60) DEFAULT NULL COMMENT '指标字段备注 -- ',
   PRIMARY KEY (`metric_col_cd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标字段 -- ';
 
@@ -271,7 +295,7 @@ INSERT INTO `metric_column` VALUES ('M000000020', '新冠患者占人口比例',
 DROP TABLE IF EXISTS `metric_dim`;
 CREATE TABLE `metric_dim` (
   `dim_cd` char(4) NOT NULL COMMENT '维度代码 -- ',
-  `dim_nm` varchar(80) DEFAULT NULL COMMENT '维度名称 -- ',
+  `dim_nm` varchar(60) DEFAULT NULL COMMENT '维度名称 -- ',
   `dim_tbl_phy_nm` varchar(30) DEFAULT NULL COMMENT '维度物理表名称 -- ',
   PRIMARY KEY (`dim_cd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标维度 -- ';
@@ -318,7 +342,7 @@ DROP TABLE IF EXISTS `metric_dim_rollup`;
 CREATE TABLE `metric_dim_rollup` (
   `dim_cd` char(4) NOT NULL COMMENT '维度代码 -- ',
   `metric_row_id` bigint(20) NOT NULL COMMENT '指标记录标识 -- ',
-  `rollup_type` int(11) DEFAULT NULL COMMENT '指标上卷方式 -- 0：SUM，1：MIN，2：MAX，3：AVG',
+  `rollup_type` int(11) DEFAULT NULL COMMENT '指标上卷方式 -- 0：SUM，1：MIN，2：MAX，3：AVG，4：LAST',
   PRIMARY KEY (`dim_cd`,`metric_row_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标维度上卷 -- ';
 
@@ -380,7 +404,7 @@ DROP TABLE IF EXISTS `metric_interface`;
 CREATE TABLE `metric_interface` (
   `mif_row_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '接口记录标识 -- ',
   `metric_if_cd` char(8) DEFAULT NULL COMMENT '指标接口代码 -- ',
-  `metric_if_nm` varchar(80) DEFAULT NULL COMMENT '指标接口名称 -- ',
+  `metric_if_nm` varchar(60) DEFAULT NULL COMMENT '指标接口名称 -- ',
   `expire_dt` date DEFAULT NULL COMMENT '接口失效日期 -- ',
   `volume_limit` int(11) DEFAULT NULL COMMENT '访问数据量阈值 -- ',
   `freq_limit` int(11) DEFAULT NULL COMMENT '访问频次阈值 -- ',
@@ -408,7 +432,7 @@ DROP TABLE IF EXISTS `metric_param`;
 CREATE TABLE `metric_param` (
   `param_cd` char(6) NOT NULL COMMENT '参数代码 -- ',
   `param_type` int(11) DEFAULT NULL COMMENT '参数类型 -- 0：指标加载参数，1：指标系统参数。注：指标加载参数就是可以嵌入基础指标和衍生指标计算公式或者语句的参数，指标系统参数是除了指标加载参数之外的其他参数。',
-  `param_nm` varchar(80) DEFAULT NULL COMMENT '参数名称 -- ',
+  `param_nm` varchar(60) DEFAULT NULL COMMENT '参数名称 -- ',
   `param_value` varchar(512) DEFAULT NULL COMMENT '参数值 -- ',
   PRIMARY KEY (`param_cd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标计算参数 -- ';
@@ -445,19 +469,19 @@ INSERT INTO `metric_relation` VALUES ('b000000023', 'd000000022', '1', null);
 INSERT INTO `metric_relation` VALUES ('d000000021', 'd000000022', '1', null);
 
 -- ----------------------------
--- Table structure for metric_sec_level
+-- Table structure for metric_sec_control
 -- ----------------------------
-DROP TABLE IF EXISTS `metric_sec_level`;
-CREATE TABLE `metric_sec_level` (
-  `dim_cd` char(4) NOT NULL COMMENT '维度代码 -- ',
-  `metric_dim_col_cd` char(10) NOT NULL COMMENT '维度字段代码 -- ',
-  `metric_row_id` bigint(20) NOT NULL COMMENT '指标记录标识 -- ',
+DROP TABLE IF EXISTS `metric_sec_control`;
+CREATE TABLE `metric_sec_control` (
+  `metric_sec_ctrl_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '指标数据安全控制标识 -- ',
+  `metric_cd` varchar(10) DEFAULT NULL COMMENT '指标代码 -- ',
   `sec_level_cd` char(2) DEFAULT NULL COMMENT '安全级别代码 -- ',
-  PRIMARY KEY (`dim_cd`,`metric_dim_col_cd`,`metric_row_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标数据安全级别 -- ';
+  `metric_sec_ctrl_def` varchar(512) DEFAULT NULL COMMENT '指标数据安全控制定义 -- 指标数据的维度及粒度组合，定义的形式为：{ "dim_1":"dim_level_1", "dim_2":"dim_level_2, "dim_3":""}，未指定级别的维度表示对所有级别有效。',
+  PRIMARY KEY (`metric_sec_ctrl_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标数据安全控制 -- ';
 
 -- ----------------------------
--- Records of metric_sec_level
+-- Records of metric_sec_control
 -- ----------------------------
 
 -- ----------------------------
@@ -466,7 +490,7 @@ CREATE TABLE `metric_sec_level` (
 DROP TABLE IF EXISTS `metric_src`;
 CREATE TABLE `metric_src` (
   `metric_src_cd` char(4) NOT NULL COMMENT '指标数据源代码 -- ',
-  `metric_src_nm` varchar(80) DEFAULT NULL COMMENT '指标数据源名称 -- ',
+  `metric_src_nm` varchar(60) DEFAULT NULL COMMENT '指标数据源名称 -- ',
   `metric_src_param` varchar(256) DEFAULT NULL COMMENT '数据源访问参数 -- ',
   `metric_src_type_cd` char(2) DEFAULT NULL COMMENT '指标数据源类型代码 -- 01：Hive，02：MySQL，03：MPP，04：文件系统',
   PRIMARY KEY (`metric_src_cd`)
@@ -486,7 +510,7 @@ INSERT INTO `metric_src` VALUES ('0004', '测试文件系统', '', '04');
 DROP TABLE IF EXISTS `metric_src_type`;
 CREATE TABLE `metric_src_type` (
   `metric_src_type_cd` char(2) NOT NULL COMMENT '指标数据源类型代码 -- 01：Hive，02：MySQL，03：MPP，04：文件系统',
-  `metric_src_type_nm` varchar(80) DEFAULT NULL COMMENT '指标数据源类型名称 -- ',
+  `metric_src_type_nm` varchar(60) DEFAULT NULL COMMENT '指标数据源类型名称 -- ',
   PRIMARY KEY (`metric_src_type_cd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标数据源类型 -- ';
 
@@ -495,7 +519,7 @@ CREATE TABLE `metric_src_type` (
 -- ----------------------------
 INSERT INTO `metric_src_type` VALUES ('01', 'Hive');
 INSERT INTO `metric_src_type` VALUES ('02', 'MySQL');
-INSERT INTO `metric_src_type` VALUES ('03', 'GreenPlump');
+INSERT INTO `metric_src_type` VALUES ('03', 'MPP');
 INSERT INTO `metric_src_type` VALUES ('04', 'Filesystem');
 
 -- ----------------------------
@@ -504,7 +528,7 @@ INSERT INTO `metric_src_type` VALUES ('04', 'Filesystem');
 DROP TABLE IF EXISTS `metric_tbl`;
 CREATE TABLE `metric_tbl` (
   `metric_tbl_cd` char(6) NOT NULL COMMENT '指标主表代码 -- ',
-  `metric_tbl_nm` varchar(80) DEFAULT NULL COMMENT '指标主表名称 -- ',
+  `metric_tbl_nm` varchar(60) DEFAULT NULL COMMENT '指标主表名称 -- ',
   `metric_tbl_phy_nm` varchar(30) DEFAULT NULL COMMENT '指标主表物理表名称 -- ',
   `dept_cd` varchar(4) DEFAULT NULL COMMENT '部门代码 -- ',
   PRIMARY KEY (`metric_tbl_cd`)
@@ -544,7 +568,7 @@ INSERT INTO `metric_tbl_dim` VALUES ('C00003', '0004', '3');
 DROP TABLE IF EXISTS `organization`;
 CREATE TABLE `organization` (
   `org_cd` varchar(20) NOT NULL COMMENT '机构代码 -- ',
-  `org_nm` varchar(80) DEFAULT NULL COMMENT '机构名称 -- ',
+  `org_nm` varchar(60) DEFAULT NULL COMMENT '机构名称 -- ',
   `dept_cd` varchar(4) DEFAULT NULL COMMENT '部门代码 -- ',
   `org_type` int(11) DEFAULT NULL COMMENT '机构类型 -- 0：管理机构\r\n1：业务部门',
   `local_admin_org_cd` varchar(20) DEFAULT NULL COMMENT '本级管理机构代码 -- ',
@@ -5012,7 +5036,7 @@ INSERT INTO `role_mapping` VALUES ('08', '8');
 DROP TABLE IF EXISTS `security_level`;
 CREATE TABLE `security_level` (
   `sec_level_cd` char(2) NOT NULL COMMENT '安全级别代码 -- ',
-  `sec_level_nm` varchar(80) DEFAULT NULL COMMENT '安全级别名称 -- ',
+  `sec_level_nm` varchar(60) DEFAULT NULL COMMENT '安全级别名称 -- ',
   PRIMARY KEY (`sec_level_cd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据安全级别 -- ';
 
@@ -5030,7 +5054,7 @@ INSERT INTO `security_level` VALUES ('03', '绝密');
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `user_id` varchar(16) NOT NULL COMMENT '用户代码 -- ',
-  `user_name` varchar(80) DEFAULT NULL COMMENT '用户名称 -- 用户登录所用的ID',
+  `user_name` varchar(60) DEFAULT NULL COMMENT '用户名称 -- 用户登录所用的ID',
   `user_type` int(11) DEFAULT NULL COMMENT '用户类型 -- ',
   `reg_dt` date DEFAULT NULL COMMENT '注册日期 -- ',
   `user_status` int(11) DEFAULT NULL COMMENT '用户状态 -- ',
@@ -5047,6 +5071,7 @@ CREATE TABLE `user` (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
+INSERT INTO `user` VALUES ('0', 'admin', '3', null, '0', null, '-1ef523c6b645a65441a91fa80df077c2', '超级管理员', null, null, null, null);
 INSERT INTO `user` VALUES ('1', 'sysadmin', null, null, null, null, null, '系统管理员', null, null, null, null);
 INSERT INTO `user` VALUES ('2', 'user1', null, null, null, null, null, '普通指标用户', null, null, null, null);
 INSERT INTO `user` VALUES ('3', 'operator', null, null, null, null, null, '指标操作员', null, null, null, null);
@@ -5070,6 +5095,7 @@ CREATE TABLE `user_organization_assign` (
 -- ----------------------------
 -- Records of user_organization_assign
 -- ----------------------------
+INSERT INTO `user_organization_assign` VALUES ('0', '0', '110000');
 INSERT INTO `user_organization_assign` VALUES ('1', '1', '110000C005');
 INSERT INTO `user_organization_assign` VALUES ('2', '2', '110000C005');
 INSERT INTO `user_organization_assign` VALUES ('3', '3', '110000C005');
@@ -5084,12 +5110,12 @@ INSERT INTO `user_organization_assign` VALUES ('8', '8', '110000C005');
 -- ----------------------------
 DROP TABLE IF EXISTS `user_role`;
 CREATE TABLE `user_role` (
-  `user_role_id` int(11) NOT NULL COMMENT '用户角色代码 -- ',
-  `user_role_name` varchar(80) DEFAULT NULL COMMENT '用户角色名称 -- ',
+  `user_role_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户角色代码 -- ',
+  `user_role_name` varchar(60) DEFAULT NULL COMMENT '用户角色名称 -- ',
   `user_role_desc` varchar(512) DEFAULT NULL COMMENT '用户角色描述 -- ',
   `sec_level_cd` char(2) DEFAULT NULL COMMENT '安全级别代码 -- ',
   PRIMARY KEY (`user_role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户角色 -- ';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='用户角色 -- ';
 
 -- ----------------------------
 -- Records of user_role
@@ -5102,6 +5128,7 @@ INSERT INTO `user_role` VALUES ('5', '系统管理员', '', '00');
 INSERT INTO `user_role` VALUES ('6', '内部指标用户', '', '01');
 INSERT INTO `user_role` VALUES ('7', '保密指标用户', '', '02');
 INSERT INTO `user_role` VALUES ('8', '绝密指标用户', '', '03');
+INSERT INTO `user_role` VALUES ('9', '超级管理员岗', '此角色为临时加入，测试角色', '00');
 
 -- ----------------------------
 -- Table structure for user_role_assign
@@ -5116,6 +5143,7 @@ CREATE TABLE `user_role_assign` (
 -- ----------------------------
 -- Records of user_role_assign
 -- ----------------------------
+INSERT INTO `user_role_assign` VALUES ('0', '9');
 
 -- ----------------------------
 -- Table structure for user_role_privilege
@@ -5131,3 +5159,23 @@ CREATE TABLE `user_role_privilege` (
 -- ----------------------------
 -- Records of user_role_privilege
 -- ----------------------------
+INSERT INTO `user_role_privilege` VALUES ('5', '1', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '1', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '2', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '3', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '4', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '5', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '11', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '12', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '21', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '22', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '23', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '24', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '31', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '32', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '42', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '43', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '44', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '45', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '46', null);
+INSERT INTO `user_role_privilege` VALUES ('9', '55', null);

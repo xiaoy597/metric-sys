@@ -173,13 +173,13 @@ CREATE TABLE metric_relation
 	PRIMARY KEY (ustream_metric,dstream_metric)
 );
 
-CREATE TABLE metric_sec_level
+CREATE TABLE metric_sec_control
 (
-	dim_cd               CHAR(4) NOT NULL,
-	metric_dim_col_cd    CHAR(10) NOT NULL,
-	metric_row_id        BIGINT NOT NULL,
+	metric_sec_ctrl_id   BIGINT AUTO_INCREMENT,
+	metric_cd            VARCHAR(10) NULL,
 	sec_level_cd         CHAR(2) NULL,
-	PRIMARY KEY (dim_cd,metric_dim_col_cd,metric_row_id)
+	metric_sec_ctrl_def  VARCHAR(512) NULL,
+	PRIMARY KEY (metric_sec_ctrl_id)
 );
 
 CREATE TABLE metric_src
@@ -268,7 +268,7 @@ CREATE TABLE user_organization_assign
 
 CREATE TABLE user_role
 (
-	user_role_id         INTEGER NOT NULL,
+	user_role_id         INTEGER AUTO_INCREMENT,
 	user_role_name       VARCHAR(60) NULL,
 	user_role_desc       VARCHAR(512) NULL,
 	sec_level_cd         CHAR(2) NULL,
@@ -400,7 +400,7 @@ ALTER TABLE metric_dim_col COMMENT = '指标维度字段 -- ' ENGINE=InnoDB DEFA
 ALTER TABLE metric_dim_rollup COMMENT = '指标维度上卷 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_dim_rollup MODIFY COLUMN `dim_cd` CHAR(4) NOT NULL COMMENT '维度代码 -- ';
   ALTER TABLE metric_dim_rollup MODIFY COLUMN `metric_row_id` BIGINT NOT NULL COMMENT '指标记录标识 -- ';
-  ALTER TABLE metric_dim_rollup MODIFY COLUMN `rollup_type` INTEGER NULL COMMENT '指标上卷方式 -- 0：SUM，1：MIN，2：MAX，3：AVG';
+  ALTER TABLE metric_dim_rollup MODIFY COLUMN `rollup_type` INTEGER NULL COMMENT '指标上卷方式 -- 0：SUM，1：MIN，2：MAX，3：AVG，4：LAST';
   
 ALTER TABLE metric_if_content COMMENT = '指标接口内容 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_if_content MODIFY COLUMN `metric_if_cd` CHAR(8) NOT NULL COMMENT '指标接口代码 -- ';
@@ -438,11 +438,11 @@ ALTER TABLE metric_relation COMMENT = '指标依赖关系 -- ' ENGINE=InnoDB DEF
 1：强依赖，如果不满足则不计算';
   ALTER TABLE metric_relation MODIFY COLUMN `ustream_dft_value` NUMERIC(20,4) NULL COMMENT '上游指标默认值 -- ';
   
-ALTER TABLE metric_sec_level COMMENT = '指标数据安全级别 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE metric_sec_level MODIFY COLUMN `dim_cd` CHAR(4) NOT NULL COMMENT '维度代码 -- ';
-  ALTER TABLE metric_sec_level MODIFY COLUMN `metric_dim_col_cd` CHAR(10) NOT NULL COMMENT '维度字段代码 -- ';
-  ALTER TABLE metric_sec_level MODIFY COLUMN `metric_row_id` BIGINT NOT NULL COMMENT '指标记录标识 -- ';
-  ALTER TABLE metric_sec_level MODIFY COLUMN `sec_level_cd` CHAR(2) NULL COMMENT '安全级别代码 -- ';
+ALTER TABLE metric_sec_control COMMENT = '指标数据安全控制 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE metric_sec_control MODIFY COLUMN `metric_sec_ctrl_id` BIGINT AUTO_INCREMENT COMMENT '指标数据安全控制标识 -- ';
+  ALTER TABLE metric_sec_control MODIFY COLUMN `metric_cd` VARCHAR(10) NULL COMMENT '指标代码 -- ';
+  ALTER TABLE metric_sec_control MODIFY COLUMN `sec_level_cd` CHAR(2) NULL COMMENT '安全级别代码 -- ';
+  ALTER TABLE metric_sec_control MODIFY COLUMN `metric_sec_ctrl_def` VARCHAR(512) NULL COMMENT '指标数据安全控制定义 -- 指标数据的维度及粒度组合，定义的形式为：{ "dim_1":"dim_level_1", "dim_2":"dim_level_2, "dim_3":""}，未指定级别的维度表示对所有级别有效。';
   
 ALTER TABLE metric_src COMMENT = '指标数据源 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_src MODIFY COLUMN `metric_src_cd` CHAR(4) NOT NULL COMMENT '指标数据源代码 -- ';
@@ -503,7 +503,7 @@ ALTER TABLE user_organization_assign COMMENT = '用户机构 -- ' ENGINE=InnoDB 
   ALTER TABLE user_organization_assign MODIFY COLUMN `org_cd` VARCHAR(20) NULL COMMENT '机构代码 -- ';
   
 ALTER TABLE user_role COMMENT = '用户角色 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE user_role MODIFY COLUMN `user_role_id` INTEGER NOT NULL COMMENT '用户角色代码 -- ';
+  ALTER TABLE user_role MODIFY COLUMN `user_role_id` INTEGER AUTO_INCREMENT COMMENT '用户角色代码 -- ';
   ALTER TABLE user_role MODIFY COLUMN `user_role_name` VARCHAR(60) NULL COMMENT '用户角色名称 -- ';
   ALTER TABLE user_role MODIFY COLUMN `user_role_desc` VARCHAR(512) NULL COMMENT '用户角色描述 -- ';
   ALTER TABLE user_role MODIFY COLUMN `sec_level_cd` CHAR(2) NULL COMMENT '安全级别代码 -- ';

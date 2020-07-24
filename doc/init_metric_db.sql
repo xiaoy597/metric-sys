@@ -1,8 +1,9 @@
+
 delete from metric_src_type;
 
 insert into metric_src_type values ('01', 'Hive');
 insert into metric_src_type values ('02', 'MySQL');
-insert into metric_src_type values ('03', 'GreenPlump');
+insert into metric_src_type values ('03', 'MPP');
 insert into metric_src_type values ('04', 'Filesystem');
 
 
@@ -223,6 +224,9 @@ values ('d000000022', '中小企业数量占比', 1, 'C00003', 'M000000014', '00
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
 values ('d000000023', '衍生指标0023', 1, 'C00003', 'M000000015', '0003', '00');
 
+update metric set update_flag = 0;
+
+
 delete from metric_dim_rollup;
 
 insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000001';
@@ -402,4 +406,47 @@ insert into external_user_role values ('05', '外部用户角色05');
 insert into external_user_role values ('06', '外部用户角色06');
 insert into external_user_role values ('07', '外部用户角色07');
 insert into external_user_role values ('08', '外部用户角色08');
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES ('0','admin',3,NULL,0,NULL,'-1ef523c6b645a65441a91fa80df077c2','超级管理员',NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `app_module` WRITE;
+/*!40000 ALTER TABLE `app_module` DISABLE KEYS */;
+INSERT INTO `app_module` VALUES (1,0,'指标查询分析','/metricAnalysis'),(2,0,'指标体系管理','/metricStructure'),(3,0,'指标接口管理','/metricInterface'),(4,0,'系统管理','/sysManage'),(5,0,'数据权限管理','/dataPermission'),(6,0,'权限管理','/sys'),(11,1,'指标数据查询','/metricAnalysis/dataQuery'),(12,1,'指标仪表盘','/metricAnalysis/charts'),(21,2,'指标目录维护','/metricStructure/cataMaintain'),(22,2,'指标维护','/metricStructure/metricMaintain'),(23,2,'指标目录审核','/metricStructure/cataVerify'),(24,2,'指标审核','/metricStructure/metricVerify'),(31,3,'指标接口维护','/metricInterface/maintain'),(32,3,'指标接口审核','/metricInterface/verify'),(42,4,'系统日志分析','/sysManage/logAnalysis'),(43,4,'用户角色管理','/sysManage/userRole'),(44,4,'数据源管理','/sysManage/dataSource'),(45,4,'指标仓库管理','/sysManage/warehouse'),(46,4,'系统运行报告','/sysManage/logReport'),(55,5,'数据安全级别维护','/dataPermission/safetyMaintain'),(61,6,'功能查看','/sys/menu'),(62,6,'用户管理','/sys/user'),(63,6,'角色管理','/sys/role'),(64,6,'机构管理','/sys/record/recordOriginManager');
+/*!40000 ALTER TABLE `app_module` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `user_organization_assign` WRITE;
+/*!40000 ALTER TABLE `user_organization_assign` DISABLE KEYS */;
+INSERT INTO `user_organization_assign` VALUES (0,'0','110000');
+/*!40000 ALTER TABLE `user_organization_assign` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `user_role` WRITE;
+/*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
+INSERT INTO `user_role` VALUES (9,'超级管理员岗','此角色为临时加入，测试角色','00');
+/*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+LOCK TABLES `user_role_assign` WRITE;
+/*!40000 ALTER TABLE `user_role_assign` DISABLE KEYS */;
+INSERT INTO `user_role_assign` VALUES ('0',9);
+/*!40000 ALTER TABLE `user_role_assign` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `user_role_privilege` WRITE;
+/*!40000 ALTER TABLE `user_role_privilege` DISABLE KEYS */;
+INSERT INTO `user_role_privilege` VALUES (5,1,NULL),(9,1,NULL),(9,2,NULL),(9,3,NULL),(9,4,NULL),(9,5,NULL),(9,11,NULL),(9,12,NULL),(9,21,NULL),(9,22,NULL),(9,23,NULL),(9,24,NULL),(9,31,NULL),(9,32,NULL),(9,42,NULL),(9,43,NULL),(9,44,NULL),(9,45,NULL),(9,46,NULL),(9,55,NULL);
+/*!40000 ALTER TABLE `user_role_privilege` ENABLE KEYS */;
+UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `user_organizations_assign`;
+DROP TABLE IF EXISTS `sys_origin`;
+DROP TABLE IF EXISTS `rcd_person_config`;
+DROP TABLE IF EXISTS `rcd_person_group`;
+
 
