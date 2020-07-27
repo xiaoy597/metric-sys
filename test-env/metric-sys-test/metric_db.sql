@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2020-07-24 17:43:47
+Date: 2020-07-27 10:59:05
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -389,7 +389,7 @@ DROP TABLE IF EXISTS `metric_if_content`;
 CREATE TABLE `metric_if_content` (
   `metric_if_cd` char(8) NOT NULL COMMENT '指标接口代码 -- ',
   `metric_cd` varchar(10) NOT NULL COMMENT '指标代码 -- ',
-  `data_filter` varchar(1024) DEFAULT NULL COMMENT '数据筛选条件 -- ',
+  `data_filter` text COMMENT '数据筛选条件 -- ',
   PRIMARY KEY (`metric_if_cd`,`metric_cd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标接口内容 -- ';
 

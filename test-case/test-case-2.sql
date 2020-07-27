@@ -17,14 +17,19 @@ insert into metric_tbl_2_tmp(date_dim_id, admin_dim_id, b000000010)
 select d3.id, t.admin_dim_id, t.b000000010
 from
 (
+	-- 获得各行政区划维度值下每个月有数据的最后一天的日期，以及对应的月份、季度、年份、行政区划
+	-- 并得到该日期
 	select max(d_date) as d_date, d_month, d_quarter, d_year, t.admin_dim_id
 	from date_dim d, metric_tbl_2 t
 	where d.id = t.date_dim_id
 	group by d_month, d_quarter, d_year, t.admin_dim_id
 ) d1, date_dim d2, date_dim d3, metric_tbl_2 t
-where d1.d_date = d2.d_date
+where 
+-- d1和d2分别提供了用于从t中找到唯一的目标记录的两个维度的id值。
+d1.d_date = d2.d_date
 and d2.id = t.date_dim_id
 and d1.admin_dim_id = t.admin_dim_id
+-- 以下条件用于从d3中得到具有月粒度的日期维度记录id
 and d1.d_month = d3.d_month
 and d1.d_quarter = d3.d_quarter
 and d1.d_year = d3.d_year
@@ -37,6 +42,7 @@ insert into metric_tbl_2_tmp (date_dim_id, admin_dim_id, b000000010)
 select d3.id, t.admin_dim_id, t.b000000010
 from
 (
+	-- 获得各行政区划维度值下每个季度有数据的最后一个月的月份数
 	select max(d_month) as d_month, d_quarter, d_year, t.admin_dim_id
 	from date_dim d, metric_tbl_2_tmp t
 	where d.id = t.date_dim_id

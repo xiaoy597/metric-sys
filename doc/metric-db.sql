@@ -130,7 +130,7 @@ CREATE TABLE metric_if_content
 (
 	metric_if_cd         CHAR(8) NOT NULL,
 	metric_cd            VARCHAR(10) NOT NULL,
-	data_filter          VARCHAR(1024) NULL,
+	data_filter          TEXT NULL,
 	PRIMARY KEY (metric_if_cd,metric_cd)
 );
 
@@ -405,7 +405,7 @@ ALTER TABLE metric_dim_rollup COMMENT = '指标维度上卷 -- ' ENGINE=InnoDB D
 ALTER TABLE metric_if_content COMMENT = '指标接口内容 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_if_content MODIFY COLUMN `metric_if_cd` CHAR(8) NOT NULL COMMENT '指标接口代码 -- ';
   ALTER TABLE metric_if_content MODIFY COLUMN `metric_cd` VARCHAR(10) NOT NULL COMMENT '指标代码 -- ';
-  ALTER TABLE metric_if_content MODIFY COLUMN `data_filter` VARCHAR(1024) NULL COMMENT '数据筛选条件 -- ';
+  ALTER TABLE metric_if_content MODIFY COLUMN `data_filter` TEXT NULL COMMENT '数据筛选条件 -- ';
   
 ALTER TABLE metric_interface COMMENT = '指标数据接口 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_interface MODIFY COLUMN `mif_row_id` BIGINT AUTO_INCREMENT COMMENT '接口记录标识 -- ';
