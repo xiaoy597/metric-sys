@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2020-07-27 10:59:05
+Date: 2020-07-30 17:40:04
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -138,7 +138,7 @@ CREATE TABLE `metric` (
 -- ----------------------------
 -- Records of metric
 -- ----------------------------
-INSERT INTO `metric` VALUES ('1', 'b000000001', '大专学历以上人口数量', '0', null, null, 'C00001', 'M000000001', '0003', 'select ${sys_date}, count(*) from person  where degree > 3 and birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('1', 'b000000001', '大专学历以上人口数量', '0', null, null, 'C00001', 'M000000001', '0003', 'select ${sys_date}, count(*) from person  where degree > 3 and birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null)', null, '00', null, '0', null, null, null, null, null, null);
 INSERT INTO `metric` VALUES ('2', 'b000000002', '累计新冠患者数量', '0', null, null, 'C00001', 'M000000002', '0003', 'select count(*) from covid_treatment where begin_dt <= ${sys_date}', null, '00', null, '0', null, null, null, null, null, null);
 INSERT INTO `metric` VALUES ('3', 'b000000003', '新增新冠患者数量', '0', null, null, 'C00001', 'M000000003', '0003', 'select count(*) from covid_treatment where begin_dt = ${sys_date}', null, '00', null, '0', null, null, null, null, null, null);
 INSERT INTO `metric` VALUES ('4', 'b000000004', '基础指标0004', '0', null, null, 'C00001', 'M000000004', '0003', null, null, '00', null, '0', null, null, null, null, null, null);
@@ -179,20 +179,17 @@ CREATE TABLE `metric_class` (
   `approve_tm` datetime DEFAULT NULL COMMENT '审核时间 -- ',
   `task_flow_id` int(11) DEFAULT NULL COMMENT '审批流编号 -- ',
   PRIMARY KEY (`mc_row_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='指标目录 -- ';
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='指标目录 -- ';
 
 -- ----------------------------
 -- Records of metric_class
 -- ----------------------------
 INSERT INTO `metric_class` VALUES ('1', '00000000', '全部指标', null, null, '0', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric_class` VALUES ('2', '10000000', '指标体系1', '00000000', null, '0', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric_class` VALUES ('3', '20000000', '指标体系2', '00000000', null, '1', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric_class` VALUES ('4', '11000000', '指标分类1', '10000000', null, '0', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric_class` VALUES ('5', '12000000', '指标分类2', '10000000', null, '1', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric_class` VALUES ('6', '21000000', '指标分类3', '20000000', null, '0', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric_class` VALUES ('7', '21100000', '指标子类31', '21000000', null, '0', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric_class` VALUES ('8', '21200000', '指标子类32', '21000000', null, '1', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric_class` VALUES ('9', '22000000', '指标分类4', '20000000', null, '1', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric_class` VALUES ('11', 'A001', '疫情分析指标体系', '00000000', '0000', '1', '疫情分析指标体系', '0', null, null, '0', null, '2020-07-30 17:26:28', null);
+INSERT INTO `metric_class` VALUES ('12', 'B001', '企业发展情况指标体系', '00000000', '0000', '2', '企业发展情况指标体系', '0', null, null, '0', null, '2020-07-30 17:26:38', null);
+INSERT INTO `metric_class` VALUES ('13', 'A001001', '人口健康情况', 'A001', '0000', '1', '人口健康情况指标目录', '0', null, null, '0', null, '2020-07-30 17:25:54', null);
+INSERT INTO `metric_class` VALUES ('14', 'A001002', '人口基本情况', 'A001', '0000', '4', '人口基本情况指标目录', '0', null, null, '0', null, '2020-07-30 17:26:10', null);
+INSERT INTO `metric_class` VALUES ('15', 'A001003', '疫情情况', 'A001', '0000', '5', '疫情情况指标目录', '0', null, null, '0', null, '2020-07-30 17:26:19', null);
 
 -- ----------------------------
 -- Table structure for metric_class_r
@@ -211,32 +208,24 @@ CREATE TABLE `metric_class_r` (
   `approve_tm` datetime DEFAULT NULL COMMENT '审核时间 -- ',
   `task_flow_id` int(11) DEFAULT NULL COMMENT '审批流编号 -- ',
   PRIMARY KEY (`mc_r_row_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='指标分类 -- ';
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COMMENT='指标分类 -- ';
 
 -- ----------------------------
 -- Records of metric_class_r
 -- ----------------------------
-INSERT INTO `metric_class_r` VALUES ('1', 'b000000001', '11000000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('2', 'b000000002', '11000000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('3', 'b000000003', '12000000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('4', 'b000000004', '12000000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('5', 'b000000005', '22000000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('6', 'b000000010', '21100000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('7', 'b000000011', '21200000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('8', 'b000000020', '21100000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('9', 'b000000021', '21200000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('10', 'b000000001', '21200000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('11', 'b000000002', '21200000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('12', 'b000000004', '21200000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('13', 'b000000021', '21100000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('14', 'd000000001', '21100000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('15', 'd000000011', '21100000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('16', 'd000000012', '21100000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('17', 'd000000013', '21200000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('18', 'd000000021', '21200000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('19', 'd000000022', '21200000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('20', 'd000000023', '21200000', '0', '0', null, null, null, null, null, null);
-INSERT INTO `metric_class_r` VALUES ('21', 'd000000011', '21200000', '0', '0', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('23', 'b000000012', 'A001001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('24', 'd000000011', 'A001001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('25', 'b000000001', 'A001002', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('26', 'b000000002', 'A001003', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('27', 'b000000003', 'A001003', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('28', 'b000000011', 'A001003', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('29', 'd000000001', 'A001003', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('30', 'b000000021', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('31', 'b000000023', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('32', 'b000000024', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('33', 'd000000022', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('34', 'd000000021', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('35', 'b000000022', 'B001', null, '1', null, null, null, null, null, null);
 
 -- ----------------------------
 -- Table structure for metric_column
@@ -477,6 +466,7 @@ CREATE TABLE `metric_sec_control` (
   `metric_cd` varchar(10) DEFAULT NULL COMMENT '指标代码 -- ',
   `sec_level_cd` char(2) DEFAULT NULL COMMENT '安全级别代码 -- ',
   `metric_sec_ctrl_def` varchar(512) DEFAULT NULL COMMENT '指标数据安全控制定义 -- 指标数据的维度及粒度组合，定义的形式为：{ "dim_1":"dim_level_1", "dim_2":"dim_level_2, "dim_3":""}，未指定级别的维度表示对所有级别有效。',
+  `metric_sec_ctrl_chn` varchar(512) DEFAULT NULL COMMENT '指标数据安全控制说明 -- 存放和指标数据安全定义对应的中文描述',
   PRIMARY KEY (`metric_sec_ctrl_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标数据安全控制 -- ';
 
@@ -5080,6 +5070,22 @@ INSERT INTO `user` VALUES ('5', 'datadmin', null, null, null, null, null, '安�
 INSERT INTO `user` VALUES ('6', 'user2', null, null, null, null, null, '内部指标用户', null, null, null, null);
 INSERT INTO `user` VALUES ('7', 'user3', null, null, null, null, null, '保密指标用户', null, null, null, null);
 INSERT INTO `user` VALUES ('8', 'user4', null, null, null, null, null, '绝密指标用户', null, null, null, null);
+
+-- ----------------------------
+-- Table structure for user_metric_collection
+-- ----------------------------
+DROP TABLE IF EXISTS `user_metric_collection`;
+CREATE TABLE `user_metric_collection` (
+  `user_id` varchar(16) NOT NULL COMMENT '用户代码 -- ',
+  `metric_cd` varchar(10) NOT NULL COMMENT '指标代码 -- ',
+  `collect_tm` datetime DEFAULT NULL COMMENT '收藏时间 -- ',
+  `collect_comment` varchar(512) DEFAULT NULL COMMENT '收藏备注 -- ',
+  PRIMARY KEY (`user_id`,`metric_cd`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户收藏指标 -- ';
+
+-- ----------------------------
+-- Records of user_metric_collection
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for user_organization_assign

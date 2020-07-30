@@ -179,6 +179,7 @@ CREATE TABLE metric_sec_control
 	metric_cd            VARCHAR(10) NULL,
 	sec_level_cd         CHAR(2) NULL,
 	metric_sec_ctrl_def  VARCHAR(512) NULL,
+	metric_sec_ctrl_chn  VARCHAR(512) NULL,
 	PRIMARY KEY (metric_sec_ctrl_id)
 );
 
@@ -256,6 +257,15 @@ CREATE TABLE user
 	email                VARCHAR(45) NULL,
 	social_code          VARCHAR(45) NULL,
 	PRIMARY KEY (user_id)
+);
+
+CREATE TABLE user_metric_collection
+(
+	user_id              VARCHAR(16) NOT NULL,
+	metric_cd            VARCHAR(10) NOT NULL,
+	collect_tm           DATETIME NULL,
+	collect_comment      VARCHAR(512) NULL,
+	PRIMARY KEY (user_id,metric_cd)
 );
 
 CREATE TABLE user_organization_assign
@@ -443,6 +453,7 @@ ALTER TABLE metric_sec_control COMMENT = '指标数据安全控制 -- ' ENGINE=I
   ALTER TABLE metric_sec_control MODIFY COLUMN `metric_cd` VARCHAR(10) NULL COMMENT '指标代码 -- ';
   ALTER TABLE metric_sec_control MODIFY COLUMN `sec_level_cd` CHAR(2) NULL COMMENT '安全级别代码 -- ';
   ALTER TABLE metric_sec_control MODIFY COLUMN `metric_sec_ctrl_def` VARCHAR(512) NULL COMMENT '指标数据安全控制定义 -- 指标数据的维度及粒度组合，定义的形式为：{ "dim_1":"dim_level_1", "dim_2":"dim_level_2, "dim_3":""}，未指定级别的维度表示对所有级别有效。';
+  ALTER TABLE metric_sec_control MODIFY COLUMN `metric_sec_ctrl_chn` VARCHAR(512) NULL COMMENT '指标数据安全控制说明 -- 存放和指标数据安全定义对应的中文描述';
   
 ALTER TABLE metric_src COMMENT = '指标数据源 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_src MODIFY COLUMN `metric_src_cd` CHAR(4) NOT NULL COMMENT '指标数据源代码 -- ';
@@ -496,6 +507,12 @@ ALTER TABLE user COMMENT = '用户 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE user MODIFY COLUMN `mobile_phone` VARCHAR(45) NULL COMMENT '移动电话 -- ';
   ALTER TABLE user MODIFY COLUMN `email` VARCHAR(45) NULL COMMENT '电子邮件 -- ';
   ALTER TABLE user MODIFY COLUMN `social_code` VARCHAR(45) NULL COMMENT '社会统一代码 -- ';
+  
+ALTER TABLE user_metric_collection COMMENT = '用户收藏指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ALTER TABLE user_metric_collection MODIFY COLUMN `user_id` VARCHAR(16) NOT NULL COMMENT '用户代码 -- ';
+  ALTER TABLE user_metric_collection MODIFY COLUMN `metric_cd` VARCHAR(10) NOT NULL COMMENT '指标代码 -- ';
+  ALTER TABLE user_metric_collection MODIFY COLUMN `collect_tm` DATETIME NULL COMMENT '收藏时间 -- ';
+  ALTER TABLE user_metric_collection MODIFY COLUMN `collect_comment` VARCHAR(512) NULL COMMENT '收藏备注 -- ';
   
 ALTER TABLE user_organization_assign COMMENT = '用户机构 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE user_organization_assign MODIFY COLUMN `id` INTEGER NOT NULL COMMENT '记录标识 -- ';

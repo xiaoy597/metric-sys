@@ -131,7 +131,7 @@ delete from metric;
 
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
 values ('b000000001', '大专学历以上人口数量', 0, 'C00001', 'M000000001', '0003', '00'
-, 'select ${sys_date}, count(*) from person  where degree > 3 and birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null');
+, 'select ${sys_date}, count(*) from person  where degree > 3 and birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null)');
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
 values ('b000000002', '累计新冠患者数量', 0, 'C00001', 'M000000002', '0003', '00'
 , 'select count(*) from covid_treatment where begin_dt <= ${sys_date}');
@@ -280,54 +280,29 @@ insert into metric_relation (ustream_metric, dstream_metric, relation_type) valu
 
 delete from metric_class;
 
-insert into metric_class (metric_class_cd, metric_class_nm, super_class_cd, update_flag, disp_order)
-values ('00000000', '全部指标', null, 0, 0);
-insert into metric_class (metric_class_cd, metric_class_nm, super_class_cd, update_flag, disp_order)
-values ('10000000', '指标体系1', '00000000', 0, 0);
-insert into metric_class (metric_class_cd, metric_class_nm, super_class_cd, update_flag, disp_order)
-values ('20000000', '指标体系2', '00000000', 0, 1);
-
-insert into metric_class (metric_class_cd, metric_class_nm, super_class_cd, update_flag, disp_order)
-values ('11000000', '指标分类1', '10000000', 0, 0);
-insert into metric_class (metric_class_cd, metric_class_nm, super_class_cd, update_flag, disp_order)
-values ('12000000', '指标分类2', '10000000', 0, 1);
-
-insert into metric_class (metric_class_cd, metric_class_nm, super_class_cd, update_flag, disp_order)
-values ('21000000', '指标分类3', '20000000', 0, 0);
-insert into metric_class (metric_class_cd, metric_class_nm, super_class_cd, update_flag, disp_order)
-values ('21100000', '指标子类31', '21000000', 0, 0);
-insert into metric_class (metric_class_cd, metric_class_nm, super_class_cd, update_flag, disp_order)
-values ('21200000', '指标子类32', '21000000', 0, 1);
-insert into metric_class (metric_class_cd, metric_class_nm, super_class_cd, update_flag, disp_order)
-values ('22000000', '指标分类4', '20000000', 0, 1);
+INSERT INTO `metric_class` VALUES ('1', '00000000', '全部指标', null, null, '0', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric_class` VALUES ('11', 'A001', '疫情分析指标体系', '00000000', '0000', '1', '疫情分析指标体系', '0', null, null, '0', null, '2020-07-30 17:26:28', null);
+INSERT INTO `metric_class` VALUES ('12', 'B001', '企业发展情况指标体系', '00000000', '0000', '2', '企业发展情况指标体系', '0', null, null, '0', null, '2020-07-30 17:26:38', null);
+INSERT INTO `metric_class` VALUES ('13', 'A001001', '人口健康情况', 'A001', '0000', '1', '人口健康情况指标目录', '0', null, null, '0', null, '2020-07-30 17:25:54', null);
+INSERT INTO `metric_class` VALUES ('14', 'A001002', '人口基本情况', 'A001', '0000', '4', '人口基本情况指标目录', '0', null, null, '0', null, '2020-07-30 17:26:10', null);
+INSERT INTO `metric_class` VALUES ('15', 'A001003', '疫情情况', 'A001', '0000', '5', '疫情情况指标目录', '0', null, null, '0', null, '2020-07-30 17:26:19', null);
 
 
 delete from metric_class_r;
 
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000001', '11000000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000002', '11000000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000003', '12000000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000004', '12000000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000005', '22000000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000010', '21100000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000011', '21200000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000020', '21100000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000021', '21200000', 0);
-
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000001', '21200000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000002', '21200000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000004', '21200000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'b000000021', '21100000', 0);
-
-
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000001', '21100000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000011', '21100000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000012', '21100000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000013', '21200000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000021', '21200000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000022', '21200000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000023', '21200000', 0);
-insert into metric_class_r (disp_order, metric_cd, metric_class_cd, update_flag) values (0, 'd000000011', '21200000', 0);
+INSERT INTO `metric_class_r` VALUES ('23', 'b000000012', 'A001001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('24', 'd000000011', 'A001001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('25', 'b000000001', 'A001002', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('26', 'b000000002', 'A001003', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('27', 'b000000003', 'A001003', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('28', 'b000000011', 'A001003', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('29', 'd000000001', 'A001003', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('30', 'b000000021', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('31', 'b000000023', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('32', 'b000000024', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('33', 'd000000022', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('34', 'd000000021', 'B001', null, '1', null, null, null, null, null, null);
+INSERT INTO `metric_class_r` VALUES ('35', 'b000000022', 'B001', null, '1', null, null, null, null, null, null);
 
 delete from security_level;
 

@@ -47,6 +47,7 @@
 指标数据安全控制标识,metric_sec_ctrl_id,,X,X,X,X
 指标数据安全控制,metric_sec_control,,X,X,X,X
 指标数据安全控制定义,metric_sec_ctrl_def,,X,X,X,X
+指标数据安全控制说明,metric_sec_ctrl_chn,,X,X,X,X
 指标数据源,metric_src,,X,X,X,X
 指标数据源代码,metric_src_cd,,X,X,X,X
 指标数据源名称,metric_src_nm,,X,X,X,X
@@ -220,3 +221,6 @@
 指标上卷方式,rollup_type,,X,X,X,X
 维度序号,dim_order,,X,X,X,X
 指标维度上卷,metric_dim_rollup,,X,X,X,X
+用户收藏指标,user_metric_collection,,X,X,X,X
+收藏时间,collect_tm,,X,X,X,X
+收藏备注,collect_comment,,X,X,X,X
