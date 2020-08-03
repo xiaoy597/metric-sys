@@ -39,6 +39,7 @@ insert into metric_param values ('S00001', 1, '指标数据仓库连接参数','
 insert into metric_param values ('S00002', 1, '指标管理机构代码','110000C005');
 
 insert into metric_param values ('L00001', 0, '数据更新日期','2020-06-20');
+insert into metric_param values ('sys_date', 0, '数据更新日期','2020-06-20');
 
 delete from metric_dim;
 
@@ -134,10 +135,10 @@ values ('b000000001', '大专学历以上人口数量', 0, 'C00001', 'M000000001
 , 'select ${sys_date}, count(*) from person  where degree > 3 and birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null)');
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
 values ('b000000002', '累计新冠患者数量', 0, 'C00001', 'M000000002', '0003', '00'
-, 'select count(*) from covid_treatment where begin_dt <= ${sys_date}');
+, 'select ${sys_date}, count(*) from covid_treatment where begin_dt <= ${sys_date}');
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
 values ('b000000003', '新增新冠患者数量', 0, 'C00001', 'M000000003', '0003', '00'
-, 'select count(*) from covid_treatment where begin_dt = ${sys_date}');
+, 'select ${sys_date}, count(*) from covid_treatment where begin_dt = ${sys_date}');
 
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
 values ('b000000004', '基础指标0004', 0, 'C00001', 'M000000004', '0003', '00');

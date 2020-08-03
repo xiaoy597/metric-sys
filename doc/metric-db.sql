@@ -19,6 +19,7 @@ CREATE TABLE common_metric_query
 (
 	common_mqry_id       INTEGER AUTO_INCREMENT,
 	common_mqry_name     VARCHAR(20) NULL,
+	user_id              VARCHAR(16) NULL,
 	metric_row_id        BIGINT NULL,
 	common_mqry_condition TEXT NULL,
 	PRIMARY KEY (common_mqry_id)
@@ -157,7 +158,7 @@ CREATE TABLE metric_interface
 
 CREATE TABLE metric_param
 (
-	param_cd             CHAR(6) NOT NULL,
+	param_cd             VARCHAR(20) NOT NULL,
 	param_type           INTEGER NULL,
 	param_nm             VARCHAR(60) NULL,
 	param_value          VARCHAR(512) NULL,
@@ -313,6 +314,7 @@ ALTER TABLE busi_department COMMENT = '业务部门 -- ' ENGINE=InnoDB DEFAULT C
 ALTER TABLE common_metric_query COMMENT = '常用指标数据查询 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_id` INTEGER AUTO_INCREMENT COMMENT '常用指标数据查询标识 -- ';
   ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_name` VARCHAR(20) NULL COMMENT '常用指标数据查询名称 -- ';
+  ALTER TABLE common_metric_query MODIFY COLUMN `user_id` VARCHAR(16) NULL COMMENT '用户代码 -- ';
   ALTER TABLE common_metric_query MODIFY COLUMN `metric_row_id` BIGINT NULL COMMENT '指标记录标识 -- ';
   ALTER TABLE common_metric_query MODIFY COLUMN `common_mqry_condition` TEXT NULL COMMENT '指标查询条件 -- 使用JSON结构表示查询条件的各元素。其中对于简单查询，需要保存各谓词中的字段名称，操作符和操作数，各谓词之间只支持AND‘；自定义查询可直接保存完整的查询条件。JSON中需要设置字段区分简单查询和自定义查询。';
   
@@ -405,7 +407,7 @@ ALTER TABLE metric_dim COMMENT = '指标维度 -- ' ENGINE=InnoDB DEFAULT CHARSE
 ALTER TABLE metric_dim_col COMMENT = '指标维度字段 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_dim_col MODIFY COLUMN `dim_cd` CHAR(4) NOT NULL COMMENT '维度代码 -- ';
   ALTER TABLE metric_dim_col MODIFY COLUMN `metric_dim_col_cd` CHAR(10) NOT NULL COMMENT '维度字段代码 -- ';
-  ALTER TABLE metric_dim_col MODIFY COLUMN `dim_level` INTEGER NULL COMMENT '维度级别 -- 从1开始顺序增加，逐级汇总';
+  ALTER TABLE metric_dim_col MODIFY COLUMN `dim_level` INTEGER NULL COMMENT '维度级别 -- 从0开始顺序增加，逐级汇总';
   
 ALTER TABLE metric_dim_rollup COMMENT = '指标维度上卷 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_dim_rollup MODIFY COLUMN `dim_cd` CHAR(4) NOT NULL COMMENT '维度代码 -- ';
@@ -436,7 +438,7 @@ ALTER TABLE metric_interface COMMENT = '指标数据接口 -- ' ENGINE=InnoDB DE
   ALTER TABLE metric_interface MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
   
 ALTER TABLE metric_param COMMENT = '指标计算参数 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE metric_param MODIFY COLUMN `param_cd` CHAR(6) NOT NULL COMMENT '参数代码 -- ';
+  ALTER TABLE metric_param MODIFY COLUMN `param_cd` VARCHAR(20) NOT NULL COMMENT '参数代码 -- ';
   ALTER TABLE metric_param MODIFY COLUMN `param_type` INTEGER NULL COMMENT '参数类型 -- 0：指标加载参数，1：指标系统参数。注：指标加载参数就是可以嵌入基础指标和衍生指标计算公式或者语句的参数，指标系统参数是除了指标加载参数之外的其他参数。';
   ALTER TABLE metric_param MODIFY COLUMN `param_nm` VARCHAR(60) NULL COMMENT '参数名称 -- ';
   ALTER TABLE metric_param MODIFY COLUMN `param_value` VARCHAR(512) NULL COMMENT '参数值 -- ';

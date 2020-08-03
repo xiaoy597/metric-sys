@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2020-07-30 17:40:04
+Date: 2020-08-03 17:54:53
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -76,6 +76,7 @@ DROP TABLE IF EXISTS `common_metric_query`;
 CREATE TABLE `common_metric_query` (
   `common_mqry_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '常用指标数据查询标识 -- ',
   `common_mqry_name` varchar(20) DEFAULT NULL COMMENT '常用指标数据查询名称 -- ',
+  `user_id` varchar(16) DEFAULT NULL COMMENT '用户代码 -- ',
   `metric_row_id` bigint(20) DEFAULT NULL COMMENT '指标记录标识 -- ',
   `common_mqry_condition` text COMMENT '指标查询条件 -- 使用JSON结构表示查询条件的各元素。其中对于简单查询，需要保存各谓词中的字段名称，操作符和操作数，各谓词之间只支持AND‘；自定义查询可直接保存完整的查询条件。JSON中需要设置字段区分简单查询和自定义查询。',
   PRIMARY KEY (`common_mqry_id`)
@@ -139,8 +140,8 @@ CREATE TABLE `metric` (
 -- Records of metric
 -- ----------------------------
 INSERT INTO `metric` VALUES ('1', 'b000000001', '大专学历以上人口数量', '0', null, null, 'C00001', 'M000000001', '0003', 'select ${sys_date}, count(*) from person  where degree > 3 and birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null)', null, '00', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('2', 'b000000002', '累计新冠患者数量', '0', null, null, 'C00001', 'M000000002', '0003', 'select count(*) from covid_treatment where begin_dt <= ${sys_date}', null, '00', null, '0', null, null, null, null, null, null);
-INSERT INTO `metric` VALUES ('3', 'b000000003', '新增新冠患者数量', '0', null, null, 'C00001', 'M000000003', '0003', 'select count(*) from covid_treatment where begin_dt = ${sys_date}', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('2', 'b000000002', '累计新冠患者数量', '0', null, null, 'C00001', 'M000000002', '0003', 'select ${sys_date}, count(*) from covid_treatment where begin_dt <= ${sys_date}', null, '00', null, '0', null, null, null, null, null, null);
+INSERT INTO `metric` VALUES ('3', 'b000000003', '新增新冠患者数量', '0', null, null, 'C00001', 'M000000003', '0003', 'select ${sys_date}, count(*) from covid_treatment where begin_dt = ${sys_date}', null, '00', null, '0', null, null, null, null, null, null);
 INSERT INTO `metric` VALUES ('4', 'b000000004', '基础指标0004', '0', null, null, 'C00001', 'M000000004', '0003', null, null, '00', null, '0', null, null, null, null, null, null);
 INSERT INTO `metric` VALUES ('5', 'b000000005', '基础指标0005', '0', null, null, 'C00001', 'M000000005', '0003', null, null, '00', null, '0', null, null, null, null, null, null);
 INSERT INTO `metric` VALUES ('6', 'b000000010', '人口规模', '0', null, null, 'C00002', 'M000000006', '0003', 'select ${sys_date}, addr_admin_cd, count(*) from person where birth_dt <= ${sys_date} and (death_dt > ${sys_date} or death_dt is null) group by addr_admin_cd', null, '00', null, '0', null, null, null, null, null, null);
@@ -303,7 +304,7 @@ DROP TABLE IF EXISTS `metric_dim_col`;
 CREATE TABLE `metric_dim_col` (
   `dim_cd` char(4) NOT NULL COMMENT '维度代码 -- ',
   `metric_dim_col_cd` char(10) NOT NULL COMMENT '维度字段代码 -- ',
-  `dim_level` int(11) DEFAULT NULL COMMENT '维度级别 -- 从1开始顺序增加，逐级汇总',
+  `dim_level` int(11) DEFAULT NULL COMMENT '维度级别 -- 从0开始顺序增加，逐级汇总',
   PRIMARY KEY (`dim_cd`,`metric_dim_col_cd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指标维度字段 -- ';
 
@@ -419,7 +420,7 @@ CREATE TABLE `metric_interface` (
 -- ----------------------------
 DROP TABLE IF EXISTS `metric_param`;
 CREATE TABLE `metric_param` (
-  `param_cd` char(6) NOT NULL COMMENT '参数代码 -- ',
+  `param_cd` varchar(20) NOT NULL COMMENT '参数代码 -- ',
   `param_type` int(11) DEFAULT NULL COMMENT '参数类型 -- 0：指标加载参数，1：指标系统参数。注：指标加载参数就是可以嵌入基础指标和衍生指标计算公式或者语句的参数，指标系统参数是除了指标加载参数之外的其他参数。',
   `param_nm` varchar(60) DEFAULT NULL COMMENT '参数名称 -- ',
   `param_value` varchar(512) DEFAULT NULL COMMENT '参数值 -- ',
@@ -432,6 +433,7 @@ CREATE TABLE `metric_param` (
 INSERT INTO `metric_param` VALUES ('L00001', '0', '数据更新日期', '2020-06-20');
 INSERT INTO `metric_param` VALUES ('S00001', '1', '指标数据仓库连接参数', '\r\n{\r\n	\"type\": \"mysql\",\r\n	\"connect-params\": {\r\n		\"ip\": \"localhost\",\r\n		\"port\": 3306,\r\n		\"db\": \"metric_warehouse\",\r\n		\"user\": \"root\",\r\n		\"password\": \"root\"\r\n	}\r\n}\r\n');
 INSERT INTO `metric_param` VALUES ('S00002', '1', '指标管理机构代码', '110000C005');
+INSERT INTO `metric_param` VALUES ('sys_date', '0', '数据更新日期', '2020-06-20');
 
 -- ----------------------------
 -- Table structure for metric_relation
