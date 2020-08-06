@@ -72,16 +72,16 @@ insert into metric_column values ('D000000002', '月份', 0, 'INT', 'd_month', '
 insert into metric_column values ('D000000003', '季度', 0, 'INT', 'd_quarter', '');
 insert into metric_column values ('D000000004', '年份', 0, 'INT', 'd_year', '');
 
-insert into metric_column values ('D000000011', '村/社区', 0, 'STRING', 'd_village', '');
-insert into metric_column values ('D000000012', '乡镇/街道', 0, 'STRING', 'd_town', '');
-insert into metric_column values ('D000000013', '区/县', 0, 'STRING', 'd_county', '');
-insert into metric_column values ('D000000014', '市', 0, 'STRING', 'd_city', '');
-insert into metric_column values ('D000000015', '省', 0, 'STRING', 'd_province', '');
+insert into metric_column values ('D000000011', '村/社区', 0, 'VARCHAR(40)', 'd_village', '');
+insert into metric_column values ('D000000012', '乡镇/街道', 0, 'VARCHAR(40)', 'd_town', '');
+insert into metric_column values ('D000000013', '区/县', 0, 'VARCHAR(40)', 'd_county', '');
+insert into metric_column values ('D000000014', '市', 0, 'VARCHAR(40)', 'd_city', '');
+insert into metric_column values ('D000000015', '省', 0, 'VARCHAR(40)', 'd_province', '');
 
-insert into metric_column values ('D000000021', '行业3级分类', 0, 'STRING', 'd_class3', '');
-insert into metric_column values ('D000000022', '行业2级分类', 0, 'STRING', 'd_class2', '');
-insert into metric_column values ('D000000023', '行业1级分类', 0, 'STRING', 'd_class1', '');
-insert into metric_column values ('D000000024', '行业门类', 0, 'STRING', 'd_category', '');
+insert into metric_column values ('D000000021', '行业3级分类', 0, 'VARCHAR(40)', 'd_class3', '');
+insert into metric_column values ('D000000022', '行业2级分类', 0, 'VARCHAR(40)', 'd_class2', '');
+insert into metric_column values ('D000000023', '行业1级分类', 0, 'VARCHAR(40)', 'd_class1', '');
+insert into metric_column values ('D000000024', '行业门类', 0, 'VARCHAR(40)', 'd_category', '');
 
 insert into metric_column values ('M000000001', '大专学历以上人口数量', 1, 'NUMERIC', 'b000000001', '大专学历以上人口数量');
 insert into metric_column values ('M000000002', '累计新冠患者数量', 1, 'NUMERIC', 'b000000002', '累计新冠患者数量');
