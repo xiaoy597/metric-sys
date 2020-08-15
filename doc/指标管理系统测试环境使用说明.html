@@ -459,6 +459,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_初次启动测试环境">初次启动测试环境</a></li>
 <li><a href="#_关闭测试环境">关闭测试环境</a></li>
 <li><a href="#_重新启动测试环境">重新启动测试环境</a></li>
+<li><a href="#_指标加载引擎调用接口">指标加载引擎调用接口</a>
+<ul class="sectlevel2">
+<li><a href="#_指标加载">指标加载</a></li>
+<li><a href="#_查询指标加载状态">查询指标加载状态</a></li>
+<li><a href="#_取消指标加载">取消指标加载</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -483,46 +490,52 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist data-line-12">
 <ul>
 <li class="data-line-12">
-<p>Hadoop 2.9.2</p>
+<p>指标加载引擎</p>
 </li>
 <li class="data-line-13">
-<p>Hive 2.3.7</p>
+<p>Hadoop 2.9.2 （暂不使用）</p>
 </li>
 <li class="data-line-14">
+<p>Hive 2.3.7 （暂不使用）</p>
+</li>
+<li class="data-line-15">
 <p>MySQL 5.7</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect2 data-line-16">
+<div class="sect2 data-line-18">
 <h3 id="_数据">数据</h3>
-<div class="ulist data-line-17">
+<div class="ulist data-line-19">
 <ul>
-<li class="data-line-17">
+<li class="data-line-19">
 <p>指标数据源测试数据，在Hive的metric_src_db数据库中，可以通过以下链接访问：</p>
-<div class="ulist data-line-18">
+<div class="ulist data-line-20">
 <ul>
-<li class="data-line-18">
-<p>jdbc:hive2://localhost:10000/metric_src_db</p>
+<li class="data-line-20">
+<p>jdbc:mysql://localhost:3306/metric_src_db?user=root&amp;password=root&amp;characterEncoding=utf8</p>
+</li>
+<li class="data-line-21">
+<p>jdbc:hive2://localhost:10000/metric_src_db （暂不使用）</p>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-19">
+<li class="data-line-22">
 <p>指标管理系统测试数据，在MySQL的metric_db数据库中，可以通过以下链接访问：</p>
-<div class="ulist data-line-20">
+<div class="ulist data-line-23">
 <ul>
-<li class="data-line-20">
+<li class="data-line-23">
 <p>jdbc:mysql://localhost:3306/metric_db?user=root&amp;password=root&amp;characterEncoding=utf8</p>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-21">
+<li class="data-line-24">
 <p>指标仓库测试数据，在MySQL的metric_warehouse数据库中，可以通过以下链接访问：</p>
-<div class="ulist data-line-22">
+<div class="ulist data-line-25">
 <ul>
-<li class="data-line-22">
+<li class="data-line-25">
 <p>jdbc:mysql://localhost:3306/metric_warehouse?user=root&amp;password=root&amp;characterEncoding=utf8</p>
 </li>
 </ul>
@@ -533,42 +546,42 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
-<div class="sect1 data-line-24">
+<div class="sect1 data-line-27">
 <h2 id="_测试环境设置步骤">测试环境设置步骤</h2>
 <div class="sectionbody">
-<div class="olist arabic data-line-25">
+<div class="olist arabic data-line-28">
 <ol class="arabic">
-<li class="data-line-25">
+<li class="data-line-28">
 <p>在虚拟机上安装Docker和Docker Compose（参考官方文档）。</p>
 </li>
-<li class="data-line-26">
+<li class="data-line-29">
 <p>打开链接（https://pan.baidu.com/s/1l569C65nuNvDwwo6yHI0ng，提取码：9fey），进入test目录下载下列文件</p>
-<div class="ulist data-line-27">
+<div class="ulist data-line-30">
 <ul>
-<li class="data-line-27">
+<li class="data-line-30">
 <p>metric-sys-test.tar.gz</p>
 </li>
-<li class="data-line-28">
+<li class="data-line-31">
 <p>metric-sys-test-images.tar.gz</p>
-<div class="paragraph data-line-30">
+<div class="paragraph data-line-33">
 <p>并将这两个文件上传到虚拟机。</p>
 </div>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-31">
+<li class="data-line-34">
 <p>执行以下命令将metric-sys-test-images.tar.gz导入docker，</p>
-<div class="listingblock data-line-34">
+<div class="listingblock data-line-37">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ gzip -d metric-sys-test-images.tar.gz
 $ docker load -i metric-sys-test-images.tar</code></pre>
 </div>
 </div>
 </li>
-<li class="data-line-38">
+<li class="data-line-41">
 <p>在虚拟机任意目录下展开metric-sys-test.tar.gz</p>
-<div class="listingblock data-line-41">
+<div class="listingblock data-line-44">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ tar xvzf metric-sys-test.tar.gz</code></pre>
 </div>
@@ -578,122 +591,245 @@ $ docker load -i metric-sys-test-images.tar</code></pre>
 </div>
 </div>
 </div>
-<div class="sect1 data-line-45">
+<div class="sect1 data-line-48">
 <h2 id="_初次启动测试环境">初次启动测试环境</h2>
 <div class="sectionbody">
-<div class="paragraph data-line-46">
+<div class="paragraph data-line-49">
 <p>进入metric-sys-test目录，执行：</p>
 </div>
-<div class="listingblock data-line-48">
+<div class="listingblock data-line-51">
 <div class="content">
-<pre class="highlight"><code class="language-shell" data-lang="shell">$ docker-compose up</code></pre>
+<pre class="highlight"><code class="language-shell" data-lang="shell">$ chmod a+rwx metric-engine/tmp
+$ docker-compose up</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-51">
-<p>等待一会儿，直到观察到端口10000被占用：</p>
+<div class="paragraph data-line-55">
+<p>等待一会儿，直到观察到端口8300被占用：</p>
 </div>
-<div class="listingblock data-line-53">
+<div class="listingblock data-line-57">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ netstat -tlnp
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
 Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      -
 tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50010           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50075           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50020           0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:9000          0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50090           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:2222            0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:32975         0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:10000           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:10002           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50070           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN      -
 tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
-tcp6       0      0 :::8088                 :::*                    LISTEN      -
+tcp6       0      0 ::1:5432                :::*                    LISTEN      -
 tcp6       0      0 ::1:25                  :::*                    LISTEN      -
-tcp6       0      0 :::13562                :::*                    LISTEN      -
-tcp6       0      0 :::8030                 :::*                    LISTEN      -
-tcp6       0      0 :::8031                 :::*                    LISTEN      -
-tcp6       0      0 :::8032                 :::*                    LISTEN      -
-tcp6       0      0 :::8033                 :::*                    LISTEN      -
-tcp6       0      0 :::8040                 :::*                    LISTEN      -
-tcp6       0      0 :::40296                :::*                    LISTEN      -
-tcp6       0      0 :::8042                 :::*                    LISTEN      -
 tcp6       0      0 :::3306                 :::*                    LISTEN      -
-tcp6       0      0 :::2222                 :::*                    LISTEN      -
+tcp6       0      0 :::8300                 :::*                    LISTEN      -
 tcp6       0      0 :::22                   :::*                    LISTEN      -</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-85">
-<p>此时可以通过jdbc连接hive或mysql使用测试环境中的数据。</p>
+<div class="paragraph data-line-71">
+<p>此时可以通过jdbc连接hive或mysql访问测试环境中的数据，也可以调用指标加载接口的功能。</p>
 </div>
 </div>
 </div>
-<div class="sect1 data-line-87">
+<div class="sect1 data-line-73">
 <h2 id="_关闭测试环境">关闭测试环境</h2>
 <div class="sectionbody">
-<div class="paragraph data-line-88">
+<div class="paragraph data-line-74">
 <p>进入metric-sys-test目录，执行：</p>
 </div>
-<div class="listingblock data-line-90">
+<div class="listingblock data-line-76">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ docker-compose stop</code></pre>
 </div>
 </div>
 </div>
 </div>
-<div class="sect1 data-line-94">
+<div class="sect1 data-line-80">
 <h2 id="_重新启动测试环境">重新启动测试环境</h2>
 <div class="sectionbody">
-<div class="paragraph data-line-95">
+<div class="paragraph data-line-81">
 <p>进入metric-sys-test目录，执行：</p>
 </div>
-<div class="listingblock data-line-97">
+<div class="listingblock data-line-83">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ docker-compose start</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-100">
-<p>等待一会儿，直到观察到端口10000被占用：</p>
+<div class="paragraph data-line-86">
+<p>等待一会儿，直到观察到端口3306和8300被占用：</p>
 </div>
-<div class="listingblock data-line-102">
+<div class="listingblock data-line-88">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ netstat -tlnp
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
 Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      -
 tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50010           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50075           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50020           0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:9000          0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50090           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:2222            0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:32975         0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:10000           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:10002           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50070           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN      -
 tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
-tcp6       0      0 :::8088                 :::*                    LISTEN      -
+tcp6       0      0 ::1:5432                :::*                    LISTEN      -
 tcp6       0      0 ::1:25                  :::*                    LISTEN      -
-tcp6       0      0 :::13562                :::*                    LISTEN      -
-tcp6       0      0 :::8030                 :::*                    LISTEN      -
-tcp6       0      0 :::8031                 :::*                    LISTEN      -
-tcp6       0      0 :::8032                 :::*                    LISTEN      -
-tcp6       0      0 :::8033                 :::*                    LISTEN      -
-tcp6       0      0 :::8040                 :::*                    LISTEN      -
-tcp6       0      0 :::40296                :::*                    LISTEN      -
-tcp6       0      0 :::8042                 :::*                    LISTEN      -
 tcp6       0      0 :::3306                 :::*                    LISTEN      -
-tcp6       0      0 :::2222                 :::*                    LISTEN      -
+tcp6       0      0 :::8300                 :::*                    LISTEN      -
 tcp6       0      0 :::22                   :::*                    LISTEN      -</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-134">
-<p>此时可以通过jdbc连接hive或mysql使用测试环境中的数据。</p>
+<div class="paragraph data-line-102">
+<p>此时可以通过jdbc连接hive或mysql访问测试环境中的数据，也可以调用指标加载接口的功能。</p>
+</div>
+</div>
+</div>
+<div class="sect1 data-line-104">
+<h2 id="_指标加载引擎调用接口">指标加载引擎调用接口</h2>
+<div class="sectionbody">
+<div class="paragraph data-line-105">
+<p>指标加载引擎使用HTTP接口提供指标加载、加载状态查询和取消加载任务的功能。</p>
+</div>
+<div class="sect2 data-line-107">
+<h3 id="_指标加载">指标加载</h3>
+<div class="paragraph data-line-108">
+<p>加载指定的指标列表中所含的指标，或加载全部指标。</p>
+</div>
+<div class="ulist data-line-110">
+<ul>
+<li class="data-line-110">
+<p>调用方法：POST</p>
+</li>
+<li class="data-line-111">
+<p>URL: <a href="http://ip-address:8300/metric-engine/load/&lt;metric-code-list&gt" class="bare">http://ip-address:8300/metric-engine/load/&lt;metric-code-list&gt</a>;</p>
+<div class="paragraph data-line-113">
+<p>&lt;metric-code-list&gt;为逗号分隔的待加载指标代码列表，也可以用‘all’表示加载全部指标。</p>
+</div>
+</li>
+<li class="data-line-114">
+<p>接口参数</p>
+<div class="listingblock data-line-117">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "param-name1": "param-value1",
+    "param-name2": "param-value2",
+    ... ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph data-line-124">
+<p>接口参数是一个JSON结构体，内容为指标加载所用的SQL语句中所含参数的名称和对应的值。</p>
+</div>
+</li>
+<li class="data-line-125">
+<p>返回结果格式</p>
+<div class="listingblock data-line-128">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "msg": "OK",
+    "result": {
+        "b000000001": "SUCC",
+        "b000000002": "SUCC"
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph data-line-138">
+<p>result中包括各指标代码的加载结果</p>
+</div>
+<div class="ulist data-line-140">
+<ul>
+<li class="data-line-140">
+<p>SUCC 加载成功</p>
+</li>
+<li class="data-line-141">
+<p>FAIL 加载失败</p>
+</li>
+<li class="data-line-142">
+<p>ABORT 放弃加载（指标配置不正确，或指标代码错误）</p>
+</li>
+<li class="data-line-143">
+<p>INIT 未开始加载</p>
+</li>
+<li class="data-line-144">
+<p>CANCEL 加载取消</p>
+</li>
+<li class="data-line-145">
+<p>RUNNING 正在执行</p>
+</li>
+<li class="data-line-146">
+<p>BLOCKING 等待上游指标加载</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2 data-line-148">
+<h3 id="_查询指标加载状态">查询指标加载状态</h3>
+<div class="paragraph data-line-149">
+<p>查询上次提交加载的指标列表中各指标的加载状态。</p>
+</div>
+<div class="ulist data-line-151">
+<ul>
+<li class="data-line-151">
+<p>调用方法：GET</p>
+</li>
+<li class="data-line-152">
+<p>URL: <a href="http://ip-address:8300/metric-engine/check" class="bare">http://ip-address:8300/metric-engine/check</a></p>
+</li>
+<li class="data-line-153">
+<p>返回结果格式</p>
+<div class="listingblock data-line-156">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "msg": "OK",
+    "result": {
+        "b000000001": "RUNNING",
+        "b000000002": "RUNNING",
+        "b000000003": "SUCC",
+        "b000000004": "ABORT",
+        "b000000005": "ABORT",
+        "b000000010": "RUNNING",
+        "b000000011": "RUNNING",
+        "b000000012": "RUNNING",
+        "b000000020": "INIT",
+        "b000000021": "INIT",
+        "b000000022": "INIT",
+        "b000000023": "INIT",
+        "b000000024": "INIT",
+        "d000000001": "INIT",
+        "d000000011": "INIT",
+        "d000000021": "INIT",
+        "d000000022": "INIT"
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph data-line-181">
+<p>result中包括各指标代码的加载状态，各状态的解释参见上一节的说明。</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2 data-line-183">
+<h3 id="_取消指标加载">取消指标加载</h3>
+<div class="paragraph data-line-184">
+<p>取消上次提交加载的指标列表中尚未开始调度的指标加载作业，被成功取消的指标的加载状态会变为‘CANCEL’。</p>
+</div>
+<div class="ulist data-line-186">
+<ul>
+<li class="data-line-186">
+<p>调用方法：GET</p>
+</li>
+<li class="data-line-187">
+<p>URL: <a href="http://ip-address:8300/metric-engine/cancel" class="bare">http://ip-address:8300/metric-engine/cancel</a></p>
+</li>
+<li class="data-line-188">
+<p>返回结果格式</p>
+<div class="listingblock data-line-191">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "msg": "OK",
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
@@ -701,7 +837,7 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2020-07-23 10:47:26 +0800
+Last updated 2020-08-14 23:30:43 +0800
 </div>
 </div>
 </body>

@@ -9,13 +9,16 @@ v1.0
 == 测试环境的内容
 
 === 组件
-* Hadoop 2.9.2
-* Hive 2.3.7
+* 指标加载引擎
+* Hadoop 2.9.2 （暂不使用）
+* Hive 2.3.7 （暂不使用）
 * MySQL 5.7
+
 
 === 数据
 * 指标数据源测试数据，在Hive的metric_src_db数据库中，可以通过以下链接访问：
- - jdbc:hive2://localhost:10000/metric_src_db
+ - jdbc:mysql://localhost:3306/metric_src_db?user=root&password=root&characterEncoding=utf8
+ - jdbc:hive2://localhost:10000/metric_src_db （暂不使用）
 * 指标管理系统测试数据，在MySQL的metric_db数据库中，可以通过以下链接访问：
  - jdbc:mysql://localhost:3306/metric_db?user=root&password=root&characterEncoding=utf8
 * 指标仓库测试数据，在MySQL的metric_warehouse数据库中，可以通过以下链接访问：
@@ -46,43 +49,26 @@ $ tar xvzf metric-sys-test.tar.gz
 进入metric-sys-test目录，执行：
 [source, shell]
 ----
+$ chmod a+rwx metric-engine/tmp
 $ docker-compose up
 ----
-等待一会儿，直到观察到端口10000被占用：
+等待一会儿，直到观察到端口8300被占用：
 [source, shell]
 ----
 $ netstat -tlnp
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
 Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      -
 tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50010           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50075           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50020           0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:9000          0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50090           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:2222            0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:32975         0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:10000           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:10002           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50070           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN      -
 tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
-tcp6       0      0 :::8088                 :::*                    LISTEN      -
+tcp6       0      0 ::1:5432                :::*                    LISTEN      -
 tcp6       0      0 ::1:25                  :::*                    LISTEN      -
-tcp6       0      0 :::13562                :::*                    LISTEN      -
-tcp6       0      0 :::8030                 :::*                    LISTEN      -
-tcp6       0      0 :::8031                 :::*                    LISTEN      -
-tcp6       0      0 :::8032                 :::*                    LISTEN      -
-tcp6       0      0 :::8033                 :::*                    LISTEN      -
-tcp6       0      0 :::8040                 :::*                    LISTEN      -
-tcp6       0      0 :::40296                :::*                    LISTEN      -
-tcp6       0      0 :::8042                 :::*                    LISTEN      -
 tcp6       0      0 :::3306                 :::*                    LISTEN      -
-tcp6       0      0 :::2222                 :::*                    LISTEN      -
+tcp6       0      0 :::8300                 :::*                    LISTEN      -
 tcp6       0      0 :::22                   :::*                    LISTEN      -
 ----
-此时可以通过jdbc连接hive或mysql使用测试环境中的数据。
+此时可以通过jdbc连接hive或mysql访问测试环境中的数据，也可以调用指标加载接口的功能。
 
 == 关闭测试环境
 进入metric-sys-test目录，执行：
@@ -97,38 +83,114 @@ $ docker-compose stop
 ----
 $ docker-compose start
 ----
-等待一会儿，直到观察到端口10000被占用：
+等待一会儿，直到观察到端口3306和8300被占用：
 [source, shell]
 ----
 $ netstat -tlnp
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
 Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      -
 tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50010           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50075           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50020           0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:9000          0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50090           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:2222            0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:32975         0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:10000           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:10002           0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:50070           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN      -
 tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
-tcp6       0      0 :::8088                 :::*                    LISTEN      -
+tcp6       0      0 ::1:5432                :::*                    LISTEN      -
 tcp6       0      0 ::1:25                  :::*                    LISTEN      -
-tcp6       0      0 :::13562                :::*                    LISTEN      -
-tcp6       0      0 :::8030                 :::*                    LISTEN      -
-tcp6       0      0 :::8031                 :::*                    LISTEN      -
-tcp6       0      0 :::8032                 :::*                    LISTEN      -
-tcp6       0      0 :::8033                 :::*                    LISTEN      -
-tcp6       0      0 :::8040                 :::*                    LISTEN      -
-tcp6       0      0 :::40296                :::*                    LISTEN      -
-tcp6       0      0 :::8042                 :::*                    LISTEN      -
 tcp6       0      0 :::3306                 :::*                    LISTEN      -
-tcp6       0      0 :::2222                 :::*                    LISTEN      -
+tcp6       0      0 :::8300                 :::*                    LISTEN      -
 tcp6       0      0 :::22                   :::*                    LISTEN      -
 ----
-此时可以通过jdbc连接hive或mysql使用测试环境中的数据。
+此时可以通过jdbc连接hive或mysql访问测试环境中的数据，也可以调用指标加载接口的功能。
+
+== 指标加载引擎调用接口
+指标加载引擎使用HTTP接口提供指标加载、加载状态查询和取消加载任务的功能。
+
+=== 指标加载
+加载指定的指标列表中所含的指标，或加载全部指标。
+
+* 调用方法：POST
+* URL: http://ip-address:8300/metric-engine/load/<metric-code-list>
++
+<metric-code-list>为逗号分隔的待加载指标代码列表，也可以用‘all’表示加载全部指标。
+* 接口参数
++
+[source, json]
+----
+{
+    "param-name1": "param-value1",
+    "param-name2": "param-value2",
+    ... ...
+}
+----
+接口参数是一个JSON结构体，内容为指标加载所用的SQL语句中所含参数的名称和对应的值。
+* 返回结果格式
++
+[source, json]
+----
+{
+    "msg": "OK",
+    "result": {
+        "b000000001": "SUCC",
+        "b000000002": "SUCC"
+    }
+}
+----
++
+result中包括各指标代码的加载结果
+
+- SUCC 加载成功
+- FAIL 加载失败
+- ABORT 放弃加载（指标配置不正确，或指标代码错误）
+- INIT 未开始加载
+- CANCEL 加载取消
+- RUNNING 正在执行
+- BLOCKING 等待上游指标加载
+
+=== 查询指标加载状态
+查询上次提交加载的指标列表中各指标的加载状态。
+
+* 调用方法：GET
+* URL: http://ip-address:8300/metric-engine/check
+* 返回结果格式
++
+[source, json]
+----
+{
+    "msg": "OK",
+    "result": {
+        "b000000001": "RUNNING",
+        "b000000002": "RUNNING",
+        "b000000003": "SUCC",
+        "b000000004": "ABORT",
+        "b000000005": "ABORT",
+        "b000000010": "RUNNING",
+        "b000000011": "RUNNING",
+        "b000000012": "RUNNING",
+        "b000000020": "INIT",
+        "b000000021": "INIT",
+        "b000000022": "INIT",
+        "b000000023": "INIT",
+        "b000000024": "INIT",
+        "d000000001": "INIT",
+        "d000000011": "INIT",
+        "d000000021": "INIT",
+        "d000000022": "INIT"
+    }
+}
+----
++
+result中包括各指标代码的加载状态，各状态的解释参见上一节的说明。
+
+=== 取消指标加载
+取消上次提交加载的指标列表中尚未开始调度的指标加载作业，被成功取消的指标的加载状态会变为‘CANCEL’。
+
+* 调用方法：GET
+* URL: http://ip-address:8300/metric-engine/cancel
+* 返回结果格式
++
+[source, json]
+----
+{
+    "msg": "OK",
+}
+----
+

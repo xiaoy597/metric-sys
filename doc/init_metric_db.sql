@@ -13,11 +13,13 @@ insert into metric_src values ('0001', '大数据平台主题库', '', '01');
 insert into metric_src values ('0002', '大数据平台基础库', '', '01');
 insert into metric_src values ('0003', '测试关系数据库', '
 {
-	"ip": "localhost",
+	"ip": "127.0.0.1",
 	"port": 3306,
 	"db": "metric_src_db",
 	"user": "root",
-	"password": "root"
+	"password": "root",
+	"ftp-user": "ftp",
+	"dump-path": "/tmp"
 }', '02');
 insert into metric_src values ('0004', '测试文件系统', '', '04');
 
@@ -27,12 +29,15 @@ insert into metric_param values ('S00001', 1, '指标数据仓库连接参数','
 {
 	"type": "mysql",
 	"connect-params": {
-		"ip": "localhost",
+		"ip": "127.0.0.1",
 		"port": 3306,
 		"db": "metric_warehouse",
 		"user": "root",
 		"password": "root"
-	}
+	},
+  "ftp-user": "ftp",
+  "dump-path": "/tmp",
+  "temp-db": "tmpdb"
 }
 ');
 
@@ -220,7 +225,7 @@ values ('d000000021', '中小企业数量', 1, 'C00003', 'M000000013', '0003', '
 
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level, metric_formula)
 values ('d000000022', '中小企业数量占比', 1, 'C00003', 'M000000014', '0003', '00'
-, '$[d000000021]/$[d000000021]+$[b000000023]');
+, '$[d000000021]/($[d000000021]+$[b000000023])');
 
 insert into metric (metric_cd, metric_nm, metric_type, metric_tbl_cd, metric_tbl_col_cd, metric_src_cd, default_sec_level)
 values ('d000000023', '衍生指标0023', 1, 'C00003', 'M000000015', '0003', '00');
@@ -232,6 +237,7 @@ delete from metric_dim_rollup;
 
 insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000001';
 insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000002';
+insert into metric_dim_rollup select '0001', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000003';
 insert into metric_dim_rollup select '0001', m.metric_row_id, 4 from metric m where m.metric_cd = 'b000000010';
 insert into metric_dim_rollup select '0002', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000010';
 insert into metric_dim_rollup select '0001', m.metric_row_id, 0 from metric m where m.metric_cd = 'b000000011';
