@@ -344,6 +344,44 @@ update organization set super_admin_org_cd = substr(super_admin_org_cd, 1, 6);
 update organization set org_type = 1 where length(org_cd) > 7;
 update organization set dept_cd = case when length(org_cd) > 9 then substr(org_cd, 7, 4) else '0000' end;
 
+
+delete from organization 
+where 
+org_cd like '%E%' 
+or org_cd like '%F%'
+or org_cd like '%G%'
+or org_cd like '%H%'
+or org_cd like '%I%'
+or org_cd like '%J%'
+or org_cd like '%K%'
+or org_cd like '%L%'
+or org_cd like '%Y%'
+or org_cd like '%Z%'
+;
+
+
+delete from organization
+where org_cd like '110329%'
+or org_cd like '110000001%'
+or org_cd like '1100002312%'
+or org_cd like '110330%';
+
+update organization set super_admin_org_cd = '110000' where length(org_cd) = 7;
+
+
+delete from busi_department;
+
+insert into busi_department
+select distinct dept_cd, dept_nm
+from (
+select o2.org_cd, o2.org_nm, o2.dept_cd, o2.super_admin_org_cd, concat(o1.org_nm, '-', o2.org_nm) as dept_nm
+from
+organization o1,
+(select * from organization where length(org_cd) = 10 and super_admin_org_cd = '110000') o2
+where o1.org_cd = o2.super_busi_org_cd
+) t;
+
+
 delete from user;
 
 insert into `user` (user_id, user_name, user_name_cn) values (1, 'sysadmin'  , '系统管理员'    );
