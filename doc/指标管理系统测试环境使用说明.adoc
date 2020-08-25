@@ -4,15 +4,20 @@ v1.0
 :toc:
 
 == 测试环境要求
-* 一台Linux虚拟机（CentOS或Ubuntu均可）。虚拟机上如果已经安装MySQL，需要将其关闭。
+* 一台Linux虚拟机（CentOS或Ubuntu均可），内存至少为4G。虚拟机上如果已经安装MySQL，需要将其关闭，否则可能会与镜像中的MySQL发生冲突。
 
 == 测试环境的内容
 
 === 组件
+* 指标管理应用
 * 指标加载引擎
 * Hadoop 2.9.2 （暂不使用）
 * Hive 2.3.7 （暂不使用）
 * MySQL 5.7
+* Logstash 7.8.1
+* Elasticsearch 7.8.1
+* Filebeat 7.8.1
+
 
 
 === 数据
@@ -25,6 +30,12 @@ v1.0
  - jdbc:mysql://localhost:3306/metric_warehouse?user=root&password=root&characterEncoding=utf8
 
 == 测试环境设置步骤
+. 修改虚拟机系统参数，打开/etc/sysctl.conf，并在文件末尾添加：
++
+----
+ vm.max_map_count = 262144 
+----
+保存后，重新启动虚拟机。
 . 在虚拟机上安装Docker和Docker Compose（参考官方文档）。
 . 打开链接（https://pan.baidu.com/s/1l569C65nuNvDwwo6yHI0ng，提取码：9fey），进入test目录下载下列文件
  - metric-sys-test.tar.gz
@@ -46,13 +57,20 @@ $ tar xvzf metric-sys-test.tar.gz
 ----
 
 == 初次启动测试环境
-进入metric-sys-test目录，执行：
+
+. 编译指标管理系统web应用，将产生的metric-service.war和metric-web目录拷贝到metric-sys-test/metric-web/webapps目录下。
+. 进入metric-sys-test目录， 执行：
++
 [source, shell]
 ----
+$ chmod -R a+rwx metric-web/logs
+$ chmod -R a+rwx metric-web/webapps
 $ chmod a+rwx metric-engine/tmp
 $ docker-compose up
 ----
-等待一会儿，直到观察到端口8300被占用：
++
+等待几分钟，直到观察到端口8080, 8300, 9200, 9600被占用：
++
 [source, shell]
 ----
 $ netstat -tlnp
@@ -64,11 +82,23 @@ tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN      
 tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
 tcp6       0      0 ::1:5432                :::*                    LISTEN      -
 tcp6       0      0 ::1:25                  :::*                    LISTEN      -
+tcp6       0      0 127.0.0.1:8005          :::*                    LISTEN      -
 tcp6       0      0 :::3306                 :::*                    LISTEN      -
 tcp6       0      0 :::8300                 :::*                    LISTEN      -
+tcp6       0      0 127.0.0.1:9200          :::*                    LISTEN      -
+tcp6       0      0 ::1:9200                :::*                    LISTEN      -
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 127.0.0.1:9300          :::*                    LISTEN      -
+tcp6       0      0 ::1:9300                :::*                    LISTEN      -
 tcp6       0      0 :::22                   :::*                    LISTEN      -
 ----
-此时可以通过jdbc连接hive或mysql访问测试环境中的数据，也可以调用指标加载接口的功能。
++
+此时可以：
++
+.. 通过jdbc连接hive或mysql访问测试环境中的数据
+.. 访问http://localhost:8300/metric-engine调用指标加载引擎接口的功能。
+.. 访问http://localhost:8080/metric-web使用指标管理web应用。
+.. 访问http://localhost:9200查询ES中的日志数据。
 
 == 关闭测试环境
 进入metric-sys-test目录，执行：
@@ -83,23 +113,16 @@ $ docker-compose stop
 ----
 $ docker-compose start
 ----
-等待一会儿，直到观察到端口3306和8300被占用：
+等待一会儿，直到观察到端口8080, 8300, 9200, 9600被占用：
+
+注意：如果更新了metric-sys-test/metric-web/webapps下的内容，需要重新执行：
 [source, shell]
 ----
-$ netstat -tlnp
-Active Internet connections (only servers)
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
-tcp6       0      0 ::1:5432                :::*                    LISTEN      -
-tcp6       0      0 ::1:25                  :::*                    LISTEN      -
-tcp6       0      0 :::3306                 :::*                    LISTEN      -
-tcp6       0      0 :::8300                 :::*                    LISTEN      -
-tcp6       0      0 :::22                   :::*                    LISTEN      -
+$ chmod -R a+rwx metric-web/logs
+$ chmod -R a+rwx metric-web/webapps
 ----
-此时可以通过jdbc连接hive或mysql访问测试环境中的数据，也可以调用指标加载接口的功能。
+否则应用可能会报错。
+
 
 == 指标加载引擎调用接口
 指标加载引擎使用HTTP接口提供指标加载、加载状态查询和取消加载任务的功能。

@@ -1,0 +1,107 @@
+= 指标管理系统日志相关功能开发说明
+肖燏 <yu.xiao@seaboxdata.com>
+v1.0
+:toc:
+
+== 日志内容
+
+* 指标维护日志
++
+记录用户所执行的指标和指标目录的维护、审批操作。
+
+* 指标加载日志
++
+记录指标引擎所执行的指标加载操作。
+
+* 指标访问日志
++
+记录用户对指标数据的查询、修改、导入导出操作。
+
+== 日志存储与结构
+指标管理系统中所有日志都存放在ES中，存储结构为：
+
+* 指标维护日志
+** 索引名称：metric-edit-%{YYYY.MM}
+** 索引字段：
++
+[cols="1,3" options="header"]
+|===
+|字段名|字段说明
+|log_id|日志记录唯一ID
+|log_time|日志记录时间
+|user_id|用户代码
+|user_name|用户名称
+|metric_code|指标代码或指标目录代码
+|metric_name|指标名称或指标目录名称
+|op_type|操作类型，包括指标增加、修改、删除，指标目录增加、修改、删除
+|comment|备注信息
+|===
+
+* 指标加载日志
+** 索引名称：metric-load-%{YYYY.MM}
+** 索引字段：
++
+[cols="1,3" options="header"]
+|===
+|字段名|字段说明
+|log_id|日志记录唯一ID
+|log_time|日志记录时间
+|metric_code|指标代码
+|metric_name|指标名称
+|load_type|加载类型：周期加载/即时加载
+|begin_time|加载开始时间
+|end_time|加载结束时间
+|comment|备注信息
+|===
+
+* 指标访问日志
+** 索引名称：metric-access-%{YYYY.MM}
+** 索引字段：
++
+[cols="1,3" options="header"]
+|===
+|字段名|字段说明
+|log_id|日志记录唯一ID
+|log_time|日志记录时间
+|request_id|访问请求代码，用于记录通过接口访问指标时的接口请求ID
+|metric_code|指标代码
+|metric_name|指标名称
+|metric_filter|指标数据范围，即指标筛选条件
+|user_id|用户代码
+|user_name|用户名称
+|interface_code|指标接口代码
+|row_count|接口访问记录数
+|comment|备注信息
+|===
+
+== 日志记录
+日志记录的处理流程为：
+
+. 由指标管理Web应用或指标加载引擎将日志内容记录在现有的日志文件中。
+. 后台日志处理系统（Filebeat+Logstash）自动跟踪日志文件内容变化，并将新增的日志内容导入对应的ES索引。
+
+=== 在指标管理应用中记录日志
+在指标管理Web应用中记录以上日志内容可以采用现有的日志记录API（slf4j/log4j/logback/...）及日志格式，但日志的内容部分要符合以下格式：
+
+<日志类型> <日志内容>
+
+- <日志类型>
++
+可取值包括：METRIC-EDIT、METRIC-LOAD、METRIC-ACCESS，分别表示指标维护日志、指标加载日志和指标访问日志
+- <日志内容>
++
+由与日志类型对应的日志字段组成的JSON结构字符串。
+
+例如：
+[source]
+----
+24-Jul-2020 17:46:32.125 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log METRIC-EDIT { "user_id" : 1, "user_name": "张三", "metric_code": "123456", "metric_name": "指标1", "op_type": "DELETE", "comment": "删除指标" }
+----
+字段log_id和log_time不需要包含在JSON字符串中，日志处理过程会自动添加这两个字段。
+
+=== 在指标加载引擎中记录日志
+待补充。
+
+== 日志查询
+在指标管理系统Web应用中，通过ES的JDBC接口使用ES的SQL语句对上述日志进行查询统计，SQL语句中使用的表名即为ES索引名，字段名与索引字段一一对应。具体实现方式请参见ES文档。
+
