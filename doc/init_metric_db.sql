@@ -382,6 +382,11 @@ where o1.org_cd = o2.super_busi_org_cd
 ) t;
 
 
+update metric set approve_status = 1;
+update metric_class set approve_status = 1;
+update metric_class_r set approve_status = 1;
+
+
 delete from user;
 
 insert into `user` (user_id, user_name, user_name_cn) values (1, 'sysadmin'  , '系统管理员'    );
