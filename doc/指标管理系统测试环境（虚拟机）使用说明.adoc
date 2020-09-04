@@ -1,0 +1,154 @@
+= 指标管理系统测试环境（虚拟机）使用说明
+
+== 环境准备
+
+. VMware Workstation 15+
+. 指标管理系统测试虚拟机（Metric.Test）
+
+== 安装步骤
+
+. 将指标管理系统虚拟机拷贝到本地硬盘
+. 运行该虚拟机。
+. 登录虚拟机（root/root），查看虚拟机IP地址
+. 打开宿主机命令行窗口，测试宿主机到虚拟机网络是否联通（ping 虚拟机网址）
+. 编辑宿主机hosts文件
+ * Linux - /etc/hosts
+ * Windows - C:\windows\system32\drivers\etc\hosts
+
++
+在hosts文件中增加虚拟机主机名，
+[source]
+----
+    x.x.x.x    test-server
+----
+
+== 初次启动测试环境
+
+. 用test/root用户登录虚拟机
+. 进入metric-sys-test目录，执行
++
+[source]
+----
+ docker-compose up
+----
+. 等待几分钟
+. 打开另一个窗口，执行'netstat -tln'命令，看到返回下列结果时即表示系统启动完毕：
++
+[source]
+----
+ Active Internet connections (only servers)
+ Proto Recv-Q Send-Q Local Address           Foreign Address         State
+ tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN
+ tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN
+ tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN
+ tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
+ tcp6       0      0 ::1:5432                :::*                    LISTEN
+ tcp6       0      0 ::1:25                  :::*                    LISTEN
+ tcp6       0      0 127.0.0.1:9600          :::*                    LISTEN
+ tcp6       0      0 127.0.0.1:8005          :::*                    LISTEN
+ tcp6       0      0 :::3306                 :::*                    LISTEN
+ tcp6       0      0 :::8300                 :::*                    LISTEN
+ tcp6       0      0 127.0.0.1:9200          :::*                    LISTEN
+ tcp6       0      0 ::1:9200                :::*                    LISTEN
+ tcp6       0      0 :::8080                 :::*                    LISTEN
+ tcp6       0      0 :::5044                 :::*                    LISTEN
+ tcp6       0      0 127.0.0.1:9300          :::*                    LISTEN
+ tcp6       0      0 ::1:9300                :::*                    LISTEN
+ tcp6       0      0 :::22                   :::*                    LISTEN
+----
+. 在宿主机浏览器上访问'http://test-server:8080/metric-web'打开指标管理系统测试环境登录页面。
+. 使用admin/123456用户登录系统。
+
+== 停止测试环境
+
+. 用test/root用户登录虚拟机
+. 进入metric-sys-test目录，执行
++
+[source]
+----
+ docker-compose stop
+----
+
+== 重新启动测试环境
+
+. 用test/root用户登录虚拟机
+. 进入metric-sys-test目录，执行
++
+[source]
+----
+ docker-compose start
+----
+. 等待几分钟
+. 打开另一个窗口，执行'netstat -tln'命令，看到返回下列结果时即表示系统启动完毕：
++
+[source]
+----
+ Active Internet connections (only servers)
+ Proto Recv-Q Send-Q Local Address           Foreign Address         State
+ tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN
+ tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN
+ tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN
+ tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
+ tcp6       0      0 ::1:5432                :::*                    LISTEN
+ tcp6       0      0 ::1:25                  :::*                    LISTEN
+ tcp6       0      0 127.0.0.1:9600          :::*                    LISTEN
+ tcp6       0      0 127.0.0.1:8005          :::*                    LISTEN
+ tcp6       0      0 :::3306                 :::*                    LISTEN
+ tcp6       0      0 :::8300                 :::*                    LISTEN
+ tcp6       0      0 127.0.0.1:9200          :::*                    LISTEN
+ tcp6       0      0 ::1:9200                :::*                    LISTEN
+ tcp6       0      0 :::8080                 :::*                    LISTEN
+ tcp6       0      0 :::5044                 :::*                    LISTEN
+ tcp6       0      0 127.0.0.1:9300          :::*                    LISTEN
+ tcp6       0      0 ::1:9300                :::*                    LISTEN
+ tcp6       0      0 :::22                   :::*                    LISTEN
+----
+. 在宿主机浏览器上访问'http://test-server:8080/metric-web'打开指标管理系统测试环境登录页面。
+. 使用admin/123456用户登录系统。
+
+
+== 更新测试环境
+
+=== 更新应用程序
+. 如果测试环境正在运行，需要先停止测试环境。
+. 打开Windows Git Bash窗口，使用以下命令将metric-sys-test.tar.gz拷贝到虚拟机上（test用户的口令为root）:
++
+[source]
+----
+scp metric-sys-test.tar.gz test@test-server:
+----
+
+. 用test用户登录虚拟机，执行以下命令：
++
+[source]
+----
+rm -rf metric-sys-test
+tar xvzf metric-sys-test.tar.gz
+chmod -R a+rwx metric-sys-test/metric-web
+----
+
+. 重新启动测试环境
+
+=== 更新Docker镜像
+. 用test用户登录，进入metric-sys-test目录，执行以下命令删除测试环境：
++
+[source]
+----
+docker-compose down
+----
+
+. 打开Windows Git Bash窗口，使用以下命令将metric-sys-images.tar.gz拷贝到虚拟机上（test用户的口令为root）:
++
+[source]
+----
+scp metric-sys-images.tar.gz test@test-server:
+----
+
+. 用test用户登录虚拟机，执行以下命令：
++
+[source]
+----
+gzip -cd metric-sys-images.tar.gz|docker load
+----
+
+. 重新启动测试环境
