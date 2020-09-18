@@ -5,8 +5,8 @@
 指标字段备注,metric_col_desc,,X,X,X,X
 参数类型,param_type,,X,X,X,X
 默认安全级别,default_sec_level,,X,X,X,X
-审核时间,approve_tm,,X,X,X,X
-审核用户,approver,,X,X,X,X
+审核时间,review_tm,,X,X,X,X
+审核用户,review_user_id,,X,X,X,X
 业务部门,busi_department,,X,X,X,X
 业务部门代码,dept_cd,,X,X,X,X
 部门代码,dept_cd,,X,X,X,X
@@ -78,7 +78,7 @@
 上级指标目录代码,super_class_cd,,X,X,X,X
 修改标识,update_flag,,X,X,X,X
 更新时间,update_tm,,X,X,X,X
-更新用户,commiter,,X,X,X,X
+更新用户,update_user_id,,X,X,X,X
 上游指标默认值,ustream_dft_value,,X,X,X,X
 上游指标代码,ustream_metric,,X,X,X,X
 指标数据接口,metric_interface,,X,X,X,X
@@ -89,10 +89,10 @@
 访问数据量阈值,volume_limit,,X,X,X,X
 访问频次阈值,freq_limit,,X,X,X,X
 接口申请备注,app_memo,,X,X,X,X
-接口审核备注,approve_memo,,X,X,X,X
+接口审核备注,review_memo,,X,X,X,X
 接口访问令牌,access_token,,X,X,X,X
 令牌失效时间,token_expire_tm,,X,X,X,X
-审核状态,approve_status,,X,X,X,X
+审核状态,review_status,,X,X,X,X
 申请用户,applicant,,X,X,X,X
 申请时间,applicate_tm,,X,X,X,X
 指标接口内容,metric_if_content,,X,X,X,X
@@ -235,11 +235,10 @@
 失效日期,expire_dt,,X,X,X,X
 任务调度标识,schedule_id,,X,X,X,X
 任务备注,task_desc,,X,X,X,X
-考核操作员,op_user_id,,X,X,X,X
-考核审核员,appr_user_id,,X,X,X,X
-审核类型,appr_type,,X,X,X,X
-审核状态,appr_status,,X,X,X,X
-审核意见,appr_comment,,X,X,X,X
+考核操作员,update_user_id,,X,X,X,X
+考核审核员,review_user_id,,X,X,X,X
+审核类型,review_type,,X,X,X,X
+审核意见,review_comment,,X,X,X,X
 考核任务关联指标,eva_task_metric,,X,X,X,X
 考核对象,eva_object,,X,X,X,X
 考核对象标识,object_id,,X,X,X,X
@@ -268,3 +267,6 @@
 部门维度,dept_dim,,X,X,X,X
 月份维度标识,month_dim_id,,X,X,X,X
 部门维度标识,dept_dim_id,,X,X,X,X
+考核指标审核,eva_metric_review,,X,X,X,X
+维度说明,dim_desc,,X,X,X,X
+指标值,metric_value,,X,X,X,X
