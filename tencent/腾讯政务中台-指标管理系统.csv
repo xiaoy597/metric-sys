@@ -270,3 +270,12 @@
 考核指标审核,eva_metric_review,,X,X,X,X
 维度说明,dim_desc,,X,X,X,X
 指标值,metric_value,,X,X,X,X
+维度数据源代码,metric_src_cd,,X,X,X,X
+源表名称,src_tbl_nm,,X,X,X,X
+源字段名称,src_col_nm,,X,X,X,X
+维度代码表,dim_code,,X,X,X,X
+维度代码标识,dim_code_id,,X,X,X,X
+维度代码类型,dim_code_type,,X,X,X,X
+维度代码值,dim_code_cd,,X,X,X,X
+维度代码描述,dim_code_desc,,X,X,X,X
+指标修订值,metric_amend_value,,X,X,X,X

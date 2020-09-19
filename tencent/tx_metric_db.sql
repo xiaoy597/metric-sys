@@ -137,33 +137,17 @@ CREATE TABLE metric_class_r
 	PRIMARY KEY (mc_r_row_id)
 );
 
-CREATE TABLE metric_column
-(
-	metric_col_cd        VARCHAR(10) NOT NULL,
-	metric_col_nm        VARCHAR(60) NULL,
-	metric_col_type      INTEGER NULL,
-	metric_col_data_type VARCHAR(20) NULL,
-	metric_col_phy_nm    VARCHAR(30) NULL,
-	metric_col_desc      VARCHAR(60) NULL,
-	PRIMARY KEY (metric_col_cd)
-);
-
 CREATE TABLE metric_dim
 (
 	dim_cd               VARCHAR(4) NOT NULL,
 	dim_nm               VARCHAR(60) NULL,
-	dim_tbl_phy_nm       VARCHAR(30) NULL,
+	dim_code_type        VARCHAR(30) NULL,
 	dim_desc             VARCHAR(512) NULL,
 	update_user_id       VARCHAR(16) NULL,
+	metric_src_cd        CHAR(4) NULL,
+	src_tbl_nm           VARCHAR(60) NULL,
+	src_col_nm           VARCHAR(60) NULL,
 	PRIMARY KEY (dim_cd)
-);
-
-CREATE TABLE metric_dim_col
-(
-	dim_cd               VARCHAR(4) NOT NULL,
-	metric_dim_col_cd    VARCHAR(10) NOT NULL,
-	dim_level            INTEGER NULL,
-	PRIMARY KEY (dim_cd,metric_dim_col_cd)
 );
 
 CREATE TABLE metric_param
@@ -284,8 +268,8 @@ ALTER TABLE metric COMMENT = '指标 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric MODIFY COLUMN `metric_row_id` BIGINT AUTO_INCREMENT COMMENT '指标记录标识 -- ';
   ALTER TABLE metric MODIFY COLUMN `metric_cd` VARCHAR(10) NULL COMMENT '指标代码 -- 不得重复';
   ALTER TABLE metric MODIFY COLUMN `metric_nm` VARCHAR(60) NULL COMMENT '指标名称 -- ';
-  ALTER TABLE metric MODIFY COLUMN `metric_type` INTEGER NULL COMMENT '指标类型 -- 0：基础指标
-1：衍生指标
+  ALTER TABLE metric MODIFY COLUMN `metric_type` INTEGER NULL COMMENT '指标类型 -- 0：基础指标（数据映射）
+1：衍生指标（公式计算）
 2：考核指标';
   ALTER TABLE metric MODIFY COLUMN `dept_cd` VARCHAR(4) NULL COMMENT '业务部门代码 -- ';
   ALTER TABLE metric MODIFY COLUMN `metric_unit` VARCHAR(16) NULL COMMENT '指标数据单位 -- ';
@@ -349,26 +333,15 @@ ALTER TABLE metric_class_r COMMENT = '指标分类 -- ' ENGINE=InnoDB DEFAULT CH
   ALTER TABLE metric_class_r MODIFY COLUMN `review_tm` DATETIME NULL COMMENT '审核时间 -- ';
   ALTER TABLE metric_class_r MODIFY COLUMN `task_flow_id` INTEGER NULL COMMENT '审批流编号 -- ';
   
-ALTER TABLE metric_column COMMENT = '指标字段 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE metric_column MODIFY COLUMN `metric_col_cd` VARCHAR(10) NOT NULL COMMENT '指标字段代码 -- ';
-  ALTER TABLE metric_column MODIFY COLUMN `metric_col_nm` VARCHAR(60) NULL COMMENT '指标字段名称 -- ';
-  ALTER TABLE metric_column MODIFY COLUMN `metric_col_type` INTEGER NULL COMMENT '指标字段类型 -- 0：指标维度
-1：指标度量';
-  ALTER TABLE metric_column MODIFY COLUMN `metric_col_data_type` VARCHAR(20) NULL COMMENT '指标字段数据类型 -- ';
-  ALTER TABLE metric_column MODIFY COLUMN `metric_col_phy_nm` VARCHAR(30) NULL COMMENT '指标字段物理名称 -- ';
-  ALTER TABLE metric_column MODIFY COLUMN `metric_col_desc` VARCHAR(60) NULL COMMENT '指标字段备注 -- ';
-  
 ALTER TABLE metric_dim COMMENT = '指标维度 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_dim MODIFY COLUMN `dim_cd` VARCHAR(4) NOT NULL COMMENT '维度代码 -- ';
   ALTER TABLE metric_dim MODIFY COLUMN `dim_nm` VARCHAR(60) NULL COMMENT '维度名称 -- ';
-  ALTER TABLE metric_dim MODIFY COLUMN `dim_tbl_phy_nm` VARCHAR(30) NULL COMMENT '维度物理表名称 -- ';
+  ALTER TABLE metric_dim MODIFY COLUMN `dim_code_type` VARCHAR(30) NULL COMMENT '维度代码类型 -- ';
   ALTER TABLE metric_dim MODIFY COLUMN `dim_desc` VARCHAR(512) NULL COMMENT '维度说明 -- ';
   ALTER TABLE metric_dim MODIFY COLUMN `update_user_id` VARCHAR(16) NULL COMMENT '更新用户 -- ';
-  
-ALTER TABLE metric_dim_col COMMENT = '指标维度字段 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  ALTER TABLE metric_dim_col MODIFY COLUMN `dim_cd` VARCHAR(4) NOT NULL COMMENT '维度代码 -- ';
-  ALTER TABLE metric_dim_col MODIFY COLUMN `metric_dim_col_cd` VARCHAR(10) NOT NULL COMMENT '维度字段代码 -- ';
-  ALTER TABLE metric_dim_col MODIFY COLUMN `dim_level` INTEGER NULL COMMENT '维度级别 -- 从0开始顺序增加，逐级汇总';
+  ALTER TABLE metric_dim MODIFY COLUMN `metric_src_cd` CHAR(4) NULL COMMENT '维度数据源代码 -- ';
+  ALTER TABLE metric_dim MODIFY COLUMN `src_tbl_nm` VARCHAR(60) NULL COMMENT '源表名称 -- ';
+  ALTER TABLE metric_dim MODIFY COLUMN `src_col_nm` VARCHAR(60) NULL COMMENT '源字段名称 -- ';
   
 ALTER TABLE metric_param COMMENT = '指标计算参数 -- ' ENGINE=InnoDB DEFAULT CHARSET=utf8;
   ALTER TABLE metric_param MODIFY COLUMN `param_cd` VARCHAR(20) NOT NULL COMMENT '参数代码 -- ';
