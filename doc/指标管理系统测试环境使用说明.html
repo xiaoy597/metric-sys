@@ -578,27 +578,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>在虚拟机上安装Docker和Docker Compose（参考官方文档）。</p>
 </li>
 <li class="data-line-40">
-<p>打开链接（https://pan.baidu.com/s/1l569C65nuNvDwwo6yHI0ng，提取码：9fey），进入test目录下载下列文件</p>
-<div class="ulist data-line-41">
-<ul>
+<p>创建一个操作系统用户（或使用现有的非root用户），将该用户加入docker用户组。以下操作都以该用户身份执行。</p>
+</li>
 <li class="data-line-41">
+<p>打开链接（https://pan.baidu.com/s/1l569C65nuNvDwwo6yHI0ng，提取码：9fey），进入test目录下载下列文件</p>
+<div class="ulist data-line-42">
+<ul>
+<li class="data-line-42">
 <p>metric-sys-test.tar.gz</p>
 </li>
-<li class="data-line-42">
+<li class="data-line-43">
 <p>metric-sys-test-images.tar.gz</p>
-<div class="paragraph data-line-44">
+<div class="paragraph data-line-45">
 <p>并将这两个文件上传到虚拟机。</p>
 </div>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-45">
+<li class="data-line-46">
 <p>执行以下命令将metric-sys-test-images.tar.gz导入docker，</p>
-<div class="listingblock data-line-48">
+<div class="listingblock data-line-49">
 <div class="content">
-<pre class="highlight"><code class="language-shell" data-lang="shell">$ gzip -d metric-sys-test-images.tar.gz
-$ docker load -i metric-sys-test-images.tar</code></pre>
+<pre class="highlight"><code class="language-shell" data-lang="shell">$ zcat metric-sys-test-images.tar.gz| docker load</code></pre>
 </div>
 </div>
 </li>
@@ -666,7 +668,7 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 <p>通过jdbc连接hive或mysql访问测试环境中的数据</p>
 </li>
 <li class="data-line-99">
-<p>访问http://localhost:8300/metric-engine调用指标加载引擎接口的功能。</p>
+<p>访问https://localhost:8300/metric-engine调用指标加载引擎接口的功能。</p>
 </li>
 <li class="data-line-100">
 <p>访问http://localhost:8080/metric-web使用指标管理web应用。</p>
@@ -726,27 +728,30 @@ $ chmod -R a+rwx metric-web/webapps</code></pre>
 <h2 id="_指标加载引擎调用接口">指标加载引擎调用接口</h2>
 <div class="sectionbody">
 <div class="paragraph data-line-128">
-<p>指标加载引擎使用HTTP接口提供指标加载、加载状态查询和取消加载任务的功能。</p>
+<p>指标加载引擎使用HTTPS接口提供指标加载、加载状态查询和取消加载任务的功能。</p>
 </div>
-<div class="sect2 data-line-130">
+<div class="paragraph data-line-130">
+<p>访问HTTPS接口时需要将HTTP客户端设置为不验证服务器证书的模式。</p>
+</div>
+<div class="sect2 data-line-132">
 <h3 id="_指标加载">指标加载</h3>
-<div class="paragraph data-line-131">
+<div class="paragraph data-line-133">
 <p>加载指定的指标列表中所含的指标，或加载全部指标。</p>
 </div>
-<div class="ulist data-line-133">
+<div class="ulist data-line-135">
 <ul>
-<li class="data-line-133">
+<li class="data-line-135">
 <p>调用方法：POST</p>
 </li>
-<li class="data-line-134">
-<p>URL: <a href="http://ip-address:8300/metric-engine/load/&lt;metric-code-list&gt" class="bare">http://ip-address:8300/metric-engine/load/&lt;metric-code-list&gt</a>;</p>
-<div class="paragraph data-line-136">
+<li class="data-line-136">
+<p>URL: <a href="https://ip-address:8300/metric-engine/load/&lt;metric-code-list&gt" class="bare">https://ip-address:8300/metric-engine/load/&lt;metric-code-list&gt</a>;</p>
+<div class="paragraph data-line-138">
 <p>&lt;metric-code-list&gt;为逗号分隔的待加载指标代码列表，也可以用‘all’表示加载全部指标。</p>
 </div>
 </li>
-<li class="data-line-137">
+<li class="data-line-139">
 <p>接口参数</p>
-<div class="listingblock data-line-140">
+<div class="listingblock data-line-142">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
     "param-name1": "param-value1",
@@ -755,13 +760,13 @@ $ chmod -R a+rwx metric-web/webapps</code></pre>
 }</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-147">
+<div class="paragraph data-line-149">
 <p>接口参数是一个JSON结构体，内容为指标加载所用的SQL语句中所含参数的名称和对应的值。</p>
 </div>
 </li>
-<li class="data-line-148">
+<li class="data-line-150">
 <p>返回结果格式</p>
-<div class="listingblock data-line-151">
+<div class="listingblock data-line-153">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
     "msg": "OK",
@@ -772,30 +777,30 @@ $ chmod -R a+rwx metric-web/webapps</code></pre>
 }</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-161">
+<div class="paragraph data-line-163">
 <p>result中包括各指标代码的加载结果</p>
 </div>
-<div class="ulist data-line-163">
+<div class="ulist data-line-165">
 <ul>
-<li class="data-line-163">
+<li class="data-line-165">
 <p>SUCC 加载成功</p>
 </li>
-<li class="data-line-164">
+<li class="data-line-166">
 <p>FAIL 加载失败</p>
 </li>
-<li class="data-line-165">
+<li class="data-line-167">
 <p>ABORT 放弃加载（指标配置不正确，或指标代码错误）</p>
 </li>
-<li class="data-line-166">
+<li class="data-line-168">
 <p>INIT 未开始加载</p>
 </li>
-<li class="data-line-167">
+<li class="data-line-169">
 <p>CANCEL 加载取消</p>
 </li>
-<li class="data-line-168">
+<li class="data-line-170">
 <p>RUNNING 正在执行</p>
 </li>
-<li class="data-line-169">
+<li class="data-line-171">
 <p>BLOCKING 等待上游指标加载</p>
 </li>
 </ul>
@@ -804,22 +809,22 @@ $ chmod -R a+rwx metric-web/webapps</code></pre>
 </ul>
 </div>
 </div>
-<div class="sect2 data-line-171">
+<div class="sect2 data-line-173">
 <h3 id="_查询指标加载状态">查询指标加载状态</h3>
-<div class="paragraph data-line-172">
+<div class="paragraph data-line-174">
 <p>查询上次提交加载的指标列表中各指标的加载状态。</p>
 </div>
-<div class="ulist data-line-174">
+<div class="ulist data-line-176">
 <ul>
-<li class="data-line-174">
+<li class="data-line-176">
 <p>调用方法：GET</p>
 </li>
-<li class="data-line-175">
-<p>URL: <a href="http://ip-address:8300/metric-engine/check" class="bare">http://ip-address:8300/metric-engine/check</a></p>
+<li class="data-line-177">
+<p>URL: <a href="https://ip-address:8300/metric-engine/check" class="bare">https://ip-address:8300/metric-engine/check</a></p>
 </li>
-<li class="data-line-176">
+<li class="data-line-178">
 <p>返回结果格式</p>
-<div class="listingblock data-line-179">
+<div class="listingblock data-line-181">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
     "msg": "OK",
@@ -845,29 +850,29 @@ $ chmod -R a+rwx metric-web/webapps</code></pre>
 }</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-204">
+<div class="paragraph data-line-206">
 <p>result中包括各指标代码的加载状态，各状态的解释参见上一节的说明。</p>
 </div>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect2 data-line-206">
+<div class="sect2 data-line-208">
 <h3 id="_取消指标加载">取消指标加载</h3>
-<div class="paragraph data-line-207">
+<div class="paragraph data-line-209">
 <p>取消上次提交加载的指标列表中尚未开始调度的指标加载作业，被成功取消的指标的加载状态会变为‘CANCEL’。</p>
 </div>
-<div class="ulist data-line-209">
+<div class="ulist data-line-211">
 <ul>
-<li class="data-line-209">
+<li class="data-line-211">
 <p>调用方法：GET</p>
 </li>
-<li class="data-line-210">
-<p>URL: <a href="http://ip-address:8300/metric-engine/cancel" class="bare">http://ip-address:8300/metric-engine/cancel</a></p>
+<li class="data-line-212">
+<p>URL: <a href="https://ip-address:8300/metric-engine/cancel" class="bare">https://ip-address:8300/metric-engine/cancel</a></p>
 </li>
-<li class="data-line-211">
+<li class="data-line-213">
 <p>返回结果格式</p>
-<div class="listingblock data-line-214">
+<div class="listingblock data-line-216">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
     "msg": "OK",
@@ -884,7 +889,7 @@ $ chmod -R a+rwx metric-web/webapps</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2020-08-25 15:07:47 +0800
+Last updated 2020-09-21 22:22:25 +0800
 </div>
 </div>
 </body>

@@ -37,6 +37,7 @@ v1.0
 ----
 保存后，重新启动虚拟机。
 . 在虚拟机上安装Docker和Docker Compose（参考官方文档）。
+. 创建一个操作系统用户（或使用现有的非root用户），将该用户加入docker用户组。以下操作都以该用户身份执行。
 . 打开链接（https://pan.baidu.com/s/1l569C65nuNvDwwo6yHI0ng，提取码：9fey），进入test目录下载下列文件
  - metric-sys-test.tar.gz
  - metric-sys-test-images.tar.gz
@@ -46,8 +47,7 @@ v1.0
 +
 [source, shell]
 ----
-$ gzip -d metric-sys-test-images.tar.gz
-$ docker load -i metric-sys-test-images.tar
+$ zcat metric-sys-test-images.tar.gz| docker load
 ----
 . 在虚拟机任意目录下展开metric-sys-test.tar.gz
 +
@@ -96,7 +96,7 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 此时可以：
 +
 .. 通过jdbc连接hive或mysql访问测试环境中的数据
-.. 访问http://localhost:8300/metric-engine调用指标加载引擎接口的功能。
+.. 访问https://localhost:8300/metric-engine调用指标加载引擎接口的功能。
 .. 访问http://localhost:8080/metric-web使用指标管理web应用。
 .. 访问http://localhost:9200查询ES中的日志数据。
 
@@ -125,13 +125,15 @@ $ chmod -R a+rwx metric-web/webapps
 
 
 == 指标加载引擎调用接口
-指标加载引擎使用HTTP接口提供指标加载、加载状态查询和取消加载任务的功能。
+指标加载引擎使用HTTPS接口提供指标加载、加载状态查询和取消加载任务的功能。
+
+访问HTTPS接口时需要将HTTP客户端设置为不验证服务器证书的模式。
 
 === 指标加载
 加载指定的指标列表中所含的指标，或加载全部指标。
 
 * 调用方法：POST
-* URL: http://ip-address:8300/metric-engine/load/<metric-code-list>
+* URL: https://ip-address:8300/metric-engine/load/<metric-code-list>
 +
 <metric-code-list>为逗号分隔的待加载指标代码列表，也可以用‘all’表示加载全部指标。
 * 接口参数
@@ -172,7 +174,7 @@ result中包括各指标代码的加载结果
 查询上次提交加载的指标列表中各指标的加载状态。
 
 * 调用方法：GET
-* URL: http://ip-address:8300/metric-engine/check
+* URL: https://ip-address:8300/metric-engine/check
 * 返回结果格式
 +
 [source, json]
@@ -207,7 +209,7 @@ result中包括各指标代码的加载状态，各状态的解释参见上一�
 取消上次提交加载的指标列表中尚未开始调度的指标加载作业，被成功取消的指标的加载状态会变为‘CANCEL’。
 
 * 调用方法：GET
-* URL: http://ip-address:8300/metric-engine/cancel
+* URL: https://ip-address:8300/metric-engine/cancel
 * 返回结果格式
 +
 [source, json]

@@ -1,4 +1,7 @@
 = 指标管理系统测试环境（虚拟机）使用说明
+肖燏 <yu.xiao@seaboxdata.com>
+v1.0
+:toc:
 
 == 环境准备
 
@@ -137,18 +140,55 @@ chmod -R a+rwx metric-sys-test/metric-web
 docker-compose down
 ----
 
-. 打开Windows Git Bash窗口，使用以下命令将metric-sys-images.tar.gz拷贝到虚拟机上（test用户的口令为root）:
+. 打开Windows Git Bash窗口，使用以下命令将metric-sys-test-images.tar.gz拷贝到虚拟机上（test用户的口令为root）:
 +
 [source]
 ----
-scp metric-sys-images.tar.gz test@test-server:
+scp metric-sys-test-images.tar.gz test@test-server:
 ----
 
 . 用test用户登录虚拟机，执行以下命令：
 +
 [source]
 ----
-gzip -cd metric-sys-images.tar.gz|docker load
+gzip -cd metric-sys-test-images.tar.gz|docker load
 ----
 
-. 重新启动测试环境
+. 按照初次启动测试环境的步骤进行测试环境启动
+
+
+== 生成指标测试数据
+
+对于测试用例中需要的指标测试数据，可以在启动测试环境后，用test用户身份登录测试环境虚拟机，执行以下命令：
+[source]
+----
+curl -k -X POST -d '{"sys_date":"<测试用例指定的数据日期，YYYY-MM-DD格式>"}' https://localhost:8300/metric-engine/load/all
+----
+
+命令返回如下信息表示执行成功：
+[source]
+----
+{
+    "msg": "OK",
+    "result": {
+        "b000000001": "SUCC",
+        "b000000002": "SUCC",
+        "b000000003": "SUCC",
+        "b000000004": "ABORT",
+        "b000000005": "ABORT",
+        "b000000010": "SUCC",
+        "b000000011": "SUCC",
+        "b000000012": "SUCC",
+        "b000000020": "SUCC",
+        "b000000021": "SUCC",
+        "b000000022": "SUCC",
+        "b000000023": "SUCC",
+        "b000000024": "SUCC",
+        "d000000001": "SUCC",
+        "d000000011": "SUCC",
+        "d000000021": "SUCC",
+        "d000000022": "SUCC"
+}
+----
+
+需要对测试用例需要的每个数据日期执行上述命令。
