@@ -128,6 +128,7 @@ scp metric-sys-test.tar.gz test@test-server:
 rm -rf metric-sys-test
 tar xvzf metric-sys-test.tar.gz
 chmod -R a+rwx metric-sys-test/metric-web
+chmod -R a+rwx metric-sys-test/metric-engine
 ----
 
 . 重新启动测试环境
