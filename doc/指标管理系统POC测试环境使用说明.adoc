@@ -1,0 +1,118 @@
+= 指标管理系统测试环境使用说明
+肖燏 <yu.xiao@seaboxdata.com>
+v1.0
+:toc:
+
+== 测试环境要求
+* 一台Linux主机，实体机或虚拟机均可，操作系统为CentOS 7.3+或Ubuntu 20+，内存至少为8G。主机上如果已经安装MySQL，需要将其关闭，否则可能会与镜像中的MySQL发生冲突。
+
+== 测试环境的内容
+
+=== 组件
+* 指标管理应用
+* 指标加载引擎
+* MySQL 5.7
+
+
+
+=== 数据
+* 指标数据源测试数据，在MySQL的metric_src_db数据库中，可以通过以下链接访问：
+ - jdbc:mysql://localhost:3306/metric_src_db?user=root&password=root&characterEncoding=utf8
+* 指标管理系统测试数据，在MySQL的metric_db数据库中，可以通过以下链接访问：
+ - jdbc:mysql://localhost:3306/metric_db?user=root&password=root&characterEncoding=utf8
+* 指标仓库测试数据，在MySQL的metric_warehouse数据库中，可以通过以下链接访问：
+ - jdbc:mysql://localhost:3306/metric_warehouse?user=root&password=root&characterEncoding=utf8
+
+== 测试环境设置步骤
+. 修改测试主机系统参数，打开/etc/sysctl.conf，并在文件末尾添加：
++
+----
+ vm.max_map_count = 262144 
+----
+保存后，重新启动测试主机。
+. 在测试主机上安装Docker和Docker Compose（参考官方文档）。
+. 创建用户metric-test，将该用户加入docker用户组。以下操作都以该用户身份执行。
+. 准备好最新的测试环境安装包：
+ - metric-sys-test.tar.gz
+ - metric-sys-test-images.tar.gz
++
+并将这两个文件上传到测试主机。
+. 执行以下命令导入测试环境镜像，
++
+[source, shell]
+----
+$ zcat metric-sys-test-images.tar.gz| docker load
+----
+. 在测试主机metric-test用户目录下展开metric-sys-test.tar.gz
++
+[source, shell]
+----
+$ tar xvzf metric-sys-test.tar.gz
+----
+. 设置系统服务端口
+.. 打开metric-sys-test/docker-compose.yml，将METRIC_WEBSERVER_PORT设置为指标管理前端WEB应用端口。
+.. 打开metric-sys-test/metric-engine/etc/config.ini，将[metric_engine]下的LISTEN_PORT设置为指标管理后端服务的端口。
+
+== 初次启动测试环境
+
+. 使用metric-test用户登录测试环境测试主机
+. 进入metric-sys-test目录， 执行：
++
+[source, shell]
+----
+$ chmod -R a+rwx metric-web/logs
+$ chmod -R a+rwx metric-web/webapps
+$ chmod a+rwx metric-engine/logs
+$ chmod a+rwx metric-engine/tmp
+$ docker-compose up
+----
++
+等待几分钟，直到观察到前面设置的系统服务端口被占用（例如：8080，8300）：
++
+[source, shell]
+----
+$ netstat -tlnp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      -
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+tcp6       0      0 ::1:5432                :::*                    LISTEN      -
+tcp6       0      0 ::1:25                  :::*                    LISTEN      -
+tcp6       0      0 127.0.0.1:8005          :::*                    LISTEN      -
+tcp6       0      0 :::3306                 :::*                    LISTEN      -
+tcp6       0      0 :::8300                 :::*                    LISTEN      -
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 :::22                   :::*                    LISTEN      -
+----
++
+此时可以：
++
+.. 访问https://localhost:<后台服务端口>/metric-engine调用指标加载引擎接口的功能。
+.. 访问http://localhost:<前台服务端口>/metric-web使用指标管理web应用。
+
+== 关闭测试环境
+进入metric-sys-test目录，执行：
+[source, shell]
+----
+$ docker-compose stop
+----
+
+== 重新启动测试环境
+进入metric-sys-test目录，执行：
+[source, shell]
+----
+$ docker-compose start
+----
+等待一会儿，直到观察到前后台服务端口被占用：
+
+注意：如果更新了metric-sys-test/metric-web/webapps下的内容，需要重新执行：
+[source, shell]
+----
+$ chmod -R a+rwx metric-web/logs
+$ chmod -R a+rwx metric-web/webapps
+----
+否则应用可能会报错。
+
+
