@@ -62,8 +62,8 @@ $ tar xvzf metric-sys-test.tar.gz
 ----
 $ chmod -R a+rwx metric-web/logs
 $ chmod -R a+rwx metric-web/webapps
-$ chmod a+rwx metric-engine/logs
-$ chmod a+rwx metric-engine/tmp
+$ chmod -R a+rwx metric-engine/logs
+$ chmod -R a+rwx metric-engine/tmp
 $ docker-compose up
 ----
 +
@@ -90,7 +90,7 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 此时可以：
 +
 .. 访问https://localhost:<后台服务端口>/metric-engine调用指标加载引擎接口的功能。
-.. 访问http://localhost:<前台服务端口>/metric-web使用指标管理web应用。
+.. 访问http://localhost:<前台服务端口>/metric-web使用指标管理web应用，默认管理员用户为：admin/123456。
 
 == 关闭测试环境
 进入metric-sys-test目录，执行：

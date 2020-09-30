@@ -618,8 +618,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ chmod -R a+rwx metric-web/logs
 $ chmod -R a+rwx metric-web/webapps
-$ chmod a+rwx metric-engine/logs
-$ chmod a+rwx metric-engine/tmp
+$ chmod -R a+rwx metric-engine/logs
+$ chmod -R a+rwx metric-engine/tmp
 $ docker-compose up</code></pre>
 </div>
 </div>
@@ -653,7 +653,7 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 <p>访问https://localhost:&lt;后台服务端口&gt;/metric-engine调用指标加载引擎接口的功能。</p>
 </li>
 <li class="data-line-93">
-<p>访问http://localhost:&lt;前台服务端口&gt;/metric-web使用指标管理web应用。</p>
+<p>访问http://localhost:&lt;前台服务端口&gt;/metric-web使用指标管理web应用，默认管理员用户为：admin/123456。</p>
 </li>
 </ol>
 </div>
@@ -707,7 +707,7 @@ $ chmod -R a+rwx metric-web/webapps</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2020-09-25 15:33:13 +0800
+Last updated 2020-09-27 13:12:34 +0800
 </div>
 </div>
 </body>
