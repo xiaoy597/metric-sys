@@ -539,62 +539,78 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="olist arabic data-line-27">
 <ol class="arabic">
 <li class="data-line-27">
-<p>修改测试主机系统参数，打开/etc/sysctl.conf，并在文件末尾添加：</p>
-<div class="listingblock data-line-29">
+<p>修改测试主机系统参数</p>
+<div class="olist loweralpha data-line-28">
+<ol class="loweralpha" type="a">
+<li class="data-line-28">
+<p>打开/etc/sysctl.conf，并在文件末尾添加：</p>
+<div class="listingblock data-line-30">
 <div class="content">
 <pre> vm.max_map_count = 262144</pre>
 </div>
 </div>
-<div class="paragraph data-line-32">
-<p>保存后，重新启动测试主机。</p>
-</div>
 </li>
 <li class="data-line-33">
+<p>打开/etc/security/limits.conf，在文件中添加：</p>
+<div class="listingblock data-line-35">
+<div class="content">
+<pre>*   hard    nofile  65536
+*   soft    nofile  65536</pre>
+</div>
+</div>
+</li>
+<li class="data-line-39">
+<p>重新启动测试主机。</p>
+</li>
+</ol>
+</div>
+</li>
+<li class="data-line-40">
 <p>在测试主机上安装Docker和Docker Compose（参考官方文档）。</p>
 </li>
-<li class="data-line-34">
+<li class="data-line-41">
 <p>创建用户metric-test，将该用户加入docker用户组。以下操作都以该用户身份执行。</p>
 </li>
-<li class="data-line-35">
+<li class="data-line-42">
 <p>准备好最新的测试环境安装包：</p>
-<div class="ulist data-line-36">
+<div class="ulist data-line-43">
 <ul>
-<li class="data-line-36">
+<li class="data-line-43">
 <p>metric-sys-test.tar.gz</p>
 </li>
-<li class="data-line-37">
+<li class="data-line-44">
 <p>metric-sys-test-images.tar.gz</p>
-<div class="paragraph data-line-39">
+<div class="paragraph data-line-46">
 <p>并将这两个文件上传到测试主机。</p>
 </div>
 </li>
 </ul>
 </div>
 </li>
-<li class="data-line-40">
+<li class="data-line-47">
 <p>执行以下命令导入测试环境镜像，</p>
-<div class="listingblock data-line-43">
+<div class="listingblock data-line-50">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ zcat metric-sys-test-images.tar.gz| docker load</code></pre>
 </div>
 </div>
 </li>
-<li class="data-line-46">
+<li class="data-line-53">
 <p>在测试主机metric-test用户目录下展开metric-sys-test.tar.gz</p>
-<div class="listingblock data-line-49">
+<div class="listingblock data-line-56">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ tar xvzf metric-sys-test.tar.gz</code></pre>
 </div>
 </div>
 </li>
-<li class="data-line-52">
+<li class="data-line-59">
 <p>设置系统服务端口</p>
-<div class="olist loweralpha data-line-53">
+<div class="olist loweralpha data-line-60">
 <ol class="loweralpha" type="a">
-<li class="data-line-53">
+<li class="data-line-60">
 <p>打开metric-sys-test/docker-compose.yml，将METRIC_WEBSERVER_PORT设置为指标管理前端WEB应用端口。</p>
 </li>
-<li class="data-line-54">
+<li class="data-line-61">
 <p>打开metric-sys-test/metric-engine/etc/config.ini，将[metric_engine]下的LISTEN_PORT设置为指标管理后端服务的端口。</p>
 </li>
 </ol>
@@ -604,17 +620,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
-<div class="sect1 data-line-56">
+<div class="sect1 data-line-63">
 <h2 id="_初次启动测试环境">初次启动测试环境</h2>
 <div class="sectionbody">
-<div class="olist arabic data-line-58">
+<div class="olist arabic data-line-65">
 <ol class="arabic">
-<li class="data-line-58">
+<li class="data-line-65">
 <p>使用metric-test用户登录测试环境测试主机</p>
 </li>
-<li class="data-line-59">
+<li class="data-line-66">
 <p>进入metric-sys-test目录， 执行：</p>
-<div class="listingblock data-line-62">
+<div class="listingblock data-line-69">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ chmod -R a+rwx metric-web/logs
 $ chmod -R a+rwx metric-web/webapps
@@ -623,10 +639,10 @@ $ chmod -R a+rwx metric-engine/tmp
 $ docker-compose up</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-70">
+<div class="paragraph data-line-77">
 <p>等待几分钟，直到观察到前面设置的系统服务端口被占用（例如：8080，8300）：</p>
 </div>
-<div class="listingblock data-line-73">
+<div class="listingblock data-line-80">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ netstat -tlnp
 Active Internet connections (only servers)
@@ -644,15 +660,15 @@ tcp6       0      0 :::8080                 :::*                    LISTEN      
 tcp6       0      0 :::22                   :::*                    LISTEN      -</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-90">
+<div class="paragraph data-line-97">
 <p>此时可以：</p>
 </div>
-<div class="olist loweralpha data-line-92">
+<div class="olist loweralpha data-line-99">
 <ol class="loweralpha" type="a">
-<li class="data-line-92">
+<li class="data-line-99">
 <p>访问https://localhost:&lt;后台服务端口&gt;/metric-engine调用指标加载引擎接口的功能。</p>
 </li>
-<li class="data-line-93">
+<li class="data-line-100">
 <p>访问http://localhost:&lt;前台服务端口&gt;/metric-web使用指标管理web应用，默认管理员用户为：admin/123456。</p>
 </li>
 </ol>
@@ -662,43 +678,43 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 </div>
 </div>
 </div>
-<div class="sect1 data-line-95">
-<h2 id="_关闭测试环境">关闭测试环境</h2>
-<div class="sectionbody">
-<div class="paragraph data-line-96">
-<p>进入metric-sys-test目录，执行：</p>
-</div>
-<div class="listingblock data-line-98">
-<div class="content">
-<pre class="highlight"><code class="language-shell" data-lang="shell">$ docker-compose stop</code></pre>
-</div>
-</div>
-</div>
-</div>
 <div class="sect1 data-line-102">
-<h2 id="_重新启动测试环境">重新启动测试环境</h2>
+<h2 id="_关闭测试环境">关闭测试环境</h2>
 <div class="sectionbody">
 <div class="paragraph data-line-103">
 <p>进入metric-sys-test目录，执行：</p>
 </div>
 <div class="listingblock data-line-105">
 <div class="content">
+<pre class="highlight"><code class="language-shell" data-lang="shell">$ docker-compose stop</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 data-line-109">
+<h2 id="_重新启动测试环境">重新启动测试环境</h2>
+<div class="sectionbody">
+<div class="paragraph data-line-110">
+<p>进入metric-sys-test目录，执行：</p>
+</div>
+<div class="listingblock data-line-112">
+<div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ docker-compose start</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-108">
+<div class="paragraph data-line-115">
 <p>等待一会儿，直到观察到前后台服务端口被占用：</p>
 </div>
-<div class="paragraph data-line-110">
+<div class="paragraph data-line-117">
 <p>注意：如果更新了metric-sys-test/metric-web/webapps下的内容，需要重新执行：</p>
 </div>
-<div class="listingblock data-line-112">
+<div class="listingblock data-line-119">
 <div class="content">
 <pre class="highlight"><code class="language-shell" data-lang="shell">$ chmod -R a+rwx metric-web/logs
 $ chmod -R a+rwx metric-web/webapps</code></pre>
 </div>
 </div>
-<div class="paragraph data-line-116">
+<div class="paragraph data-line-123">
 <p>否则应用可能会报错。</p>
 </div>
 </div>
@@ -707,7 +723,7 @@ $ chmod -R a+rwx metric-web/webapps</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2020-09-27 13:12:34 +0800
+Last updated 2020-10-21 17:18:57 +0800
 </div>
 </div>
 </body>
