@@ -246,6 +246,7 @@
 渠道有效时间段,channel_valid_time,,X,X,X,X
 消息模板,message_template,,X,X,X,X
 消息模板标识,template_id,,X,X,X,X
+消息模板名称,template_nm,,X,X,X,X
 消息模板内容,template_content,,X,X,X,X
 系统事件跟踪,system_event_tracking,,X,X,X,X
 事件流水号,event_serial,,X,X,X,X

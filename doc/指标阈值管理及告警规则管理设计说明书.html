@@ -5,8 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<meta name="author" content="肖燏">
-<title>指标管理系统日志相关功能开发说明</title>
+<title>指标阈值管理及告警规则管理设计说明书</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,329 +438,602 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article data-line-1">
 <div id="header">
-<h1>指标管理系统日志相关功能开发说明</h1>
-<div class="details">
-<span id="author" class="author">肖燏</span><br>
-<span id="email" class="email"><a href="mailto:yu.xiao@seaboxdata.com">yu.xiao@seaboxdata.com</a></span><br>
-<span id="revnumber">version 1.0</span>
-</div>
-<div id="toc" class="toc">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_日志内容">日志内容</a></li>
-<li><a href="#_日志存储与结构">日志存储与结构</a></li>
-<li><a href="#_日志记录">日志记录</a>
-<ul class="sectlevel2">
-<li><a href="#_在指标管理应用中记录日志">在指标管理应用中记录日志</a></li>
-<li><a href="#_在指标加载引擎中记录日志">在指标加载引擎中记录日志</a></li>
-</ul>
-</li>
-<li><a href="#_日志查询">日志查询</a></li>
-</ul>
-</div>
+<h1>指标阈值管理及告警规则管理设计说明书</h1>
 </div>
 <div id="content">
-<div class="sect1 data-line-6">
-<h2 id="_日志内容">日志内容</h2>
+<div class="sect1 data-line-3">
+<h2 id="_指标阈值管理">指标阈值管理</h2>
 <div class="sectionbody">
-<div class="ulist data-line-8">
+<div class="sect2 data-line-5">
+<h3 id="_模块入口">模块入口</h3>
+<div class="paragraph data-line-7">
+<p>指标数据管理（原指标查询分析） &#8594; 指标阈值管理</p>
+</div>
+</div>
+<div class="sect2 data-line-9">
+<h3 id="_数据模型">数据模型</h3>
+<div class="ulist data-line-11">
 <ul>
-<li class="data-line-8">
-<p>指标维护日志</p>
-<div class="paragraph data-line-10">
-<p>记录用户所执行的指标和指标目录的维护、审批操作。</p>
-</div>
-</li>
-<li class="data-line-12">
-<p>指标加载日志</p>
-<div class="paragraph data-line-14">
-<p>记录指标引擎所执行的指标加载操作。</p>
-</div>
-</li>
-<li class="data-line-16">
-<p>指标访问日志</p>
-<div class="paragraph data-line-18">
-<p>记录用户对指标数据的查询、修改、导入导出操作。</p>
-</div>
+<li class="data-line-11">
+<p>指标数据阈值（metric_threshold）</p>
 </li>
 </ul>
 </div>
-</div>
-</div>
-<div class="sect1 data-line-20">
-<h2 id="_日志存储与结构">日志存储与结构</h2>
-<div class="sectionbody">
-<div class="paragraph data-line-21">
-<p>指标管理系统中所有日志都存放在ES中，存储结构为：</p>
-</div>
-<div class="ulist data-line-23">
-<ul>
-<li class="data-line-23">
-<p>指标维护日志</p>
-<div class="ulist data-line-24">
-<ul>
-<li class="data-line-24">
-<p>索引名称：metric-edit-%{YYYY.MM}</p>
-</li>
-<li class="data-line-25">
-<p>索引字段：</p>
-<table class="tableblock frame-all grid-all stretch data-line-28">
+<table class="tableblock frame-all grid-all stretch data-line-14">
 <colgroup>
+<col style="width: 12.5%;">
 <col style="width: 25%;">
-<col style="width: 75%;">
+<col style="width: 50%;">
+<col style="width: 12.5%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">字段名</th>
-<th class="tableblock halign-left valign-top">字段说明</th>
+<th class="tableblock halign-left valign-top">字段名称</th>
+<th class="tableblock halign-left valign-top">字段中文名称</th>
+<th class="tableblock halign-left valign-top">字段描述</th>
+<th class="tableblock halign-left valign-top">主键</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">log_id</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">日志记录唯一ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">metric_threshold_id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指标数据阈值标识</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">自增的指标阈值唯一ID。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">log_time</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">日志记录时间</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">metric_threshold_nm</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指标数据阈值名称</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指标阈值的中文名称。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">user_id</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">用户代码</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">metric_cd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指标代码</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">阈值所属的指标代码。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">user_name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">用户名称</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">metric_granularity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">数据粒度</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">通过维度+粒度的方式定义该阈值在指标数据集中的应用范围。例如阈值所属的指标具有日期维度和地区维度，如果数据粒度定义为“日期-月份”和“地区-区县”，则表示该阈值的检查范围仅限于该指标的区县月度指标数据。数据粒度采用JSON格式保存，具体格式为：{ "维度代码1": "维度字段代码1", "维度代码2": "维度字段代码2", &#8230;&#8203; "维度代码n", "维度字段代码n"}，如果数据粒度字段为空，则表示阈值应用于各维度的最细粒度。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">metric_code</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">指标代码或指标目录代码</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">metric_drv_type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指标派生类型</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">定义阈值所应用的指标度量的类型。<br>
+0：指标原始值。<br>
+1：月度环比值。<br>
+2：季度环比值。<br>
+3：年度同比值。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">metric_name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">指标名称或指标目录名称</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">threshold_top_value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指标阈值上限</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">定义该阈值的上限。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">op_type</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">操作类型，包括指标增加、修改、删除，指标目录增加、修改、删除</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">threshold_bottom_value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指标阈值下限</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">定义该阈值的下限。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">comment</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">备注信息</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">commiter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">更新用户</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">最后更新该阈值的用户的ID。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">update_tm</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">更新时间</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">最后一次更新该阈值的时间。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
 </tr>
 </tbody>
 </table>
-</li>
-</ul>
 </div>
+<div class="sect2 data-line-31">
+<h3 id="_功能列表">功能列表</h3>
+<div class="sect3 data-line-33">
+<h4 id="_显示指标阈值列表">显示指标阈值列表</h4>
+<div class="sect4 data-line-35">
+<h5 id="_用户界面交互">用户界面交互</h5>
+<div class="olist arabic data-line-36">
+<ol class="arabic">
+<li class="data-line-36">
+<p>用户在指标目录数中点选一个指标</p>
+</li>
+<li class="data-line-37">
+<p>系统显示在该指标上定义的指标阈值列表，阈值属性包括：</p>
+<div class="olist loweralpha data-line-38">
+<ol class="loweralpha" type="a">
+<li class="data-line-38">
+<p>阈值名称</p>
+</li>
+<li class="data-line-39">
+<p>应用范围（显示为维度名称+粒度名称的列表），对应指标数据阈值表的数据粒度字段的内容。</p>
 </li>
 <li class="data-line-40">
-<p>指标加载日志</p>
-<div class="ulist data-line-41">
-<ul>
+<p>指标阈值上限</p>
+</li>
 <li class="data-line-41">
-<p>索引名称：metric-load-%{YYYY.MM}</p>
-</li>
-<li class="data-line-42">
-<p>索引字段：</p>
-<table class="tableblock frame-all grid-all stretch data-line-45">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">字段名</th>
-<th class="tableblock halign-left valign-top">字段说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">log_id</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">日志记录唯一ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">log_time</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">日志记录时间</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">metric_code</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">指标代码</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">metric_name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">指标名称</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">load_type</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">加载类型：周期加载/即时加载</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">begin_time</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">加载开始时间</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">end_time</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">加载结束时间</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">comment</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">备注信息</p></td>
-</tr>
-</tbody>
-</table>
-</li>
-</ul>
-</div>
-</li>
-<li class="data-line-57">
-<p>指标访问日志</p>
-<div class="ulist data-line-58">
-<ul>
-<li class="data-line-58">
-<p>索引名称：metric-access-%{YYYY.MM}</p>
-</li>
-<li class="data-line-59">
-<p>索引字段：</p>
-<table class="tableblock frame-all grid-all stretch data-line-62">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">字段名</th>
-<th class="tableblock halign-left valign-top">字段说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">log_id</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">日志记录唯一ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">log_time</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">日志记录时间</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">request_id</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">访问请求代码，用于记录通过接口访问指标时的接口请求ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">metric_code</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">指标代码</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">metric_name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">指标名称</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">metric_filter</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">指标数据范围，即指标筛选条件</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">user_id</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">用户代码</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">user_name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">用户名称</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">interface_code</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">指标接口代码</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">row_count</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">接口访问记录数</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">comment</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">备注信息</p></td>
-</tr>
-</tbody>
-</table>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1 data-line-77">
-<h2 id="_日志记录">日志记录</h2>
-<div class="sectionbody">
-<div class="paragraph data-line-78">
-<p>日志记录的处理流程为：</p>
-</div>
-<div class="olist arabic data-line-80">
-<ol class="arabic">
-<li class="data-line-80">
-<p>由指标管理Web应用或指标加载引擎将日志内容记录在现有的日志文件中。</p>
-</li>
-<li class="data-line-81">
-<p>后台日志处理系统（Filebeat+Logstash）自动跟踪日志文件内容变化，并将新增的日志内容导入对应的ES索引。</p>
+<p>指标阈值下限</p>
 </li>
 </ol>
 </div>
-<div class="sect2 data-line-83">
-<h3 id="_在指标管理应用中记录日志">在指标管理应用中记录日志</h3>
-<div class="paragraph data-line-84">
-<p>在指标管理Web应用中记录以上日志内容可以采用现有的日志记录API（slf4j/log4j/logback/&#8230;&#8203;）及日志格式，但日志的内容部分要符合以下格式：</p>
-</div>
-<div class="paragraph data-line-86">
-<p>&lt;日志类型&gt; &lt;日志内容&gt;</p>
-</div>
-<div class="ulist data-line-88">
-<ul>
-<li class="data-line-88">
-<p>&lt;日志类型&gt;</p>
-<div class="paragraph data-line-90">
-<p>可取值包括：METRIC-EDIT、METRIC-LOAD、METRIC-ACCESS，分别表示指标维护日志、指标加载日志和指标访问日志</p>
-</div>
 </li>
-<li class="data-line-91">
-<p>&lt;日志内容&gt;</p>
-<div class="paragraph data-line-93">
-<p>由与日志类型对应的日志字段组成的JSON结构字符串。</p>
+<li class="data-line-42">
+<p>用户可以对列表中的阈值条目进行编辑和删除。</p>
+</li>
+<li class="data-line-43">
+<p>用户点击列表上方的“新增”按钮可以为当前指标增加新的阈值。</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4 data-line-45">
+<h5 id="_后台处理逻辑">后台处理逻辑</h5>
+<div class="olist arabic data-line-46">
+<ol class="arabic">
+<li class="data-line-46">
+<p>查询当前用户可见的有效指标目录及指标列表。</p>
+</li>
+<li class="data-line-47">
+<p>根据用户选定的指标查询该指标的所有阈值记录。</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect3 data-line-49">
+<h4 id="_新增编辑指标阈值">新增/编辑指标阈值</h4>
+<div class="sect4 data-line-51">
+<h5 id="_用户界面交互_2">用户界面交互</h5>
+<div class="ulist data-line-52">
+<ul>
+<li class="data-line-52">
+<p>输入内容</p>
+<div class="olist arabic data-line-53">
+<ol class="arabic">
+<li class="data-line-53">
+<p>指标阈值名称。指标阈值名称不得重复。</p>
+</li>
+<li class="data-line-54">
+<p>各维度的粒度。用户可以选择阈值所应用的各维度粒度，默认为最细粒度。</p>
+</li>
+<li class="data-line-55">
+<p>阈值上限值。可选，但上限和下限至少要指定一个。</p>
+</li>
+<li class="data-line-56">
+<p>阈值下限值。可选，但上限和下限至少要指定一个。</p>
+</li>
+</ol>
 </div>
 </li>
 </ul>
 </div>
-<div class="paragraph data-line-95">
-<p>例如：</p>
 </div>
-<div class="listingblock data-line-97">
-<div class="content">
-<pre class="highlight"><code>24-Jul-2020 17:46:32.125 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log METRIC-EDIT { "user_id" : 1, "user_name": "张三", "metric_code": "123456", "metric_name": "指标1", "op_type": "DELETE", "comment": "删除指标" }</code></pre>
+<div class="sect4 data-line-59">
+<h5 id="_后台处理逻辑_2">后台处理逻辑</h5>
+<div class="olist arabic data-line-60">
+<ol class="arabic">
+<li class="data-line-60">
+<p>将页面提交的阈值定义保存到指标数据阈值表（metric_threshold）。</p>
+<div class="paragraph data-line-62">
+<p>各指标数据阈值的名称不得重复。对于未指定的指标上限或下限值，对应字段填null。</p>
 </div>
-</div>
-<div class="paragraph data-line-100">
-<p>字段log_id和log_time不需要包含在JSON字符串中，日志处理过程会自动添加这两个字段。</p>
-</div>
-</div>
-<div class="sect2 data-line-102">
-<h3 id="_在指标加载引擎中记录日志">在指标加载引擎中记录日志</h3>
-<div class="paragraph data-line-103">
-<p>待补充。</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
+<div class="sect3 data-line-65">
+<h4 id="_删除指标阈值">删除指标阈值</h4>
+<div class="sect4 data-line-67">
+<h5 id="_用户界面交互_3">用户界面交互</h5>
+<div class="olist arabic data-line-68">
+<ol class="arabic">
+<li class="data-line-68">
+<p>用户在阈值列表中点击需要删除的阈值定义条目右侧的“删除”按钮。</p>
+</li>
+<li class="data-line-69">
+<p>系统提示是否确认删除阈值定义。</p>
+</li>
+<li class="data-line-70">
+<p>用户点击“确定”，向后台提交阈值删除请求，否则返回列表。</p>
+</li>
+</ol>
 </div>
-<div class="sect1 data-line-105">
-<h2 id="_日志查询">日志查询</h2>
+</div>
+<div class="sect4 data-line-72">
+<h5 id="_后台处理逻辑_3">后台处理逻辑</h5>
+<div class="olist arabic data-line-73">
+<ol class="arabic">
+<li class="data-line-73">
+<p>根据页面提交的阈值删除请求从指标数据阈值表（metric_threshold）中删除对应记录。</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 data-line-76">
+<h2 id="_告警规则管理">告警规则管理</h2>
 <div class="sectionbody">
-<div class="paragraph data-line-106">
-<p>在指标管理系统Web应用中，通过ES的JDBC接口使用ES的SQL语句对上述日志进行查询统计，SQL语句中使用的表名即为ES索引名，字段名与索引字段一一对应。具体实现方式请参见ES文档。</p>
+<div class="sect2 data-line-78">
+<h3 id="_模块入口_2">模块入口</h3>
+<div class="paragraph data-line-80">
+<p>系统管理 &#8594; 自动告警管理</p>
+</div>
+</div>
+<div class="sect2 data-line-83">
+<h3 id="_数据模型_2">数据模型</h3>
+<div class="ulist data-line-85">
+<ul>
+<li class="data-line-85">
+<p>系统事件类型（system_event_type）</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch data-line-88">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 12.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段名称</th>
+<th class="tableblock halign-left valign-top">字段中文名称</th>
+<th class="tableblock halign-left valign-top">字段描述</th>
+<th class="tableblock halign-left valign-top">主键</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">event_type_id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">事件类型标识</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">自增的事件类型唯一ID。每一种需要处理的事件对应一个ID。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">event_category</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">事件类别</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">表示事件类型所属的类别。<br>
+0: 阈值越界事件</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">event_type_nm</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">事件类型名称</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">事件类型的中文名称</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">trigger_obj_id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">触发对象ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">导致当前事件类型发生的对象。对于阈值越界事件，触发对象ID是发生越界的指标阈值ID。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">event_level</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">事件级别</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">事件的严重级别。<br>
+0：一般。<br>
+1：关注。<br>
+2：重要。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist data-line-101">
+<ul>
+<li class="data-line-101">
+<p>事件通知规则（event_notify_rule）</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch data-line-104">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 12.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段名称</th>
+<th class="tableblock halign-left valign-top">字段中文名称</th>
+<th class="tableblock halign-left valign-top">字段描述</th>
+<th class="tableblock halign-left valign-top">主键</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">event_type_id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">事件类型标识</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">自增的事件类型唯一ID。每一种需要处理的事件对应一个ID。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">channel_id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">渠道标识</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">表示当某类型的事件发生时，发送通知的渠道。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">template_id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">内容模板标识</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">发送通知时所使用的内容模板。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist data-line-111">
+<ul>
+<li class="data-line-111">
+<p>消息渠道（message_channel）</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch data-line-114">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 12.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段名称</th>
+<th class="tableblock halign-left valign-top">字段中文名称</th>
+<th class="tableblock halign-left valign-top">字段描述</th>
+<th class="tableblock halign-left valign-top">主键</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">channel_id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">渠道标识</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">通知发送渠道的唯一标识。自增。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">channel_type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">渠道类型</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0：短信，1：邮件。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">channel_desc</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">渠道描述</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">保存渠道的具体内容，对于短信渠道，存放电话号码，对于邮件渠道，存放邮件地址</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">channel_valid_time</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">渠道的可用时间</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">目前暂时不使用。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist data-line-122">
+<ul>
+<li class="data-line-122">
+<p>消息模板（message_template）</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch data-line-125">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 12.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段名称</th>
+<th class="tableblock halign-left valign-top">字段中文名称</th>
+<th class="tableblock halign-left valign-top">字段描述</th>
+<th class="tableblock halign-left valign-top">主键</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">template_id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">模板唯一标识</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">通知模板的唯一标识。自增。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">template_nm</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">模板名称</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">通知模板的中文名称。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">template_content</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">模板内容</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">存放通知内容的模板。模板为字符串文本，可以嵌入格式为“{变量名}”的变量。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2 data-line-133">
+<h3 id="_功能列表_2">功能列表</h3>
+<div class="sect3 data-line-135">
+<h4 id="_告警规则查询">告警规则查询</h4>
+<div class="sect4 data-line-137">
+<h5 id="_用户界面交互_4">用户界面交互</h5>
+<div class="olist arabic data-line-138">
+<ol class="arabic">
+<li class="data-line-138">
+<p>用户可以使用指标和指标阈值作为条件，查询为该阈值定义的告警规则。</p>
+</li>
+<li class="data-line-139">
+<p>告警规则列表的字段包括：</p>
+<div class="olist loweralpha data-line-140">
+<ol class="loweralpha" type="a">
+<li class="data-line-140">
+<p>指标名称</p>
+</li>
+<li class="data-line-141">
+<p>指标阈值名称</p>
+</li>
+<li class="data-line-142">
+<p>告警方式</p>
+</li>
+<li class="data-line-143">
+<p>告警渠道（暂时只显示电话号码或邮件地址）。</p>
+</li>
+</ol>
+</div>
+</li>
+<li class="data-line-144">
+<p>用户可以对列表中的告警规则进行编辑或删除。</p>
+</li>
+<li class="data-line-145">
+<p>用户点击列表上方的“新增”按钮可以增加新的告警规则。</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4 data-line-147">
+<h5 id="_后台处理逻辑_4">后台处理逻辑</h5>
+<div class="olist arabic data-line-148">
+<ol class="arabic">
+<li class="data-line-148">
+<p>根据用户指定的指标和指标阈值查询为该阈值定义的告警规则，及该规则所关联的告警渠道信息。</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4 data-line-150">
+<h5 id="_告警规则新增编辑">告警规则新增/编辑</h5>
+
+</div>
+<div class="sect4 data-line-152">
+<h5 id="_用户界面交互_5">用户界面交互</h5>
+<div class="ulist data-line-153">
+<ul>
+<li class="data-line-153">
+<p>输入内容：</p>
+<div class="olist arabic data-line-154">
+<ol class="arabic">
+<li class="data-line-154">
+<p>指标名称</p>
+</li>
+<li class="data-line-155">
+<p>指标阈值名称</p>
+</li>
+<li class="data-line-156">
+<p>告警方式</p>
+</li>
+<li class="data-line-157">
+<p>告警渠道</p>
+</li>
+<li class="data-line-158">
+<p>告警级别</p>
+</li>
+<li class="data-line-159">
+<p>内容模板</p>
+<div class="olist loweralpha data-line-160">
+<ol class="loweralpha" type="a">
+<li class="data-line-160">
+<p>用户可以选择现有模板，或建立新的模板</p>
+</li>
+<li class="data-line-161">
+<p>当建立新模板时，需要让用户输入模板名称和模板内容，新模板的名称不能与现有模板重复。</p>
+</li>
+<li class="data-line-162">
+<p>用户选择现有模板，可以对模板内容做修改，修改后的模板内容需要一起提交到后台。</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4 data-line-164">
+<h5 id="_后台处理逻辑_5">后台处理逻辑</h5>
+<div class="olist arabic data-line-165">
+<ol class="arabic">
+<li class="data-line-165">
+<p>查询用户可见的有效指标列表</p>
+</li>
+<li class="data-line-166">
+<p>查询指定指标的指标阈值列表</p>
+</li>
+<li class="data-line-167">
+<p>保存/更新告警规则</p>
+<div class="olist loweralpha data-line-168">
+<ol class="loweralpha" type="a">
+<li class="data-line-168">
+<p>告警规则存入事件通知规则表（event_notify_rule）</p>
+</li>
+<li class="data-line-169">
+<p>如果用户指定的渠道信息（类型+渠道内容）在渠道表（message_channel）中已经存在，则复用现有的渠道ID，否则自动建立新的渠道ID。</p>
+</li>
+<li class="data-line-170">
+<p>如果用户新建或修改了内容模板，需要将修改后或新建的模板保存到消息模板表（message_template）表中。</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4 data-line-172">
+<h5 id="_告警规则删除">告警规则删除</h5>
+
+</div>
+<div class="sect4 data-line-174">
+<h5 id="_用户界面交互_6">用户界面交互</h5>
+<div class="olist arabic data-line-175">
+<ol class="arabic">
+<li class="data-line-175">
+<p>用户在告警规则列表中点击需要删除的告警规则右侧的删除按钮</p>
+</li>
+<li class="data-line-176">
+<p>系统提示用户确认删除</p>
+</li>
+<li class="data-line-177">
+<p>用户点击确定，则向后台提交删除请求，否则返回列表。</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4 data-line-179">
+<h5 id="_后台处理逻辑_6">后台处理逻辑</h5>
+<div class="olist arabic data-line-180">
+<ol class="arabic">
+<li class="data-line-180">
+<p>从事件通知规则表（event_notify_rule）中删除用户指定的告警规则记录。</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0<br>
-Last updated 2020-11-06 15:43:49 +0800
+Last updated 2020-11-06 17:14:38 +0800
 </div>
 </div>
 </body>
