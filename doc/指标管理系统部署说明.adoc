@@ -1,0 +1,158 @@
+= 指标管理系统部署使用说明
+肖燏 <yu.xiao@seaboxdata.com>
+v1.0
+:toc:
+
+== 指标管理系统部署
+
+=== 环境要求
+* 一台Linux主机，实体机或虚拟机均可，要求为：
+** 操作系统：CentOS 7.3+或Ubuntu 20+
+** 内存：8G+
+** 硬盘：500G+
+
+主机上如果已经安装MySQL，需要将其关闭，否则可能会与指标管理系统自带的的MySQL发生冲突。
+
+=== 环境准备
+. 修改主机系统参数
+.. 打开/etc/sysctl.conf，并在文件末尾添加：
++
+----
+ vm.max_map_count = 262144 
+ net.ipv4.ip_forward = 1
+----
+.. 打开/etc/security/limits.conf，在文件中添加：
++
+----
+*   hard    nofile  65536
+*   soft    nofile  65536
+----
+
+.. 重新启动主机。
+. 在主机上安装Docker和Docker Compose（参考官方文档）。
+
+
+=== 系统部署
+. 创建用户metric-sys，将该用户加入docker用户组。以下操作都以该用户身份执行。
+. 获得最新的指标管理系统安装包：
+ - metric-sys.tar.gz
+ - metric-sys-images.tar.gz
++
+并将这两个文件上传到测试主机。
+
+. 执行以下命令导入测试环境镜像，
++
+[source, shell]
+----
+$ zcat metric-sys-images.tar.gz| docker load
+----
+. 在主机metric-test用户目录下展开metric-sys.tar.gz
++
+[source, shell]
+----
+$ tar xvzf metric-sys.tar.gz
+----
+
+. 设置系统服务端口（可选）
+.. 打开metric-sys/docker-compose.yml，将METRIC_WEBSERVER_PORT设置为指标管理前端WEB应用端口（默认为8080）。
+.. 打开metric-sys/metric-engine/etc/config.ini，将[metric_engine]下的LISTEN_PORT设置为指标管理后端服务的端口（默认为8300）。
+
+=== 系统初始化（包括初次启动）
+
+. 使用metric-sys用户登录主机
+. 进入metric-sys目录， 执行：
++
+[source, shell]
+----
+$ chmod -R a+rwx metric-web/logs
+$ chmod -R a+rwx metric-web/webapps
+$ chmod -R a+rwx metric-engine/logs
+$ chmod -R a+rwx metric-engine/tmp
+$ docker-compose up
+----
++
+等待几分钟，直到观察到前面设置的系统服务端口被占用（例如：8080，8300）：
++
+[source, shell]
+----
+$ netstat -tlnp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      -
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:8300            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+tcp6       0      0 ::1:5432                :::*                    LISTEN      -
+tcp6       0      0 ::1:25                  :::*                    LISTEN      -
+tcp6       0      0 127.0.0.1:8005          :::*                    LISTEN      -
+tcp6       0      0 :::3306                 :::*                    LISTEN      -
+tcp6       0      0 :::8300                 :::*                    LISTEN      -
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 :::22                   :::*                    LISTEN      -
+----
++
+. 在浏览器上打开http://<metric-host-ip>:8080/metric-web，管理员用户/口令为：admin/123456。
+
+=== 关闭系统
+使用metric-sys用户登录，进入metric-sys目录，执行：
+[source, shell]
+----
+$ docker-compose stop
+----
+
+=== 重新启动系统
+使用metric-sys用户登录，进入metric-sys目录，执行：
+[source, shell]
+----
+$ docker-compose start
+----
+等待一会儿，直到观察到前后台服务端口处于监听状态。
+
+
+== 指标管理系统使用
+
+=== 系统组件
+
+* 指标管理Web应用
++
+指标管理系统的用户界面，可以通过链接：http://<host-ip>:8080/metric-web访问。
+* 指标加载引擎服务
++
+负责执行指标数据加载的后台服务。
+* 指标数据接口服务
++
+负责对外提供指标数据的后台接口服务。
+* 系统维护服务
++
+负责管理指标系统内部事件的后台服务。
+* 指标系统数据库
++
+指标管理系统自带的MySQL数据库服务，包含三个数据库：
+
+. 指标系统管理数据库（metric_db）。存储指标系统的管理信息，包括指标、指标目录的配置，指标数据的元数据，指标数据源参数，各种系统参数等。
+. 指标系统模拟数据源（metric_src_db）。存储模拟指标源数据，主要用于系统测试和演示。
+. 指标数据仓库（metric_warehouse）。存放指标数据和维度数据。
+
+* 指标日志服务
++
+为指标管理系统提供系统运行日志的采集和索引功能的后台服务。
+
+
+=== 系统配置
+
+. 系统组件配置
+系统组件配置包括对docker-compose管理的各应用服务的配置信息，在metric-sys/docker-compose.yml文件中。通过修改这个文件，可以对默认启动的应用服务进行裁剪，或调整服务的运行配置。
+
+. 指标管理系统后台服务配置
+指标管理系统后台服务的配置信息存放在metric-sys/metric-engine/etc/config.ini文件中，包括以下内容：
+.. 指标系统管理数据库配置
+.. 指标加载引擎配置
+.. 指标接口服务配置
+.. 指标管理服务配置
+.. Hadoop客户端配置
+
+=== 问题诊断
+
+==== 系统运行日志
+* 指标管理系统Web应用日志：metric-sys/metric-web/logs/catalina.out
+* 指标管理系统后台服务日志：metric-sys/metric-engine/logs/metric-engine.log

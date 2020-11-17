@@ -258,3 +258,10 @@
 处理备注,dispose_comment,,X,X,X,X
 事件触发对象,event_trigger_object,,X,X,X,X
 指标派生类型,metric_drv_type,,X,X,X,X
+数据备份记录,metric_data_backup,,X,X,X,X
+数据备份标识,backup_id,,X,X,X,X
+数据备份时间,backup_tm,,X,X,X,X
+数据备份备注,backup_comment,,X,X,X,X
+数据备份路径,backup_path,,X,X,X,X
+数据备份用户,commiter,,X,X,X,X
+数据备份状态,backup_state,,X,X,X,X
